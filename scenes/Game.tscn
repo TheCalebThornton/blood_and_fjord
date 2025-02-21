@@ -1,0 +1,15 @@
+[gd_scene load_steps=3 format=3 uid="uid://doggc3atqp7to"]
+
+[ext_resource type="PackedScene" uid="uid://bgqn41roj4gn0" path="res://scenes/characters/character.tscn" id="1_3x2my"]
+[ext_resource type="PackedScene" uid="uid://2rrrurj8vc4c" path="res://scenes/battle/battle_map.tscn" id="2_lc8jm"]
+
+[node name="Game" type="Node2D"]
+
+[node name="BattleMap" parent="." instance=ExtResource("2_lc8jm")]
+position = Vector2(-313, -125)
+
+[node name="PurpleWarrior" parent="BattleMap" instance=ExtResource("1_3x2my")]
+position = Vector2(-193, 411)
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(3, -1)
