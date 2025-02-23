@@ -1,0 +1,83 @@
+[gd_scene load_steps=13 format=3 uid="uid://cqi8ludergyr4"]
+
+[ext_resource type="Script" path="res://scripts/characters/character.gd" id="1_x1l6y"]
+[ext_resource type="Script" path="res://scripts/characters/character_stats.gd" id="2_6fcex"]
+[ext_resource type="Texture2D" uid="uid://2dqm03yxh20" path="res://assets/Factions/Knights/Troops/Warrior/Red/Warrior_Red.png" id="3_8b3l6"]
+
+[sub_resource type="Resource" id="Resource_cwvkq"]
+script = ExtResource("2_6fcex")
+name = ""
+faction = "enemy"
+max_hp = 0
+strength = 0
+defense = 0
+speed = 0
+movement = 0
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sajrm"]
+atlas = ExtResource("3_8b3l6")
+region = Rect2(0, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_asn74"]
+atlas = ExtResource("3_8b3l6")
+region = Rect2(192, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_le4p0"]
+atlas = ExtResource("3_8b3l6")
+region = Rect2(384, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0tqil"]
+atlas = ExtResource("3_8b3l6")
+region = Rect2(576, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_37ole"]
+atlas = ExtResource("3_8b3l6")
+region = Rect2(768, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_io4x5"]
+atlas = ExtResource("3_8b3l6")
+region = Rect2(960, 0, 192, 192)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_4xo4g"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_sajrm")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_asn74")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_le4p0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0tqil")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_37ole")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_io4x5")
+}],
+"loop": true,
+"name": &"idle_animation",
+"speed": 5.0
+}]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_u265h"]
+radius = 23.0
+height = 58.0
+
+[node name="RedWarrior" type="CharacterBody2D"]
+input_pickable = true
+script = ExtResource("1_x1l6y")
+stats = SubResource("Resource_cwvkq")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+scale = Vector2(0.8, 0.8)
+sprite_frames = SubResource("SpriteFrames_4xo4g")
+animation = &"idle_animation"
+autoplay = "idle_animation"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CapsuleShape2D_u265h")

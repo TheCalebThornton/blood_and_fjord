@@ -3,7 +3,13 @@ class_name Character
 
 @export var stats: CharacterStats
 var grid_position: Vector2i = Vector2i(0,0)
-var selected: bool = false
+var _selected: bool = false
+var selected: bool:
+	get:
+		return _selected
+	set(value):
+		_selected = value
+		modulate = Color(1.4, 1.4, 1.4) if value else Color(1, 1, 1)
 
 func _ready():
 	position = GameBoard.grid_to_world(grid_position)
@@ -28,18 +34,6 @@ func get_valid_move_positions() -> Array[Vector2i]:
 				valid_positions.append(check_pos)
 	
 	return valid_positions 
-
-# Mouse interaction functions
-func _input_event():
-	if Input.is_action_pressed("left_click"):
-	#if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		if selected:
-			selected = false
-			modulate = Color(1, 1, 1)
-		else:
-			selected = true
-			modulate = Color(1.4, 1.4, 1.4)
-			get_parent().select_character(self)
 
 func _mouse_enter():
 	if not selected:

@@ -1,15 +1,33 @@
-[gd_scene load_steps=3 format=3 uid="uid://doggc3atqp7to"]
+[gd_scene load_steps=7 format=3 uid="uid://doggc3atqp7to"]
 
-[ext_resource type="PackedScene" uid="uid://bgqn41roj4gn0" path="res://scenes/characters/character.tscn" id="1_3x2my"]
+[ext_resource type="PackedScene" uid="uid://bgqn41roj4gn0" path="res://scenes/characters/purple_warr.tscn" id="1_3x2my"]
 [ext_resource type="PackedScene" uid="uid://2rrrurj8vc4c" path="res://scenes/battle/battle_map.tscn" id="2_lc8jm"]
+[ext_resource type="PackedScene" uid="uid://csugek5ayr3r1" path="res://scenes/characters/blue_warr.tscn" id="2_roq4p"]
+[ext_resource type="Script" path="res://scripts/cameras/manual_move_camera.gd" id="3_oatjb"]
+[ext_resource type="PackedScene" uid="uid://cqi8ludergyr4" path="res://scenes/characters/red_warr.tscn" id="4_3fmyq"]
+[ext_resource type="Resource" uid="uid://bquro2bdupdty" path="res://resources/characters/warrior.tres" id="5_3ibbr"]
 
 [node name="Game" type="Node2D"]
+position = Vector2(0, 1)
 
 [node name="BattleMap" parent="." instance=ExtResource("2_lc8jm")]
-position = Vector2(-313, -125)
+position = Vector2(7, 4)
+
+[node name="BlueWarrior" parent="BattleMap" instance=ExtResource("2_roq4p")]
+position = Vector2(-7, -4)
 
 [node name="PurpleWarrior" parent="BattleMap" instance=ExtResource("1_3x2my")]
-position = Vector2(-193, 411)
+position = Vector2(51, 648)
+
+[node name="RedWarrior" parent="BattleMap" instance=ExtResource("4_3fmyq")]
+stats = ExtResource("5_3ibbr")
+
+[node name="RedWarrior2" parent="BattleMap" instance=ExtResource("4_3fmyq")]
+stats = ExtResource("5_3ibbr")
+
+[node name="RedWarrior3" parent="BattleMap" instance=ExtResource("4_3fmyq")]
+stats = ExtResource("5_3ibbr")
 
 [node name="Camera2D" type="Camera2D" parent="."]
-position = Vector2(3, -1)
+position = Vector2(570, 307)
+script = ExtResource("3_oatjb")

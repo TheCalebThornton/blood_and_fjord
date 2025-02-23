@@ -2,35 +2,31 @@ extends Node2D
 class_name BattleMap
 
 @onready var tile_layer: TileMapLayer = $TileMapLayer
-var grid_size: Vector2i = Vector2i(10,4)
+@onready var player_start_positions: TileMapLayer = $PlayerPositions
+@onready var enemy_start_positions: TileMapLayer = $EnemyPositions
+@export var grid_color: Color = Color(0.5, 0.5, 0.5, 0.3)
+var grid_size: Vector2i:
+	get:
+		return tile_layer.get_used_rect().size
 var valid_moves: Array[Vector2i] = []
 var selected_character: Character = null
 var characters: Array[Character] = []
 
 const MOVE_INDICATOR_COLOR = Color(0.2, 1.0, 0.2, 0.3)  # Semi-transparent green
 const MOVE_INDICATOR_BORDER_COLOR = Color(0.2, 1.0, 0.2, 0.8)  # More solid green border
-const CELL_SIZE = 64  # Make sure this matches your GameBoard.CELL_SIZE
 
 func _ready():
 	for child in get_children():
 		if child is Character:
 			characters.append(child)
-
-func create_debug_grid(width: int, height: int):
-	# Assuming you have a tileset with at least one tile (index 0)
-	for x in range(width):
-		for y in range(height):
-			# Alternate between two tiles for a checkerboard pattern
-			var tile_index = 0 if (x + y) % 2 == 0 else 1
-			tile_layer.set_cell(Vector2i(x, y), 0, Vector2i(tile_index, 0))
+	
 
 func _unhandled_input(event):
-	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+	if event.is_action_pressed("primary_interaction"):
 		var grid_pos = world_to_grid(get_global_mouse_position())
 		handle_grid_click(grid_pos)
 
 func handle_grid_click(grid_pos: Vector2i):
-	
 	if selected_character:
 		# If a character is selected, try to move them
 		if is_valid_move(grid_pos):
@@ -61,9 +57,6 @@ func deselect_character():
 func world_to_grid(world_pos: Vector2) -> Vector2i:
 	return tile_layer.local_to_map(to_local(world_pos))
 
-func grid_to_world(grid_pos: Vector2i) -> Vector2:
-	return to_global(tile_layer.map_to_local(grid_pos))
-
 func get_character_at(grid_pos: Vector2i) -> Character:
 	for character in characters:
 		if world_to_grid(character.global_position) == grid_pos:
@@ -80,16 +73,25 @@ func is_valid_move(pos: Vector2i) -> bool:
 	# Add any additional move validation here (e.g., checking for obstacles)
 	return true
 
-func _draw():
+func draw_move_indicators():
 	for pos in valid_moves:
 		var world_pos = GameBoard.grid_to_world(pos)
+		var rect_pos = world_pos - Vector2(GameBoard.CELL_SIZE/2, GameBoard.CELL_SIZE/2)
+		var rect_size = Vector2(GameBoard.CELL_SIZE, GameBoard.CELL_SIZE)
 		
-		# Create rectangle centered on the cell
-		var rect_pos = world_pos - Vector2(CELL_SIZE/2, CELL_SIZE/2)
-		var rect_size = Vector2(CELL_SIZE, CELL_SIZE)
-		
-		# Draw filled square
 		draw_rect(Rect2(rect_pos, rect_size), MOVE_INDICATOR_COLOR)
-		
-		# Draw border, false = unfilled
-		draw_rect(Rect2(rect_pos, rect_size), MOVE_INDICATOR_BORDER_COLOR, false) 
+		# I don't know if I like this border or not
+		#draw_rect(Rect2(rect_pos, rect_size), MOVE_INDICATOR_BORDER_COLOR, false)
+
+func draw_grid():
+	for x in range(grid_size.x):
+		for y in range(grid_size.y):
+			var world_pos = GameBoard.grid_to_world(Vector2i(x, y))
+			var rect_pos = world_pos - Vector2(GameBoard.CELL_SIZE/2, GameBoard.CELL_SIZE/2)
+			var rect_size = Vector2(GameBoard.CELL_SIZE, GameBoard.CELL_SIZE)
+			draw_rect(Rect2(rect_pos, rect_size), grid_color, false)
+
+func _draw():
+	#If this becomes a performance concern, we can move this to a separate TileMapLayer
+	draw_move_indicators()
+	draw_grid()

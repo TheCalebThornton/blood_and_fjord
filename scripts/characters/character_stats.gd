@@ -2,6 +2,7 @@ extends Resource
 class_name CharacterStats
 
 @export var name: String
+@export var faction: String
 @export var max_hp: int
 @export var strength: int
 @export var defense: int
