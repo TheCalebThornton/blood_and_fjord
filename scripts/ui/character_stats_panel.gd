@@ -22,10 +22,9 @@ func _on_character_selected(character: Character):
 		position.x = -(viewport_width / 2)
 	else:
 		position.x = (viewport_width / 2) - size.x
-		
-	
-	show()
+
 	update_stats(character)
+	show()
 
 func _on_character_deselected(_character: Character):
 	hide()
