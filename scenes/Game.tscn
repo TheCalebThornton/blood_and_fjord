@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://doggc3atqp7to"]
+[gd_scene load_steps=16 format=3 uid="uid://doggc3atqp7to"]
 
 [ext_resource type="PackedScene" uid="uid://bgqn41roj4gn0" path="res://scenes/characters/purple_warr.tscn" id="1_3x2my"]
 [ext_resource type="PackedScene" uid="uid://2rrrurj8vc4c" path="res://scenes/battle/battle_map.tscn" id="2_lc8jm"]
@@ -8,6 +8,7 @@
 [ext_resource type="PackedScene" uid="uid://cqi8ludergyr4" path="res://scenes/characters/red_warr.tscn" id="4_3fmyq"]
 [ext_resource type="Script" path="res://scripts/characters/character_stats.gd" id="4_s4kkv"]
 [ext_resource type="Resource" uid="uid://djt46wta72rol" path="res://resources/characters/classes/warrior.tres" id="5_n64u6"]
+[ext_resource type="PackedScene" uid="uid://c17n3eojwus82" path="res://scenes/ui/character_stats_panel.tscn" id="9_35xd6"]
 
 [sub_resource type="Resource" id="Resource_fgksl"]
 script = ExtResource("3_qnl6u")
@@ -49,7 +50,8 @@ movement = 3
 position = Vector2(0, 1)
 
 [node name="BattleMap" parent="." instance=ExtResource("2_lc8jm")]
-position = Vector2(7, 4)
+position = Vector2(7, 5)
+metadata/_edit_lock_ = true
 
 [node name="BlueWarrior" parent="BattleMap" instance=ExtResource("2_roq4p")]
 position = Vector2(-7, -4)
@@ -67,5 +69,19 @@ stats = SubResource("Resource_phc12")
 stats = SubResource("Resource_sw3ej")
 
 [node name="Camera2D" type="Camera2D" parent="."]
-position = Vector2(570, 307)
+position = Vector2(580, 308)
+limit_smoothed = true
 script = ExtResource("3_oatjb")
+metadata/_edit_lock_ = true
+
+[node name="CharacterStatsPanel2" parent="Camera2D" instance=ExtResource("9_35xd6")]
+z_index = 1
+anchors_preset = 0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = 370.0
+offset_top = -323.0
+offset_right = 574.0
+offset_bottom = -129.0
+grow_horizontal = 1
+grow_vertical = 1

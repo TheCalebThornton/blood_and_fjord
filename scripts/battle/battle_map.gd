@@ -51,8 +51,12 @@ func handle_grid_click(grid_pos: Vector2i):
 		if selected_valid_moves.has(grid_pos):
 			selected_character.move_to(grid_pos)
 			deselect_character()
-		if charAt == selected_character:
+		elif charAt == selected_character:
 			deselect_character()
+		elif charAt:
+			# TODO Open battle options
+			deselect_character()
+			select_character(charAt)
 	else:
 		# Try to select a character at the clicked position
 		if charAt:
@@ -62,13 +66,12 @@ func select_character(character: Character):
 	if selected_character:
 		deselect_character()
 	selected_character = character
-	selected_character.selected = true
+	selected_character.select()
 	selected_valid_moves = movement_manager.get_valid_moves(selected_character)
 	queue_redraw()
 
 func deselect_character():
-	if selected_character:
-		selected_character.selected = false
+	selected_character.deselect()
 	selected_character = null
 	selected_valid_moves = []
 	queue_redraw()
