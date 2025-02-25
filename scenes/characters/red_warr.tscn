@@ -1,18 +1,16 @@
-[gd_scene load_steps=13 format=3 uid="uid://cqi8ludergyr4"]
+[gd_scene load_steps=14 format=3 uid="uid://cqi8ludergyr4"]
 
 [ext_resource type="Script" path="res://scripts/characters/character.gd" id="1_x1l6y"]
 [ext_resource type="Script" path="res://scripts/characters/character_stats.gd" id="2_6fcex"]
+[ext_resource type="Resource" uid="uid://djt46wta72rol" path="res://resources/characters/classes/warrior.tres" id="2_oa7qx"]
 [ext_resource type="Texture2D" uid="uid://2dqm03yxh20" path="res://assets/Factions/Knights/Troops/Warrior/Red/Warrior_Red.png" id="3_8b3l6"]
 
 [sub_resource type="Resource" id="Resource_cwvkq"]
 script = ExtResource("2_6fcex")
 name = ""
-faction = "enemy"
-max_hp = 0
-strength = 0
-defense = 0
-speed = 0
-movement = 0
+classStats = ExtResource("2_oa7qx")
+level = 1
+movement = 3
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_sajrm"]
 atlas = ExtResource("3_8b3l6")

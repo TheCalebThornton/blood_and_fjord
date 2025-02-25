@@ -25,13 +25,19 @@ func _ready():
 			characters.append(child)
 	movement_manager = MovementManager.new(grid_size, characters)
 	
-	for char in characters:
-		if char.stats.faction == 'player':
-			players.append(char)
-			movement_manager.spawn_character(char, player_start_positions.get_used_cells())
-		elif char.stats.faction == 'enemy':
-			enemies.append(char)
-			movement_manager.spawn_character(char, enemy_start_positions.get_used_cells())
+	for c in characters:
+		var startPositions = null
+		if c.stats.faction != null && c.stats.faction.value == Faction.FactionEnum.PLAYER:
+			startPositions = player_start_positions.get_used_cells()
+			players.append(c)
+		elif c.stats.faction != null && c.stats.faction.value == Faction.FactionEnum.ENEMY:
+			startPositions = enemy_start_positions.get_used_cells()
+			enemies.append(c)
+		else:
+			# fallback for now; eventually need to account for 'Other'
+			startPositions = enemy_start_positions.get_used_cells()
+			enemies.append(c)
+		movement_manager.spawn_character(c, startPositions)
 
 func _unhandled_input(event):
 	if event.is_action_pressed("primary_interaction"):

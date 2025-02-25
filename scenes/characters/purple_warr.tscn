@@ -1,18 +1,22 @@
-[gd_scene load_steps=13 format=3 uid="uid://bgqn41roj4gn0"]
+[gd_scene load_steps=16 format=3 uid="uid://bgqn41roj4gn0"]
 
 [ext_resource type="Texture2D" uid="uid://bi7rlnyv0r0kk" path="res://assets/Factions/Knights/Troops/Warrior/Purple/Warrior_Purple.png" id="1_rir1w"]
 [ext_resource type="Script" path="res://scripts/characters/character.gd" id="1_s52be"]
 [ext_resource type="Script" path="res://scripts/characters/character_stats.gd" id="2_ahn0t"]
+[ext_resource type="Resource" uid="uid://djt46wta72rol" path="res://resources/characters/classes/warrior.tres" id="2_rwh72"]
+[ext_resource type="Script" path="res://scripts/characters/faction.gd" id="3_43o62"]
+
+[sub_resource type="Resource" id="Resource_r36hm"]
+script = ExtResource("3_43o62")
+value = 0
 
 [sub_resource type="Resource" id="Resource_cwvkq"]
 script = ExtResource("2_ahn0t")
-name = ""
-faction = "player"
-max_hp = 0
-strength = 0
-defense = 0
-speed = 0
-movement = 0
+name = "Purp"
+faction = SubResource("Resource_r36hm")
+classStats = ExtResource("2_rwh72")
+level = 1
+movement = 3
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_5f4ls"]
 atlas = ExtResource("1_rir1w")

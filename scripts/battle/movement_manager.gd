@@ -8,11 +8,11 @@ func _init(map_size: Vector2i, map_characters: Array[Character]):
 	grid_size = map_size
 	characters = map_characters
 
-func spawn_character(char: Character, possiblePositions: Array[Vector2i]):
+func spawn_character(character: Character, possiblePositions: Array[Vector2i]):
 	# What do we do if none of the possible positions work? For now, just don't spawn.
 	for position in possiblePositions:
-		if is_valid_position(position, char):
-			char.move_to(position, false)
+		if is_valid_position(position, character):
+			character.move_to(position, false)
 			break
 
 func is_valid_move(charMoves: Array[Vector2i], pos: Vector2i) -> bool:

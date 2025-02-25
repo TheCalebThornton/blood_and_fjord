@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="CharacterStats" load_steps=5 format=3 uid="uid://bquro2bdupdty"]
+
+[ext_resource type="Resource" uid="uid://djt46wta72rol" path="res://resources/characters/classes/warrior.tres" id="1_i7asl"]
+[ext_resource type="Script" path="res://scripts/characters/faction.gd" id="2_me73q"]
+[ext_resource type="Script" path="res://scripts/characters/character_stats.gd" id="3_ersd3"]
+
+[sub_resource type="Resource" id="Resource_34i7d"]
+script = ExtResource("2_me73q")
+value = 1
+
+[resource]
+script = ExtResource("3_ersd3")
+name = "Warrior"
+faction = SubResource("Resource_34i7d")
+classStats = ExtResource("1_i7asl")
+level = 1
+movement = 3

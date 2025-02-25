@@ -1,0 +1,10 @@
+[gd_resource type="Theme" load_steps=3 format=3 uid="uid://msaa3fsw3185"]
+
+[ext_resource type="Script" path="res://themes/setup_theme.gd" id="1_qfj7g"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_e28dd"]
+bg_color = Color(0, 0, 0, 1)
+
+[resource]
+Panel/styles/panel = SubResource("StyleBoxFlat_e28dd")
+script = ExtResource("1_qfj7g")
