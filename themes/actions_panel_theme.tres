@@ -1,0 +1,13 @@
+[gd_resource type="Theme" load_steps=3 format=3 uid="uid://d37cac715rixt"]
+
+[ext_resource type="Texture2D" uid="uid://cbcskpiyrl1e8" path="res://assets/UI/Banners/Banner_Vertical.png" id="1_6cc2c"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_q1exs"]
+texture = ExtResource("1_6cc2c")
+expand_margin_left = 20.0
+expand_margin_top = 10.0
+expand_margin_right = 20.0
+expand_margin_bottom = 10.0
+
+[resource]
+Panel/styles/panel = SubResource("StyleBoxTexture_q1exs")

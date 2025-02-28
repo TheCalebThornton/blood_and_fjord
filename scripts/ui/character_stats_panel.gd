@@ -16,13 +16,11 @@ func _ready():
 
 func _on_character_selected(character: Character):
 	var viewport_width = get_viewport_rect().size.x
-	var character_screen_position = get_viewport().get_camera_2d().get_screen_center_position() - character.position
 	
 	if character.position.x > get_viewport().get_camera_2d().position.x:
 		position.x = -(viewport_width / 2)
 	else:
 		position.x = (viewport_width / 2) - size.x
-
 	update_stats(character)
 	show()
 

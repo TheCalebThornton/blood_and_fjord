@@ -1,7 +1,8 @@
-[gd_scene load_steps=5 format=4 uid="uid://2rrrurj8vc4c"]
+[gd_scene load_steps=6 format=4 uid="uid://2rrrurj8vc4c"]
 
 [ext_resource type="Script" path="res://scripts/battle/battle_map.gd" id="1_kvvre"]
 [ext_resource type="Texture2D" uid="uid://15434xysmysx" path="res://assets/Terrain/Ground/Tilemap_Flat.png" id="2_vw4eb"]
+[ext_resource type="Script" path="res://scripts/battle/turn_manager.gd" id="3_52hll"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_r7bel"]
 texture = ExtResource("2_vw4eb")
@@ -66,3 +67,6 @@ tile_set = SubResource("TileSet_va374")
 z_as_relative = false
 tile_map_data = PackedByteArray("AAAVAAcAAAAGAAEAAAAUAAYAAAAGAAEAAAAVAAUAAAAGAAEAAAAUAAQAAAAGAAEAAAAVAAMAAAAGAAEAAAAUAAIAAAAGAAEAAAAVAAEAAAAGAAEAAAA=")
 tile_set = SubResource("TileSet_va374")
+
+[node name="TurnManager" type="Node" parent="."]
+script = ExtResource("3_52hll")

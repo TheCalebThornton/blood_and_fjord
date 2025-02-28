@@ -12,7 +12,7 @@ func spawn_character(character: Character, possiblePositions: Array[Vector2i]):
 	# What do we do if none of the possible positions work? For now, just don't spawn.
 	for position in possiblePositions:
 		if is_valid_position(position, character):
-			character.move_to(position, false)
+			character.spawn_at(position)
 			break
 
 func is_valid_move(charMoves: Array[Vector2i], pos: Vector2i) -> bool:

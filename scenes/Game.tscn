@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://doggc3atqp7to"]
+[gd_scene load_steps=17 format=3 uid="uid://doggc3atqp7to"]
 
 [ext_resource type="PackedScene" uid="uid://bgqn41roj4gn0" path="res://scenes/characters/purple_warr.tscn" id="1_3x2my"]
 [ext_resource type="PackedScene" uid="uid://2rrrurj8vc4c" path="res://scenes/battle/battle_map.tscn" id="2_lc8jm"]
@@ -8,6 +8,7 @@
 [ext_resource type="PackedScene" uid="uid://cqi8ludergyr4" path="res://scenes/characters/red_warr.tscn" id="4_3fmyq"]
 [ext_resource type="Script" path="res://scripts/characters/character_stats.gd" id="4_s4kkv"]
 [ext_resource type="Resource" uid="uid://djt46wta72rol" path="res://resources/characters/classes/warrior.tres" id="5_n64u6"]
+[ext_resource type="PackedScene" uid="uid://dqwjirf7uw51e" path="res://scenes/ui/character_actions_panel.tscn" id="8_mht1w"]
 [ext_resource type="PackedScene" uid="uid://c17n3eojwus82" path="res://scenes/ui/character_stats_panel.tscn" id="9_35xd6"]
 
 [sub_resource type="Resource" id="Resource_fgksl"]
@@ -67,6 +68,8 @@ stats = SubResource("Resource_phc12")
 
 [node name="RedWarrior3" parent="BattleMap" instance=ExtResource("4_3fmyq")]
 stats = SubResource("Resource_sw3ej")
+
+[node name="CharacterActionsPanel" parent="BattleMap" instance=ExtResource("8_mht1w")]
 
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(580, 308)

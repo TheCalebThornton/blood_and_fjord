@@ -1,5 +1,6 @@
 extends Node
 
-# Character selection signals
+# Character signals
 signal character_selected(character: Character)
 signal character_deselected(character: Character) 
+signal character_action_used(character: Character) 

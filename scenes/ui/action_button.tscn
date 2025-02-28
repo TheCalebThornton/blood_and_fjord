@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://cwp2pflebb55x"]
+
+[ext_resource type="Script" path="res://scripts/ui/action_button.gd" id="1_0np81"]
+
+[node name="ActionButton" type="Button"]
+script = ExtResource("1_0np81")
