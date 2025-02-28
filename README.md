@@ -7,8 +7,9 @@ Blood and Fjord is a tactical role-playing game. Players lead a band of warriors
 ## Features
 - Turn-based tactical combat system
 - Characters and classes
-- Maps
-- Character progression and customization
+- Series of levels (maps) with inceasing difficulty
+- Map difficulty (idelly they get so hard that you can't win but have the illusion that you can win)
+- Character progression
 - Custom Norse themed art
 - Player map generation
 
