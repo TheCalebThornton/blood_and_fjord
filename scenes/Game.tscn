@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://doggc3atqp7to"]
+[gd_scene load_steps=25 format=3 uid="uid://doggc3atqp7to"]
 
 [ext_resource type="PackedScene" uid="uid://bgqn41roj4gn0" path="res://scenes/characters/purple_warr.tscn" id="1_3x2my"]
 [ext_resource type="PackedScene" uid="uid://2rrrurj8vc4c" path="res://scenes/battle/battle_map.tscn" id="2_lc8jm"]
@@ -10,6 +10,8 @@
 [ext_resource type="Resource" uid="uid://djt46wta72rol" path="res://resources/characters/classes/warrior.tres" id="5_n64u6"]
 [ext_resource type="PackedScene" uid="uid://dqwjirf7uw51e" path="res://scenes/ui/character_actions_panel.tscn" id="8_mht1w"]
 [ext_resource type="PackedScene" uid="uid://c17n3eojwus82" path="res://scenes/ui/character_stats_panel.tscn" id="9_35xd6"]
+[ext_resource type="FontFile" uid="uid://b1l1b7fvlj4ql" path="res://assets/Fonts/BruceForeverRegular-X3jd2.ttf" id="11_w5i75"]
+[ext_resource type="Script" path="res://scripts/ui/turn_start_display.gd" id="12_b4v6n"]
 
 [sub_resource type="Resource" id="Resource_fgksl"]
 script = ExtResource("3_qnl6u")
@@ -47,6 +49,77 @@ classStats = ExtResource("5_n64u6")
 level = 1
 movement = 3
 
+[sub_resource type="FontVariation" id="FontVariation_pgfnj"]
+base_font = ExtResource("11_w5i75")
+variation_embolden = 1.2
+
+[sub_resource type="FontVariation" id="FontVariation_ttg4m"]
+base_font = ExtResource("11_w5i75")
+variation_embolden = 1.2
+variation_transform = Transform2D(1, 0.2, 0, 1, 0, 0)
+
+[sub_resource type="FontVariation" id="FontVariation_fyip1"]
+base_font = ExtResource("11_w5i75")
+variation_transform = Transform2D(1, 0.2, 0, 1, 0, 0)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pxj3y"]
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+bg_color = Color(1, 1, 1, 0.75)
+draw_center = false
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+corner_detail = 5
+expand_margin_left = 2.0
+expand_margin_top = 2.0
+expand_margin_right = 2.0
+expand_margin_bottom = 2.0
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ibi7h"]
+content_margin_left = 0.0
+content_margin_top = 0.0
+content_margin_right = 0.0
+content_margin_bottom = 0.0
+
+[sub_resource type="Theme" id="Theme_u5h5h"]
+RichTextLabel/colors/default_color = Color(0.0156863, 0.243137, 0.654902, 1)
+RichTextLabel/colors/font_outline_color = Color(0, 0, 0, 1)
+RichTextLabel/colors/font_selected_color = Color(0, 0, 0, 0)
+RichTextLabel/colors/font_shadow_color = Color(0, 0, 0, 0)
+RichTextLabel/colors/selection_color = Color(0.1, 0.1, 1, 0.8)
+RichTextLabel/colors/table_border = Color(0, 0, 0, 0)
+RichTextLabel/colors/table_even_row_bg = Color(0, 0, 0, 0)
+RichTextLabel/colors/table_odd_row_bg = Color(0, 0, 0, 0)
+RichTextLabel/constants/line_separation = 0
+RichTextLabel/constants/outline_size = 0
+RichTextLabel/constants/shadow_offset_x = 1
+RichTextLabel/constants/shadow_offset_y = 1
+RichTextLabel/constants/shadow_outline_size = 1
+RichTextLabel/constants/table_h_separation = 3
+RichTextLabel/constants/table_v_separation = 3
+RichTextLabel/constants/text_highlight_h_padding = 3
+RichTextLabel/constants/text_highlight_v_padding = 3
+RichTextLabel/font_sizes/bold_font_size = 16
+RichTextLabel/font_sizes/bold_italics_font_size = 16
+RichTextLabel/font_sizes/italics_font_size = 16
+RichTextLabel/font_sizes/mono_font_size = 16
+RichTextLabel/font_sizes/normal_font_size = 64
+RichTextLabel/fonts/bold_font = SubResource("FontVariation_pgfnj")
+RichTextLabel/fonts/bold_italics_font = SubResource("FontVariation_ttg4m")
+RichTextLabel/fonts/italics_font = SubResource("FontVariation_fyip1")
+RichTextLabel/fonts/mono_font = ExtResource("11_w5i75")
+RichTextLabel/fonts/normal_font = ExtResource("11_w5i75")
+RichTextLabel/styles/focus = SubResource("StyleBoxFlat_pxj3y")
+RichTextLabel/styles/normal = SubResource("StyleBoxEmpty_ibi7h")
+
 [node name="Game" type="Node2D"]
 position = Vector2(0, 1)
 
@@ -82,9 +155,30 @@ z_index = 1
 anchors_preset = 0
 anchor_right = 0.0
 anchor_bottom = 0.0
-offset_left = 370.0
+offset_left = 334.0
 offset_top = -323.0
 offset_right = 574.0
-offset_bottom = -129.0
+offset_bottom = -107.0
 grow_horizontal = 1
 grow_vertical = 1
+
+[node name="TurnStartDisplay" type="RichTextLabel" parent="Camera2D" groups=["turn_display"]]
+visible = false
+z_index = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -162.0
+offset_top = -22.0
+offset_right = 162.0
+offset_bottom = 22.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = SubResource("Theme_u5h5h")
+text = "Player's Turn!"
+fit_content = true
+scroll_active = false
+autowrap_mode = 0
+script = ExtResource("12_b4v6n")

@@ -1,14 +1,14 @@
-class_name TurnManager
 extends Node
-
-signal turn_changed(faction: Faction)
+class_name TurnManager
 
 var current_faction_index: int = 0
 var factions: Array[Faction] = []
 var characters_by_faction: Dictionary = {}
 
-func _init(p_characters: Array[Character]):
+func _ready():
 	EventBus.character_action_used.connect(_check_character_turn_end)
+
+func start_game(p_characters):
 	# Create unique faction list from characters
 	var faction_set = {}
 	for character in p_characters:
@@ -20,19 +20,17 @@ func _init(p_characters: Array[Character]):
 		characters_by_faction[faction.value].append(character)
 		
 		character.reset_action_tracking()
-
-func start_game():
+		
 	current_faction_index = 0
 	start_faction_turn(factions[current_faction_index])
 
 func start_faction_turn(faction: Faction):
+	EventBus.faction_turn_changed.emit(faction)
+
+func end_faction_turn(faction):
 	# Reset all character actions for this faction
 	for character in characters_by_faction[faction.value]:
 		character.reset_action_tracking()
-	
-	turn_changed.emit(faction)
-
-func end_faction_turn():
 	current_faction_index = (current_faction_index + 1) % factions.size()
 	start_faction_turn(factions[current_faction_index])
 	
@@ -50,5 +48,5 @@ func _check_character_turn_end(_character):
 			break
 	
 	if all_characters_done:
-		end_faction_turn()
+		end_faction_turn(current_faction)
 		

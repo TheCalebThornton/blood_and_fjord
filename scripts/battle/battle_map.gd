@@ -4,7 +4,7 @@ class_name BattleMap
 @onready var tile_layer: TileMapLayer = $TileMapLayer
 @onready var player_start_positions: TileMapLayer = $PlayerPositions
 @onready var enemy_start_positions: TileMapLayer = $EnemyPositions
-#@onready var turn_manager: TurnManager = $EnemyPositions
+@onready var turn_manager = $TurnManager
 @export var grid_color: Color = Color(0.5, 0.5, 0.5, 0.3)
 
 var grid_size: Vector2i:
@@ -16,7 +16,6 @@ var players: Array[Character] = []
 var enemies: Array[Character] = []
 var selected_valid_moves: Array[Vector2i] = []
 var movement_manager: MovementManager
-var turn_manager: TurnManager
 
 const MOVE_INDICATOR_COLOR = Color(0.2, 1.0, 0.2, 0.3)
 const MOVE_INDICATOR_BORDER_COLOR = Color(0.2, 1.0, 0.2, 0.8)
@@ -26,15 +25,14 @@ func _ready():
 		if child is Character:
 			characters.append(child)
 	movement_manager = MovementManager.new(grid_size, characters)
-	turn_manager = TurnManager.new(characters)
-	turn_manager.turn_changed.connect(_on_turn_changed)
+	EventBus.faction_turn_changed.connect(_on_turn_changed)
 	
 	for c in characters:
 		var startPositions = null
-		if c.stats.faction != null && c.stats.faction.value == Faction.FactionEnum.PLAYER:
+		if c.stats.faction != null && c.stats.faction.value == Faction.FACTION_ENUM.PLAYER:
 			startPositions = player_start_positions.get_used_cells()
 			players.append(c)
-		elif c.stats.faction != null && c.stats.faction.value == Faction.FactionEnum.ENEMY:
+		elif c.stats.faction != null && c.stats.faction.value == Faction.FACTION_ENUM.ENEMY:
 			startPositions = enemy_start_positions.get_used_cells()
 			enemies.append(c)
 		else:
@@ -43,7 +41,7 @@ func _ready():
 			enemies.append(c)
 		movement_manager.spawn_character(c, startPositions)
 
-	turn_manager.start_game()
+	turn_manager.start_game(characters)
 
 func _unhandled_input(event):
 	if event.is_action_pressed("primary_interaction"):

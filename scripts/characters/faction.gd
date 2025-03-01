@@ -1,13 +1,13 @@
 extends Resource
 class_name Faction
 
-enum FactionEnum {
+enum FACTION_ENUM {
 	PLAYER,
 	ENEMY,
 	OTHER
 }
 
-@export var value: FactionEnum
+@export var value: FACTION_ENUM
 
 func get_faction_name() -> String:
-	return FactionEnum.keys()[value].capitalize()
+	return FACTION_ENUM.keys()[value].capitalize()

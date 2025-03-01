@@ -4,24 +4,32 @@
 [ext_resource type="Script" path="res://scripts/ui/character_actions_panel.gd" id="2_hhs4l"]
 
 [node name="CharacterActionsPanel" type="Panel"]
+z_index = 1
 clip_contents = true
 custom_minimum_size = Vector2(100, 100)
+offset_right = 135.0
+offset_bottom = 130.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
 theme = ExtResource("1_sudqk")
 script = ExtResource("2_hhs4l")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
+clip_contents = true
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -31.0
-offset_top = -34.0
-offset_right = 30.0
-offset_bottom = 25.0
+offset_left = -40.5
+offset_top = -43.0
+offset_right = 41.5
+offset_bottom = 34.0
 grow_horizontal = 2
 grow_vertical = 2
 
 [node name="ActionsContainer" type="VBoxContainer" parent="MarginContainer"]
 layout_mode = 2
+size_flags_horizontal = 5
+size_flags_vertical = 5

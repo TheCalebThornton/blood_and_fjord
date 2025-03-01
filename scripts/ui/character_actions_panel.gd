@@ -54,6 +54,24 @@ func update_ui_with_actions(character: Character):
 
 	for action in character.get_available_actions():
 		add_action_button(action, character)
+		await get_tree().process_frame
+	
+	# Reset size constraints
+	custom_minimum_size = Vector2.ZERO
+	actions_container.custom_minimum_size = Vector2.ZERO
+	
+	# Get the combined size of all children
+	var total_size = Vector2.ZERO
+	for child in actions_container.get_children():
+		total_size.y += child.size.y
+		total_size.x = max(total_size.x, child.size.x)
+	
+	 #Add some padding
+	total_size += Vector2(60, 60)
+	
+	# Ensure the panel is sized to fit its contents
+	custom_minimum_size = total_size
+	reset_size()
 
 func clear_actions():
 	for child in actions_container.get_children():

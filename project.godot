@@ -20,6 +20,10 @@ config/icon="res://icon.svg"
 GameBoard="*res://scripts/autoload/game_board.gd"
 EventBus="*res://scripts/autoload/events.gd"
 
+[gui]
+
+theme/custom_font="res://assets/Fonts/BruceForeverRegular-X3jd2.ttf"
+
 [input]
 
 primary_interaction={
