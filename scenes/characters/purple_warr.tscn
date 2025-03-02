@@ -30,7 +30,8 @@ stats = SubResource("Resource_cwvkq")
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 scale = Vector2(0.8, 0.8)
 sprite_frames = ExtResource("5_lvj4d")
-animation = &"attack_down"
+animation = &"selected"
+frame_progress = 0.396502
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CapsuleShape2D_u265h")

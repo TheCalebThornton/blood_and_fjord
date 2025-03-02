@@ -25,11 +25,14 @@ func start_game(p_characters):
 	start_faction_turn(factions[current_faction_index])
 
 func start_faction_turn(faction: Faction):
+	for character in characters_by_faction[faction.value]:
+		character.is_my_turn = true
 	EventBus.faction_turn_changed.emit(faction)
 
 func end_faction_turn(faction):
 	# Reset all character actions for this faction
 	for character in characters_by_faction[faction.value]:
+		character.is_my_turn = false
 		character.reset_action_tracking()
 	current_faction_index = (current_faction_index + 1) % factions.size()
 	start_faction_turn(factions[current_faction_index])

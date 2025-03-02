@@ -1,4 +1,4 @@
-[gd_resource type="SpriteFrames" load_steps=38 format=3 uid="uid://0nbqquj582sv"]
+[gd_resource type="SpriteFrames" load_steps=44 format=3 uid="uid://0nbqquj582sv"]
 
 [ext_resource type="Texture2D" uid="uid://2dqm03yxh20" path="res://assets/Factions/Knights/Troops/Warrior/Red/Warrior_Red.png" id="1_rcw81"]
 
@@ -146,6 +146,30 @@ region = Rect2(768, 192, 192, 192)
 atlas = ExtResource("1_rcw81")
 region = Rect2(960, 192, 192, 192)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_72twu"]
+atlas = ExtResource("1_rcw81")
+region = Rect2(0, 384, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_05vvp"]
+atlas = ExtResource("1_rcw81")
+region = Rect2(192, 384, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dabkf"]
+atlas = ExtResource("1_rcw81")
+region = Rect2(384, 384, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_swimy"]
+atlas = ExtResource("1_rcw81")
+region = Rect2(0, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sc7bj"]
+atlas = ExtResource("1_rcw81")
+region = Rect2(192, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_amr5x"]
+atlas = ExtResource("1_rcw81")
+region = Rect2(384, 0, 192, 192)
+
 [resource]
 animations = [{
 "frames": [{
@@ -284,5 +308,28 @@ animations = [{
 }],
 "loop": true,
 "name": &"move_right",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_72twu")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_05vvp")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dabkf")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_swimy")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_sc7bj")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_amr5x")
+}],
+"loop": true,
+"name": &"selected",
 "speed": 5.0
 }]

@@ -11,10 +11,14 @@ enum CharacterState {IDLE, MOVING_RIGHT, MOVING_LEFT, SELECTED, INACTIVE}
 @onready var sprite: AnimatedSprite2D = $AnimatedSprite2D
 var current_state: CharacterState = CharacterState.IDLE
 var actions: CharacterActions
+var is_my_turn: bool = false
 var selected: bool = false:
 	set(value):
 		selected = value
-		if value: set_state(CharacterState.SELECTED)
+		if value:
+			set_state(CharacterState.SELECTED)
+		elif not value and current_state != CharacterState.INACTIVE:
+			set_state(CharacterState.IDLE)
 	get():
 		return selected
 var _color_highlight: Color = Color(1.4, 1.4, 1.4)
@@ -25,7 +29,7 @@ func _ready():
 	actions = CharacterActions.new(self)
 
 func _mouse_enter():
-	if current_state != CharacterState.INACTIVE and not selected:
+	if current_state != CharacterState.INACTIVE and not selected and is_my_turn:
 		modulate = _color_highlight
 
 func _mouse_exit():
@@ -41,13 +45,13 @@ func set_state(new_state: CharacterState):
 				sprite.play("idle")
 				
 		CharacterState.MOVING_RIGHT:
-			modulate = Color(1, 1, 1)
+			modulate = _color_highlight
 			if sprite:
 				sprite.flip_h = false
 				sprite.play("move_right")
 				
 		CharacterState.MOVING_LEFT:
-			modulate = Color(1, 1, 1)
+			modulate = _color_highlight
 			if sprite:
 				sprite.flip_h = true
 				# Moving right but flipped
@@ -55,7 +59,7 @@ func set_state(new_state: CharacterState):
 		
 		CharacterState.SELECTED:
 			modulate = _color_highlight
-			sprite.play("idle")
+			sprite.play("selected")
 			
 		CharacterState.INACTIVE:
 			modulate = Color(0.5, 0.5, 0.5)

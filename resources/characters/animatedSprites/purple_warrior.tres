@@ -1,4 +1,4 @@
-[gd_resource type="SpriteFrames" load_steps=38 format=3 uid="uid://bjs0jk6gus641"]
+[gd_resource type="SpriteFrames" load_steps=42 format=3 uid="uid://bjs0jk6gus641"]
 
 [ext_resource type="Texture2D" uid="uid://bi7rlnyv0r0kk" path="res://assets/Factions/Knights/Troops/Warrior/Purple/Warrior_Purple.png" id="1_2v0d6"]
 
@@ -146,6 +146,22 @@ region = Rect2(768, 192, 192, 192)
 atlas = ExtResource("1_2v0d6")
 region = Rect2(960, 192, 192, 192)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_u325k"]
+atlas = ExtResource("1_2v0d6")
+region = Rect2(0, 384, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_usn33"]
+atlas = ExtResource("1_2v0d6")
+region = Rect2(192, 384, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qkqdk"]
+atlas = ExtResource("1_2v0d6")
+region = Rect2(0, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fqrug"]
+atlas = ExtResource("1_2v0d6")
+region = Rect2(192, 0, 192, 192)
+
 [resource]
 animations = [{
 "frames": [{
@@ -284,5 +300,28 @@ animations = [{
 }],
 "loop": true,
 "name": &"move_right",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_u325k")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_usn33")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_usn33")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qkqdk")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fqrug")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fqrug")
+}],
+"loop": true,
+"name": &"selected",
 "speed": 5.0
 }]
