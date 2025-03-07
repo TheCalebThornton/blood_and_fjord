@@ -11,32 +11,6 @@ config_version=5
 [application]
 
 config/name="Blood and Fjord"
-run/main_scene="res://scenes/Game.tscn"
-config/features=PackedStringArray("4.3", "Mobile")
+run/main_scene="res://scenes/Main.tscn"
+config/features=PackedStringArray("4.4", "Forward Plus")
 config/icon="res://icon.svg"
-
-[autoload]
-
-GameBoard="*res://scripts/autoload/game_board.gd"
-EventBus="*res://scripts/autoload/events.gd"
-
-[gui]
-
-theme/custom_font="res://assets/Fonts/BruceForeverRegular-X3jd2.ttf"
-
-[input]
-
-primary_interaction={
-"deadzone": 0.5,
-"events": [Object(InputEventMouseButton,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"button_mask":0,"position":Vector2(0, 0),"global_position":Vector2(0, 0),"factor":1.0,"button_index":1,"canceled":false,"pressed":false,"double_click":false,"script":null)
-]
-}
-camera_drag={
-"deadzone": 0.5,
-"events": [Object(InputEventMouseButton,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"button_mask":0,"position":Vector2(0, 0),"global_position":Vector2(0, 0),"factor":1.0,"button_index":2,"canceled":false,"pressed":false,"double_click":false,"script":null)
-]
-}
-
-[rendering]
-
-renderer/rendering_method="mobile"

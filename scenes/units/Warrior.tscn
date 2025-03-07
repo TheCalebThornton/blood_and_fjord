@@ -1,0 +1,16 @@
+[gd_scene load_steps=4 format=3 uid="uid://dclvetjaonogg"]
+
+[ext_resource type="Script" uid="uid://4vhwugkdiqkf" path="res://scripts/resources/Unit.gd" id="1_6ial7"]
+[ext_resource type="SpriteFrames" uid="uid://dd5tjfy8jcc25" path="res://scripts/resources/animatedSprites/BlueWarrior.tres" id="2_8j38m"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_i21d6"]
+
+[node name="Warrior" type="CharacterBody2D"]
+script = ExtResource("1_6ial7")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CapsuleShape2D_i21d6")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = ExtResource("2_8j38m")
+animation = &"attack_down"

@@ -1,0 +1,37 @@
+[gd_scene load_steps=7 format=3 uid="uid://dxi8u8w6ijsrw"]
+
+[ext_resource type="Script" uid="uid://b4e3smsp4e5h0" path="res://scripts/core/GameManager.gd" id="1_1j5fm"]
+[ext_resource type="Script" uid="uid://bj3gc32uohnqa" path="res://scripts/core/InputManager.gd" id="2_0p0ee"]
+[ext_resource type="Script" uid="uid://s2thly0gfa2w" path="res://scripts/core/BattleManager.gd" id="3_ljw3l"]
+[ext_resource type="Script" uid="uid://c15wgmlyheh16" path="res://scripts/core/GridSystem.gd" id="4_galiw"]
+[ext_resource type="Script" uid="uid://dr1wfgkscbrq8" path="res://scripts/core/UnitManager.gd" id="5_qmftw"]
+[ext_resource type="Script" uid="uid://dcpmlbed6fe77" path="res://scripts/core/MapLoader.gd" id="6_r3une"]
+
+[node name="Main" type="Node2D"]
+
+[node name="GameManager" type="Node2D" parent="."]
+script = ExtResource("1_1j5fm")
+metadata/_custom_type_script = "uid://b4e3smsp4e5h0"
+
+[node name="InputManager" type="Node2D" parent="GameManager"]
+script = ExtResource("2_0p0ee")
+
+[node name="BattleManager" type="Node2D" parent="GameManager"]
+script = ExtResource("3_ljw3l")
+
+[node name="GridSystem" type="Node2D" parent="GameManager"]
+script = ExtResource("4_galiw")
+
+[node name="UnitManager" type="Node2D" parent="GameManager"]
+script = ExtResource("5_qmftw")
+
+[node name="UIManager" type="CanvasLayer" parent="GameManager"]
+
+[node name="MapLoader" type="Node2D" parent="GameManager"]
+script = ExtResource("6_r3une")
+
+[node name="Units" type="Node2D" parent="."]
+
+[node name="Terrain" type="Node2D" parent="."]
+
+[node name="Camera2D" type="Camera2D" parent="."]

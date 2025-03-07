@@ -1,0 +1,92 @@
+{
+	"map_name": "Tutorial Battle",
+	"map_id": "tutorial_01",
+	"grid_size": {
+		"x": 10,
+		"y": 10
+	},
+	"terrain_data": [
+		["plains", "plains", "plains", "plains", "plains", "plains", "plains", "plains", "plains", "plains"],
+		["plains", "plains", "plains", "forest", "forest", "plains", "plains", "plains", "plains", "plains"],
+		["plains", "plains", "forest", "forest", "forest", "plains", "plains", "plains", "plains", "plains"],
+		["plains", "plains", "forest", "forest", "plains", "plains", "plains", "plains", "plains", "plains"],
+		["plains", "plains", "plains", "plains", "plains", "water", "water", "plains", "plains", "plains"],
+		["plains", "plains", "plains", "plains", "water", "water", "plains", "plains", "plains", "plains"],
+		["plains", "plains", "plains", "plains", "plains", "plains", "plains", "mountains", "mountains", "plains"],
+		["plains", "plains", "plains", "plains", "plains", "plains", "mountains", "mountains", "plains", "plains"],
+		["plains", "plains", "plains", "plains", "plains", "plains", "plains", "plains", "plains", "wall"],
+		["plains", "plains", "plains", "plains", "plains", "plains", "plains", "plains", "wall", "wall"]
+	],
+	"player_spawns": [
+		{
+			"unit_class": 0,
+			"position": {
+				"x": 1,
+				"y": 1
+			},
+			"level": 1,
+			"name": "Warrior"
+		},
+		{
+			"unit_class": 1,
+			"position": {
+				"x": 2,
+				"y": 1
+			},
+			"level": 1,
+			"name": "Archer"
+		},
+		{
+			"unit_class": 2,
+			"position": {
+				"x": 1,
+				"y": 2
+			},
+			"level": 1,
+			"name": "Mage"
+		},
+		{
+			"unit_class": 3,
+			"position": {
+				"x": 2,
+				"y": 2
+			},
+			"level": 1,
+			"name": "Healer"
+		}
+	],
+	"enemy_spawns": [
+		{
+			"unit_class": 0,
+			"position": {
+				"x": 8,
+				"y": 8
+			},
+			"level": 1,
+			"name": "Enemy Warrior"
+		},
+		{
+			"unit_class": 4,
+			"position": {
+				"x": 7,
+				"y": 8
+			},
+			"level": 2,
+			"name": "Enemy Knight"
+		},
+		{
+			"unit_class": 1,
+			"position": {
+				"x": 8,
+				"y": 7
+			},
+			"level": 1,
+			"name": "Enemy Archer"
+		}
+	],
+	"ally_spawns": [],
+	"victory_condition": 0,
+	"victory_param": 0,
+	"map_description": "A small skirmish to learn the basics of combat.",
+	"map_objective": "Defeat all enemies"
+} 
