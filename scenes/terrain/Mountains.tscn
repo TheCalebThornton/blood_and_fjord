@@ -1,0 +1,64 @@
+[gd_scene load_steps=7 format=3 uid="uid://8m87brfwimdi"]
+
+[ext_resource type="Texture2D" uid="uid://15434xysmysx" path="res://assets/Terrain/Ground/Tilemap_Flat.png" id="1_0kc0g"]
+[ext_resource type="Texture2D" uid="uid://cs8pjhui41utq" path="res://assets/Deco/06.png" id="2_fnrne"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_fnrne"]
+texture = ExtResource("1_0kc0g")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+1:0/0 = 0
+2:0/0 = 0
+3:0/0 = 0
+4:0/0 = 0
+5:0/0 = 0
+6:0/0 = 0
+7:0/0 = 0
+8:0/0 = 0
+9:0/0 = 0
+0:1/0 = 0
+1:1/0 = 0
+2:1/0 = 0
+3:1/0 = 0
+5:1/0 = 0
+6:1/0 = 0
+7:1/0 = 0
+8:1/0 = 0
+0:2/0 = 0
+1:2/0 = 0
+2:2/0 = 0
+3:2/0 = 0
+5:2/0 = 0
+6:2/0 = 0
+7:2/0 = 0
+8:2/0 = 0
+0:3/0 = 0
+1:3/0 = 0
+2:3/0 = 0
+3:3/0 = 0
+5:3/0 = 0
+6:3/0 = 0
+7:3/0 = 0
+8:3/0 = 0
+
+[sub_resource type="TileSet" id="TileSet_kblqt"]
+tile_size = Vector2i(64, 64)
+sources/4 = SubResource("TileSetAtlasSource_fnrne")
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_y6r0y"]
+texture = ExtResource("2_fnrne")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSet" id="TileSet_7iras"]
+tile_size = Vector2i(64, 64)
+sources/0 = SubResource("TileSetAtlasSource_y6r0y")
+
+[node name="Mountains" type="TileMapLayer"]
+tile_map_data = PackedByteArray(0, 0, 0, 0, 0, 0, 4, 0, 1, 0, 1, 0, 0, 0)
+tile_set = SubResource("TileSet_kblqt")
+
+[node name="Rocks" type="TileMapLayer" parent="."]
+z_index = 5
+tile_map_data = PackedByteArray(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+tile_set = SubResource("TileSet_7iras")

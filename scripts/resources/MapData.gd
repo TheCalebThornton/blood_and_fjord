@@ -135,6 +135,7 @@ static func load_from_file(path: String) -> MapData:
 		map_data.grid_size = Vector2i(size.x, size.y)
 		
 		map_data.terrain_data = json_result.get("terrain_data", [])
+		map_data.grid_size = Vector2i(map_data.terrain_data.size(), map_data.terrain_data[0].size())
 		map_data.player_spawns = json_result.get("player_spawns", [])
 		map_data.enemy_spawns = json_result.get("enemy_spawns", [])
 		map_data.ally_spawns = json_result.get("ally_spawns", [])

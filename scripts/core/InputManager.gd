@@ -2,7 +2,6 @@ extends Node2D
 
 class_name InputManager
 
-# Input states
 enum InputState {
 	NORMAL,
 	UNIT_SELECTED,
@@ -11,33 +10,26 @@ enum InputState {
 	MENU_OPEN
 }
 
-# Current input state
 var current_state: int = InputState.NORMAL
-
-# References to other systems
 
 var game_manager: GameManager
 @onready var grid_system: GridSystem = $"../GridSystem"
 @onready var unit_manager: UnitManager = $"../UnitManager"
 #var battle_ui: BattleUI
 
-# Current cursor position on grid
 var cursor_position: Vector2i = Vector2i(0, 0)
 
 # For target selection
 var valid_targets: Array = []
 var action_type: String = ""
 
-# Signals
-signal cursor_moved(grid_pos: Vector2i)
+signal cursor_move_request(grid_pos: Vector2i)
 signal tile_selected(grid_pos: Vector2i)
 signal action_canceled()
 
 func _ready():
-	# Get references to other systems
 	game_manager = get_parent()
 	
-	# Connect to game state changes
 	game_manager.state_changed.connect(_on_game_state_changed)
 
 func _process(_delta):
@@ -45,7 +37,6 @@ func _process(_delta):
 	if game_manager.current_state != GameManager.GameState.PLAYER_TURN:
 		return
 	
-	# Handle input based on current state
 	match current_state:
 		InputState.NORMAL, InputState.UNIT_SELECTED:
 			_handle_cursor_movement()
@@ -81,9 +72,8 @@ func _handle_cursor_movement() -> void:
 		
 		if grid_system.is_within_grid(new_pos):
 			cursor_position = new_pos
-			cursor_moved.emit(cursor_position)
+			cursor_move_request.emit(cursor_position)
 
-# Handle selection input
 func _handle_selection() -> void:
 	if Input.is_action_just_pressed("ui_accept"):
 		tile_selected.emit(cursor_position)
@@ -104,7 +94,6 @@ func _handle_selection() -> void:
 			# If we have a unit selected and clicked on empty tile, try to move
 			change_state(InputState.MOVEMENT_SELECTION)
 
-# Handle movement selection
 func _handle_movement_selection() -> void:
 	if Input.is_action_just_pressed("ui_accept"):
 		var selected_unit = unit_manager.selected_unit
@@ -131,7 +120,6 @@ func _handle_movement_selection() -> void:
 				# Could play a sound or show a message
 				pass
 
-# Handle target selection
 func _handle_target_selection() -> void:
 	if Input.is_action_just_pressed("ui_accept"):
 		var selected_unit = unit_manager.selected_unit
@@ -158,12 +146,10 @@ func _handle_target_selection() -> void:
 			valid_targets.clear()
 			action_type = ""
 
-# Handle cancel input
 func _handle_cancel() -> void:
 	if Input.is_action_just_pressed("ui_cancel"):
 		match current_state:
 			InputState.UNIT_SELECTED, InputState.MOVEMENT_SELECTION:
-				# Deselect unit
 				unit_manager.deselect_unit()
 				change_state(InputState.NORMAL)
 			InputState.TARGET_SELECTION:
@@ -177,9 +163,7 @@ func _handle_cancel() -> void:
 		
 		action_canceled.emit()
 
-# Try to attack a target
 func _try_attack(attacker: Unit, defender: Unit) -> void:
-	# Check if target is in attack range
 	var attack_range = grid_system.calculate_attack_range(
 		[attacker.grid_position],
 		attacker.min_attack_range,
@@ -187,13 +171,10 @@ func _try_attack(attacker: Unit, defender: Unit) -> void:
 	)
 	
 	if defender.grid_position in attack_range:
-		# Execute attack directly
 		game_manager.battle_manager.execute_combat(attacker, defender)
 		
-		# End unit's turn
 		unit_manager.end_unit_turn(attacker)
 		
-		# Reset state
 		change_state(InputState.NORMAL)
 	else:
 		# Target not in range, show attack range and enter target selection
@@ -204,19 +185,15 @@ func _try_attack(attacker: Unit, defender: Unit) -> void:
 		# Highlight valid targets
 		grid_system.highlight_attack_range(valid_targets)
 
-# Change input state
 func change_state(new_state: int) -> void:
 	current_state = new_state
 	
 	match new_state:
 		InputState.NORMAL:
-			# Clear any highlights
 			grid_system.clear_highlights()
 		InputState.TARGET_SELECTION:
-			# Highlight valid targets
 			grid_system.highlight_attack_range(valid_targets)
 
-# Handle game state changes
 func _on_game_state_changed(new_state: int) -> void:
 	match new_state:
 		GameManager.GameState.PLAYER_TURN:

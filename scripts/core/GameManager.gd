@@ -1,7 +1,6 @@
 extends Node2D
 class_name GameManager
 
-# Game states
 enum GameState {
 	MAIN_MENU,
 	BATTLE_PREPARATION,
@@ -12,21 +11,17 @@ enum GameState {
 	VICTORY
 }
 
-# Current game state
 var current_state: int = GameState.MAIN_MENU
 
-# References to other managers
 @onready var battle_manager: BattleManager = $BattleManager
 @onready var unit_manager: UnitManager = $UnitManager
 @onready var grid_system: GridSystem = $GridSystem
 @onready var map_loader: MapLoader = $MapLoader
-@onready var input_controller: InputManager = $InputManager
+@onready var input_manager: InputManager = $InputManager
 
-# Current map/level information
 var current_map: String = ""
 var current_level: int = 0
 
-# Signal for state changes
 signal state_changed(new_state: int)
 
 func _ready():
@@ -35,7 +30,6 @@ func _ready():
 	load_level(0)
 
 func change_state(new_state: int) -> void:
-	# var old_state = current_state
 	current_state = new_state
 	
 	# Handle state transition logic
@@ -65,7 +59,7 @@ func start_enemy_turn() -> void:
 	
 	# Start AI processing
 	# For now, just end enemy turn immediately
-	# In a real game, you'd implement AI here
+	# TODO implement AI
 	await get_tree().create_timer(1.0).timeout
 	end_enemy_turn()
 
@@ -87,7 +81,7 @@ func end_enemy_turn() -> void:
 		change_state(GameState.PLAYER_TURN)
 
 func handle_victory() -> void:
-	# Save progress, show victory screen, etc.
+	# TODO Save progress, show victory screen, etc.
 	print("Victory!")
 	
 	# In a real game, you'd show a victory screen
@@ -96,7 +90,7 @@ func handle_victory() -> void:
 	restart_level()
 
 func handle_game_over() -> void:
-	# Show game over screen, offer restart, etc.
+	# TODO Show game over screen, offer restart, etc.
 	print("Game Over!")
 	
 	# In a real game, you'd show a game over screen
@@ -119,8 +113,8 @@ func load_level(level_number: int) -> void:
 func restart_level() -> void:
 	load_level(current_level)
 
-# Handle input for ending the player's turn
 func _input(event):
 	if current_state == GameState.PLAYER_TURN:
-		if event.is_action_pressed("ui_end_turn"):
-			end_player_turn() 
+		pass
+		#if event.is_action_pressed("ui_end_turn"):
+			#end_player_turn() 

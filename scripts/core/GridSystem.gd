@@ -2,12 +2,9 @@ extends Node2D
 
 class_name GridSystem
 
-# Grid properties
-var grid_size: Vector2i = Vector2i(16, 16)  # Default grid size
-var cell_size: Vector2 = Vector2(64, 64)    # Size of each grid cell in pixels
-
-# Terrain data
-var terrain_map: Array = []  # 2D array storing terrain types
+var CELL_SIZE: Vector2 = Vector2(64, 64)
+var grid_size: Vector2i = Vector2i(16, 16)
+var terrain_map: Array = []
 var terrain_costs: Dictionary = {
 	"plains": 1,
 	"forest": 2,
@@ -20,7 +17,6 @@ var terrain_costs: Dictionary = {
 var movement_tiles: Array = []
 var attack_tiles: Array = []
 
-# Pathfinding
 var astar: AStar2D = AStar2D.new()
 
 # Signals
@@ -31,7 +27,6 @@ func _ready():
 	# Initialize grid when ready
 	pass
 
-# Initialize the grid with a specific size
 func initialize_grid(size: Vector2i) -> void:
 	grid_size = size
 	terrain_map.resize(size.x)
@@ -50,17 +45,13 @@ func initialize_grid(size: Vector2i) -> void:
 	# Signal that grid is initialized
 	grid_initialized.emit()
 
-# Reset the grid for a new map
 func reset() -> void:
-	# Clear existing data
 	terrain_map.clear()
 	movement_tiles.clear()
 	attack_tiles.clear()
 	
-	# Reinitialize AStar
 	astar = AStar2D.new()
 
-# Initialize AStar pathfinding
 func initialize_astar() -> void:
 	astar.clear()
 	
@@ -96,33 +87,32 @@ func initialize_astar() -> void:
 						astar.connect_points(point_id, adjacent_id, true)
 						astar.set_point_weight_scale(adjacent_id, weight)
 
-# Convert grid position to unique ID for AStar
 func get_point_id(grid_pos: Vector2i) -> int:
 	return grid_pos.y * grid_size.x + grid_pos.x
 
-# Check if a position is within the grid bounds
 func is_within_grid(grid_pos: Vector2i) -> bool:
 	return grid_pos.x >= 0 and grid_pos.x < grid_size.x and grid_pos.y >= 0 and grid_pos.y < grid_size.y
 
-# Convert world position to grid position
 func world_to_grid(world_pos: Vector2) -> Vector2i:
-	var x = int(world_pos.x / cell_size.x)
-	var y = int(world_pos.y / cell_size.y)
+	var x = int(world_pos.x / CELL_SIZE.x)
+	var y = int(world_pos.y / CELL_SIZE.y)
 	return Vector2i(x, y)
 
-# Convert grid position to world position (centered in cell)
 func grid_to_world(grid_pos: Vector2i) -> Vector2:
-	var x = grid_pos.x * cell_size.x + cell_size.x / 2
-	var y = grid_pos.y * cell_size.y + cell_size.y / 2
+	var x = grid_pos.x * CELL_SIZE.x + CELL_SIZE.x / 2
+	var y = grid_pos.y * CELL_SIZE.y + CELL_SIZE.y / 2
 	return Vector2(x, y)
 
-# Get the terrain type at a grid position
+func grid_to_world_centered(grid_pos: Vector2i) -> Vector2:
+	var x = (grid_pos.x * CELL_SIZE.x + CELL_SIZE.x / 2) + CELL_SIZE.x / 2
+	var y = (grid_pos.y * CELL_SIZE.y + CELL_SIZE.y / 2) + CELL_SIZE.y / 2
+	return Vector2(x, y)
+
 func get_terrain_at(grid_pos: Vector2i) -> String:
 	if is_within_grid(grid_pos):
 		return terrain_map[grid_pos.x][grid_pos.y]
 	return "invalid"
 
-# Set terrain type at a grid position
 func set_terrain_at(grid_pos: Vector2i, terrain_type: String) -> void:
 	if is_within_grid(grid_pos):
 		terrain_map[grid_pos.x][grid_pos.y] = terrain_type
@@ -132,7 +122,6 @@ func set_terrain_at(grid_pos: Vector2i, terrain_type: String) -> void:
 		var weight = terrain_costs.get(terrain_type, 1)
 		astar.set_point_weight_scale(point_id, weight)
 
-# Calculate movement range for a unit
 func calculate_movement_range(unit_pos: Vector2i, movement_points: int) -> Array:
 	var reachable_cells = []
 	var open_set = [unit_pos]
@@ -184,7 +173,6 @@ func calculate_movement_range(unit_pos: Vector2i, movement_points: int) -> Array
 	
 	return reachable_cells
 
-# Calculate attack range from a set of positions
 func calculate_attack_range(positions: Array, min_range: int, max_range: int) -> Array:
 	var attack_cells = []
 	
@@ -208,7 +196,6 @@ func calculate_attack_range(positions: Array, min_range: int, max_range: int) ->
 func get_distance(from_pos: Vector2i, to_pos: Vector2i) -> int:
 	return abs(from_pos.x - to_pos.x) + abs(from_pos.y - to_pos.y)
 
-# Find path between two grid positions
 func find_path(from_pos: Vector2i, to_pos: Vector2i) -> Array:
 	if not is_within_grid(from_pos) or not is_within_grid(to_pos):
 		return []
@@ -231,40 +218,36 @@ func is_cell_occupied(grid_pos: Vector2i) -> bool:
 	# For now, return false
 	return false
 
-# Highlight movement range
 func highlight_movement_range(cells: Array) -> void:
 	movement_tiles = cells
 	queue_redraw()
 
-# Highlight attack range
 func highlight_attack_range(cells: Array) -> void:
 	attack_tiles = cells
 	queue_redraw()
 
-# Clear all highlights
 func clear_highlights() -> void:
 	movement_tiles.clear()
 	attack_tiles.clear()
 	queue_redraw()
 
-# Draw highlights
 func _draw() -> void:
 	# Draw movement range
 	for cell in movement_tiles:
 		var rect = Rect2(
-			cell.x * cell_size.x,
-			cell.y * cell_size.y,
-			cell_size.x,
-			cell_size.y
+			cell.x * CELL_SIZE.x,
+			cell.y * CELL_SIZE.y,
+			CELL_SIZE.x,
+			CELL_SIZE.y
 		)
 		draw_rect(rect, Color(0, 0, 1, 0.3), true)
 	
 	# Draw attack range
 	for cell in attack_tiles:
 		var rect = Rect2(
-			cell.x * cell_size.x,
-			cell.y * cell_size.y,
-			cell_size.x,
-			cell_size.y
+			cell.x * CELL_SIZE.x,
+			cell.y * CELL_SIZE.y,
+			CELL_SIZE.x,
+			CELL_SIZE.y
 		)
 		draw_rect(rect, Color(1, 0, 0, 0.3), true) 

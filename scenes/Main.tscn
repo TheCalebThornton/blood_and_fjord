@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://dxi8u8w6ijsrw"]
+[gd_scene load_steps=9 format=3 uid="uid://dxi8u8w6ijsrw"]
 
 [ext_resource type="Script" uid="uid://b4e3smsp4e5h0" path="res://scripts/core/GameManager.gd" id="1_1j5fm"]
 [ext_resource type="Script" uid="uid://bj3gc32uohnqa" path="res://scripts/core/InputManager.gd" id="2_0p0ee"]
@@ -6,6 +6,8 @@
 [ext_resource type="Script" uid="uid://c15wgmlyheh16" path="res://scripts/core/GridSystem.gd" id="4_galiw"]
 [ext_resource type="Script" uid="uid://dr1wfgkscbrq8" path="res://scripts/core/UnitManager.gd" id="5_qmftw"]
 [ext_resource type="Script" uid="uid://dcpmlbed6fe77" path="res://scripts/core/MapLoader.gd" id="6_r3une"]
+[ext_resource type="Script" uid="uid://c4kyfsgs26bbt" path="res://scripts/ui/GridCursor.gd" id="7_nxtc6"]
+[ext_resource type="Script" uid="uid://3njx6ci6ycf5" path="res://scripts/core/GameCamera.gd" id="8_jlsqs"]
 
 [node name="Main" type="Node2D"]
 
@@ -34,4 +36,9 @@ script = ExtResource("6_r3une")
 
 [node name="Terrain" type="Node2D" parent="."]
 
-[node name="Camera2D" type="Camera2D" parent="."]
+[node name="Cursor" type="Node2D" parent="."]
+script = ExtResource("7_nxtc6")
+
+[node name="GameCamera" type="Camera2D" parent="."]
+position = Vector2(580, 327)
+script = ExtResource("8_jlsqs")

@@ -6,11 +6,14 @@
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_i21d6"]
 
 [node name="Warrior" type="CharacterBody2D"]
+z_index = 5
 script = ExtResource("1_6ial7")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CapsuleShape2D_i21d6")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(1.00001, -4.99998)
+scale = Vector2(0.8, 0.8)
 sprite_frames = ExtResource("2_8j38m")
-animation = &"attack_down"
+animation = &"idle"

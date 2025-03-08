@@ -1,14 +1,12 @@
 extends Node2D
 class_name Unit
 
-# Faction enum
 enum Faction {
 	PLAYER,
 	ENEMY,
 	ALLY
 }
 
-# Unit type/class
 enum UnitClass {
 	WARRIOR,
 	ARCHER,
@@ -18,6 +16,20 @@ enum UnitClass {
 	FLIER,
 	KNIGHT
 }
+
+enum UnitState {
+	IDLE,
+	MOVING_RIGHT,
+	MOVING_LEFT,
+	SELECTED,
+	INACTIVE,
+	ATTACK_LEFT,
+	ATTACK_RIGHT,
+	ATTACK_UP,
+	ATTACK_DOWN
+}
+
+var _color_highlight: Color = Color(1.4, 1.4, 1.4)
 
 # Basic unit properties
 var unit_name: String = "Unit"
@@ -54,6 +66,7 @@ var inventory: Array = []
 var equipped_weapon = null
 
 # Unit state
+var current_state: int
 var has_moved: bool = false
 var has_acted: bool = false
 var is_selected: bool = false
@@ -65,16 +78,14 @@ var grid_position: Vector2i = Vector2i(0, 0)
 var battle_manager = null
 
 # Signals
-signal moved(from_pos: Vector2i, to_pos: Vector2i)
 # signal attacked(target: Unit)
-signal damaged(amount: int)
 # signal healed(amount: int)
+signal moved(from_pos: Vector2i, to_pos: Vector2i)
+signal damaged(amount: int)
 signal defeated()
 signal leveled_up(old_level: int, new_level: int)
 
-# Sprite and animation references
-@onready var sprite = $Sprite2D
-@onready var animation_player = $AnimationPlayer
+@onready var sprite = $AnimatedSprite2D
 
 func _ready():
 	health = max_health
@@ -82,24 +93,60 @@ func _ready():
 	# Set default unit name based on class if not specified
 	if unit_name == "":
 		unit_name = UnitClass.keys()[unit_class]
+	set_state(UnitState.IDLE)
 
 #region animation
-func play_move_animation(path: Array) -> void:
-	# This would be implemented with a tween or animation
-	# For now, just teleport
-	position = get_parent().grid_system.grid_to_world(grid_position)
+func set_state(new_state: UnitState):
+	current_state = new_state
+	match current_state:
+		UnitState.IDLE:
+			modulate = Color(1, 1, 1)
+			if sprite:
+				sprite.play("idle")
 
-func play_attack_animation() -> void:
-	if animation_player and animation_player.has_animation("attack"):
-		animation_player.play("attack")
+		UnitState.MOVING_RIGHT:
+			modulate = _color_highlight
+			if sprite:
+				sprite.flip_h = false
+				sprite.play("move_right")
 
-func play_damage_animation() -> void:
-	if animation_player and animation_player.has_animation("damage"):
-		animation_player.play("damage")
+		UnitState.MOVING_LEFT:
+			modulate = _color_highlight
+			if sprite:
+				sprite.flip_h = true
+				# Moving right but flipped
+				sprite.play("move_right")
 
-func play_defeat_animation() -> void:
-	if animation_player and animation_player.has_animation("defeat"):
-		animation_player.play("defeat")
+		UnitState.ATTACK_RIGHT:
+			modulate = _color_highlight
+			if sprite:
+				sprite.flip_h = false
+				sprite.play("attack_right")
+
+		UnitState.ATTACK_LEFT:
+			modulate = _color_highlight
+			if sprite:
+				sprite.flip_h = true
+				sprite.play("attack_right")
+
+		UnitState.ATTACK_UP:
+			modulate = _color_highlight
+			if sprite:
+				sprite.play("attack_up")
+
+		UnitState.ATTACK_DOWN:
+			modulate = _color_highlight
+			if sprite:
+				sprite.play("attack_down")
+
+		UnitState.SELECTED:
+			modulate = _color_highlight
+			sprite.play("selected")
+
+		UnitState.INACTIVE:
+			modulate = Color(0.5, 0.5, 0.5)
+			sprite.stop()
+
 #endregion animation
 
 # region combat/movement
