@@ -113,28 +113,31 @@ func move_unit(unit: Unit, target_pos: Vector2i) -> void:
 	tween.set_ease(Tween.EASE_OUT)
 	tween.set_trans(Tween.TRANS_CUBIC)
 	
+	# Set initial state to moving
+	unit.set_state(unit.UnitState.IDLE)
+	
 	# Move along each point in the path
 	for i in range(1, path.size()):
+		var current_pos = path[i-1]
 		var next_pos = path[i]
 		var next_world_pos = grid_system.grid_to_world_centered(next_pos)
 		
-		if next_pos.x > unit.grid_position.x:
-			unit.set_state(unit.UnitState.MOVING_RIGHT)
-		elif next_pos.x < unit.grid_position.x:
-			unit.set_state(unit.UnitState.MOVING_LEFT)
-		
+		tween.tween_callback(func():
+			if next_pos.x > current_pos.x:
+				unit.set_state(unit.UnitState.MOVING_RIGHT)
+			elif next_pos.x < current_pos.x:
+				unit.set_state(unit.UnitState.MOVING_LEFT)
+		)
 		tween.tween_property(unit, "position", next_world_pos, 0.3)
-		# Each tween step, update grid_position
-		tween.tween_callback(func(): unit.grid_position = next_pos)
 	
 	# When tween steps are all completed
 	tween.finished.connect(func():
+		unit.grid_position = target_pos
 		if unit.is_selected:
 			unit.set_state(unit.UnitState.SELECTED)
 		else:
 			unit.set_state(unit.UnitState.IDLE)
 		
-		unit.grid_position = target_pos
 		unit.can_move = false
 		
 		if unit == selected_unit:
