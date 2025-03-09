@@ -149,15 +149,10 @@ func set_state(new_state: UnitState):
 
 #endregion animation
 
-# region combat/movement
+#region combat/movement
 func reset_turn() -> void:
 	has_moved = false
 	has_acted = false
-
-func move_to(new_position: Vector2i) -> void:
-	grid_position = new_position
-	position = Vector2(new_position.x * 64, new_position.y * 64)
-	has_moved = true
 
 func set_grid_position(pos: Vector2i) -> void:
 	var old_pos = grid_position
@@ -166,7 +161,6 @@ func set_grid_position(pos: Vector2i) -> void:
 	# Update visual position
 	position = get_parent().grid_system.grid_to_world(pos)
 	
-	# Emit signal
 	moved.emit(old_pos, pos)
 
 func perform_attack(target) -> Dictionary:
@@ -184,7 +178,6 @@ func perform_attack(target) -> Dictionary:
 	# Ensure minimum damage of 1
 	damage = max(1, damage)
 	
-	# Apply damage
 	target.take_damage(damage)
 	
 	return {
@@ -198,10 +191,8 @@ func take_damage(amount: int) -> void:
 	health -= amount
 	health = max(0, health)
 	
-	# Emit signal
 	damaged.emit(amount)
 	
-	# Check if defeated
 	if health <= 0:
 		_on_defeated()
 
@@ -212,7 +203,6 @@ func heal_target(target) -> Dictionary:
 	var heal_amount = magic / 2
 	heal_amount = max(1, heal_amount)
 	
-	# Apply healing
 	target.receive_healing(heal_amount)
 	
 	return {
@@ -227,18 +217,14 @@ func receive_healing(amount: int) -> void:
 
 # TODO Handle death
 func _on_defeated() -> void:
-	# Emit signal
 	defeated.emit()
 	
-	# Visual feedback
 	modulate = Color(0.5, 0.5, 0.5, 0.5)
 	
-	# Unit will be removed by UnitManager
 
 func gain_experience(amount: int) -> void:
 	experience += amount
 	
-	# Check for level up
 	while experience >= exp_to_level:
 		experience -= exp_to_level
 		level_up()
@@ -247,7 +233,6 @@ func level_up() -> void:
 	var old_level = level
 	level += 1
 	
-	# Increase stats based on growth rates
 	for stat in growth_rates:
 		var growth = growth_rates[stat]
 		var roll = randi() % 100
@@ -268,18 +253,16 @@ func level_up() -> void:
 				"speed":
 					speed += 1
 	
-	# Emit signal
 	leveled_up.emit(old_level, level)
-# endregion combat
+#endregion combat
 
-# UI and visual methods
 func select() -> void:
 	is_selected = true
-	# TODO Visual indication of selection will be added later
+	set_state(UnitState.SELECTED)
 
 func deselect() -> void:
 	is_selected = false
-	# TODO Remove visual indication
+	set_state(UnitState.IDLE)
 
 func get_attack_targets() -> Array:
 	# This will be implemented to return valid attack targets

@@ -25,6 +25,8 @@ signal path_found(path: Array)
 
 func _ready():
 	# Initialize grid when ready
+	# Set the z_index to ensure this node draws above others
+	z_index = 10
 	pass
 
 func initialize_grid(size: Vector2i) -> void:
@@ -93,7 +95,7 @@ func get_point_id(grid_pos: Vector2i) -> int:
 func is_within_grid(grid_pos: Vector2i) -> bool:
 	return grid_pos.x >= 0 and grid_pos.x < grid_size.x and grid_pos.y >= 0 and grid_pos.y < grid_size.y
 
-func world_to_grid(world_pos: Vector2) -> Vector2i:
+func world_to_grid(world_pos: Vector2i) -> Vector2i:
 	var x = int(world_pos.x / CELL_SIZE.x)
 	var y = int(world_pos.y / CELL_SIZE.y)
 	return Vector2i(x, y)
@@ -169,7 +171,7 @@ func calculate_movement_range(unit_pos: Vector2i, movement_points: int) -> Array
 				open_set.append(adjacent)
 	
 	# Remove starting position from reachable cells
-	reachable_cells.erase(unit_pos)
+	reachable_cells.remove_at(0)
 	
 	return reachable_cells
 
@@ -234,9 +236,10 @@ func clear_highlights() -> void:
 func _draw() -> void:
 	# Draw movement range
 	for cell in movement_tiles:
+		var worldPos = grid_to_world(cell)
 		var rect = Rect2(
-			cell.x * CELL_SIZE.x,
-			cell.y * CELL_SIZE.y,
+			worldPos.x,
+			worldPos.y,
 			CELL_SIZE.x,
 			CELL_SIZE.y
 		)
@@ -244,9 +247,10 @@ func _draw() -> void:
 	
 	# Draw attack range
 	for cell in attack_tiles:
+		var worldPos = grid_to_world(cell)
 		var rect = Rect2(
-			cell.x * CELL_SIZE.x,
-			cell.y * CELL_SIZE.y,
+			worldPos.x,
+			worldPos.y,
 			CELL_SIZE.x,
 			CELL_SIZE.y
 		)

@@ -32,40 +32,42 @@ func _ready():
 	
 	game_manager.state_changed.connect(_on_game_state_changed)
 
-func _process(_delta):
+func _unhandled_input(event: InputEvent) -> void:
 	# Only process input during player turn
 	if game_manager.current_state != GameManager.GameState.PLAYER_TURN:
 		return
 	
 	match current_state:
-		InputState.NORMAL, InputState.UNIT_SELECTED:
-			_handle_cursor_movement()
-			_handle_selection()
-			_handle_cancel()
+		InputState.NORMAL:
+			_handle_cursor_movement(event)
+			_handle_selection(event)
+			_handle_cancel(event)
 		InputState.MOVEMENT_SELECTION:
-			_handle_cursor_movement()
-			_handle_movement_selection()
-			_handle_cancel()
+			_handle_cursor_movement(event)
+			_handle_movement_selection(event)
+			_handle_cancel(event)
 		InputState.TARGET_SELECTION:
-			_handle_cursor_movement()
-			_handle_target_selection()
-			_handle_cancel()
+			_handle_cursor_movement(event)
+			_handle_target_selection(event)
+			_handle_cancel(event)
 		InputState.MENU_OPEN:
 			# Menu input is handled by UI
-			_handle_cancel()
+			_handle_cancel(event)
 
 # Handle cursor movement
-func _handle_cursor_movement() -> void:
+func _handle_cursor_movement(event: InputEvent) -> void:
 	var movement = Vector2i(0, 0)
 	
-	if Input.is_action_just_pressed("ui_right"):
+	if event.is_action_pressed("ui_right"):
 		movement.x = 1
-	elif Input.is_action_just_pressed("ui_left"):
+	elif event.is_action_pressed("ui_left"):
 		movement.x = -1
-	elif Input.is_action_just_pressed("ui_down"):
+	elif event.is_action_pressed("ui_down"):
 		movement.y = 1
-	elif Input.is_action_just_pressed("ui_up"):
+	elif event.is_action_pressed("ui_up"):
 		movement.y = -1
+	else:
+		return
 	
 	if movement != Vector2i(0, 0):
 		var new_pos = cursor_position + movement
@@ -74,8 +76,8 @@ func _handle_cursor_movement() -> void:
 			cursor_position = new_pos
 			cursor_move_request.emit(cursor_position)
 
-func _handle_selection() -> void:
-	if Input.is_action_just_pressed("ui_accept"):
+func _handle_selection(event: InputEvent) -> void:
+	if event.is_action_pressed("ui_accept"):
 		tile_selected.emit(cursor_position)
 		
 		# Check if there's a unit at the cursor position
@@ -83,19 +85,11 @@ func _handle_selection() -> void:
 		
 		if unit:
 			if unit.faction == Unit.Faction.PLAYER and unit.can_move:
-				# Select player unit
 				unit_manager.select_unit(unit)
-				change_state(InputState.UNIT_SELECTED)
-			elif unit_manager.selected_unit and unit.faction != Unit.Faction.PLAYER:
-				# If we have a unit selected and clicked on enemy, try to attack
-				if unit_manager.selected_unit.can_act:
-					_try_attack(unit_manager.selected_unit, unit)
-		elif unit_manager.selected_unit:
-			# If we have a unit selected and clicked on empty tile, try to move
-			change_state(InputState.MOVEMENT_SELECTION)
+				change_state(InputState.MOVEMENT_SELECTION)
 
-func _handle_movement_selection() -> void:
-	if Input.is_action_just_pressed("ui_accept"):
+func _handle_movement_selection(event: InputEvent) -> void:
+	if event.is_action_pressed("ui_accept"):
 		var selected_unit = unit_manager.selected_unit
 		
 		if selected_unit:
@@ -106,10 +100,8 @@ func _handle_movement_selection() -> void:
 			)
 			
 			if cursor_position in movement_range and not unit_manager.has_unit_at(cursor_position):
-				# Move the unit
 				unit_manager.move_unit(selected_unit, cursor_position)
 				
-				# Change state based on whether unit can still act
 				if selected_unit.can_act:
 					change_state(InputState.UNIT_SELECTED)
 				else:
@@ -120,8 +112,8 @@ func _handle_movement_selection() -> void:
 				# Could play a sound or show a message
 				pass
 
-func _handle_target_selection() -> void:
-	if Input.is_action_just_pressed("ui_accept"):
+func _handle_target_selection(event: InputEvent) -> void:
+	if event.is_action_pressed("ui_accept"):
 		var selected_unit = unit_manager.selected_unit
 		
 		if selected_unit and cursor_position in valid_targets:
@@ -146,8 +138,8 @@ func _handle_target_selection() -> void:
 			valid_targets.clear()
 			action_type = ""
 
-func _handle_cancel() -> void:
-	if Input.is_action_just_pressed("ui_cancel"):
+func _handle_cancel(event: InputEvent) -> void:
+	if event.is_action_pressed("ui_cancel"):
 		match current_state:
 			InputState.UNIT_SELECTED, InputState.MOVEMENT_SELECTION:
 				unit_manager.deselect_unit()

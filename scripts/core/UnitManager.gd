@@ -66,26 +66,34 @@ func select_unit(unit: Unit) -> void:
 		deselect_unit()
 		
 	selected_unit = unit
+	unit.select()
 	
 	if unit.can_move:
-		var movement_range = grid_system.calculate_movement_range(
+		var valid_moves = grid_system.calculate_movement_range(
 			unit.grid_position, 
 			unit.movement
 		)
-		grid_system.highlight_movement_range(movement_range)
+		grid_system.highlight_movement_range(valid_moves)
 		
-		var attack_range = grid_system.calculate_attack_range(
-			movement_range + [unit.grid_position],
+		var valid_attacks = grid_system.calculate_attack_range(
+			valid_moves + [unit.grid_position],
 			unit.min_attack_range,
 			unit.attack_range
 		)
-		grid_system.highlight_attack_range(attack_range)
+		
+		# Filter out cells that are in valid_moves
+		var attack_only_cells = []
+		for cell in valid_attacks:
+			if not valid_moves.has(cell) and cell != unit.grid_position:
+				attack_only_cells.append(cell)
+				
+		grid_system.highlight_attack_range(attack_only_cells)
 	
-	# Emit signal
 	unit_selected.emit(unit)
 
 func deselect_unit() -> void:
 	if selected_unit:
+		selected_unit.deselect()
 		selected_unit = null
 		grid_system.clear_highlights()
 		unit_deselected.emit()
@@ -93,38 +101,54 @@ func deselect_unit() -> void:
 func move_unit(unit: Unit, target_pos: Vector2i) -> void:
 	if not unit.can_move:
 		return
-		
 	var from_pos = unit.grid_position
-	
-	# Calculate path
 	var path = grid_system.find_path(from_pos, target_pos)
-	
 	if path.is_empty():
 		return
 		
-	# Set unit as active during movement
 	active_unit = unit
+	grid_system.clear_highlights()
 	
-	# Update unit position
-	unit.grid_position = target_pos
-	unit.can_move = false
+	var tween = create_tween()
+	tween.set_ease(Tween.EASE_OUT)
+	tween.set_trans(Tween.TRANS_CUBIC)
 	
-	# Emit signal for movement animation
-	unit_moved.emit(unit, from_pos, target_pos)
-	
-	# Update available actions after movement
-	if unit == selected_unit:
-		grid_system.clear_highlights()
+	# Move along each point in the path
+	for i in range(1, path.size()):
+		var next_pos = path[i]
+		var next_world_pos = grid_system.grid_to_world_centered(next_pos)
 		
-		# Show attack range from new position
-		var attack_range = grid_system.calculate_attack_range(
-			[unit.grid_position],
-			unit.min_attack_range,
-			unit.attack_range
-		)
-		grid_system.highlight_attack_range(attack_range)
+		if next_pos.x > unit.grid_position.x:
+			unit.set_state(unit.UnitState.MOVING_RIGHT)
+		elif next_pos.x < unit.grid_position.x:
+			unit.set_state(unit.UnitState.MOVING_LEFT)
+		
+		tween.tween_property(unit, "position", next_world_pos, 0.3)
+		# Each tween step, update grid_position
+		tween.tween_callback(func(): unit.grid_position = next_pos)
+	
+	# When tween steps are all completed
+	tween.finished.connect(func():
+		if unit.is_selected:
+			unit.set_state(unit.UnitState.SELECTED)
+		else:
+			unit.set_state(unit.UnitState.IDLE)
+		
+		unit.grid_position = target_pos
+		unit.can_move = false
+		
+		if unit == selected_unit:
+			# Show attack range from new position
+			var attack_range = grid_system.calculate_attack_range(
+				[unit.grid_position],
+				unit.min_attack_range,
+				unit.attack_range
+			)
+			grid_system.highlight_attack_range(attack_range)
+		
+		unit_moved.emit(unit, from_pos, target_pos)
+	)
 
-# Complete a unit's turn
 func end_unit_turn(unit: Unit) -> void:
 	unit.can_move = false
 	unit.can_act = false

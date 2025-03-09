@@ -116,7 +116,7 @@ func spawn_unit(spawn_data: Dictionary, faction: int) -> Unit:
 	var pos_data = spawn_data.get("position", {"x": 0, "y": 0})
 	var grid_pos = Vector2i(pos_data.x, pos_data.y)
 	unit_instance.grid_position = grid_pos
-	unit_instance.position = grid_system.grid_to_world(grid_pos) - (grid_system.CELL_SIZE / 2)
+	unit_instance.position = grid_system.grid_to_world_centered(grid_pos)
 	
 	units_node.add_child(unit_instance)
 	unit_manager.add_unit(unit_instance)
