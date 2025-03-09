@@ -1,10 +1,6 @@
 {
 	"map_name": "Tutorial Battle",
 	"map_id": "tutorial_01",
-	"grid_size": {
-		"x": 10,
-		"y": 10
-	},
 	"terrain_data": [
 		["plains", "plains", "plains", "plains", "plains", "plains", "plains", "plains", "plains", "plains"],
 		["plains", "plains", "plains", "forest", "forest", "plains", "plains", "plains", "plains", "plains"],

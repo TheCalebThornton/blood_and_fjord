@@ -1,7 +1,10 @@
 extends Camera2D
 
 const SCROLL_SPEED: int = 10000
-const CAMERA_MARGIN: float = 100.0  # Distance from edge to trigger camera movement
+const CAMERA_MARGIN: float = 200.0  # Distance from edge to trigger camera movement
+const MIN_ZOOM: float = 0.5  # Minimum zoom level (zoomed out)
+const MAX_ZOOM: float = 2.0  # Maximum zoom level (zoomed in)
+const DEFAULT_ZOOM: float = 1.0  # Default zoom level
 
 var is_dragging: bool = false
 var drag_start_position: Vector2 = Vector2.ZERO
@@ -39,30 +42,29 @@ func _on_cursor_moved(grid_pos: Vector2i):
 	check_cursor_bounds(grid_pos)
 
 func check_cursor_bounds(cursor_position: Vector2):
-	# Calculate viewport boundaries
+	var world_cursor_pos = grid_system.grid_to_world(cursor_position)
 	var viewport_size = get_viewport_rect().size
 	var half_viewport = viewport_size / 2 / zoom.x
 	
-	var left_edge = global_position.x - half_viewport.x + CAMERA_MARGIN
-	var right_edge = global_position.x + half_viewport.x - CAMERA_MARGIN
-	var top_edge = global_position.y - half_viewport.y + CAMERA_MARGIN
-	var bottom_edge = global_position.y + half_viewport.y - CAMERA_MARGIN
+	var left_edge = position.x - half_viewport.x + CAMERA_MARGIN
+	var right_edge = position.x + half_viewport.x - CAMERA_MARGIN
+	var top_edge = position.y - half_viewport.y + CAMERA_MARGIN
+	var bottom_edge = position.y + half_viewport.y - CAMERA_MARGIN
 	
 	var camera_move = Vector2.ZERO
 	var move_speed = 1.0  # Direct movement factor
 	
 	# Check if cursor is outside bounds and calculate movement
-	if cursor_position.x < left_edge:
-		camera_move.x = (cursor_position.x - left_edge) * move_speed
-	elif cursor_position.x > right_edge:
-		camera_move.x = (cursor_position.x - right_edge) * move_speed
+	if world_cursor_pos.x < left_edge:
+		camera_move.x = (world_cursor_pos.x - left_edge) * move_speed
+	elif world_cursor_pos.x > right_edge:
+		camera_move.x = (world_cursor_pos.x - right_edge) * move_speed
 	
-	if cursor_position.y < top_edge:
-		camera_move.y = (cursor_position.y - top_edge) * move_speed
-	elif cursor_position.y > bottom_edge:
-		camera_move.y = (cursor_position.y - bottom_edge) * move_speed
+	if world_cursor_pos.y < top_edge:
+		camera_move.y = (world_cursor_pos.y - top_edge) * move_speed
+	elif world_cursor_pos.y > bottom_edge:
+		camera_move.y = (world_cursor_pos.y - bottom_edge) * move_speed
 	
-	# Move camera if needed
 	if camera_move != Vector2.ZERO:
 		# Optional: Add smooth camera movement with a tween
 		var tween = create_tween()
