@@ -8,10 +8,9 @@ var move_speed: float = 10.0
 var grid_system: GridSystem
 var input_manager: InputManager
 
-var cursor_color: Color = Color(1, 1, 0, 0.5)  # Yellow semi-transparent
+var cursor_color: Color = Color(255, 255, 255, 0.7)
 var cursor_size: Vector2 = Vector2(64, 64)
 
-# Add this at the top of the class, after class_name GridCursor
 signal cursor_moved(grid_pos)
 
 func _ready():
@@ -21,7 +20,6 @@ func _ready():
 
 	input_manager.cursor_move_request.connect(_on_cursor_move_requested)
 	
-	# Set initial position
 	current_position = Vector2i(0, 0)
 	position = grid_system.grid_to_world_centered(current_position)
 	target_position = position
@@ -34,18 +32,26 @@ func _process(delta):
 		position = target_position
 
 func _draw():
-	# Draw cursor rectangle
-	var rect = Rect2(-cursor_size.x / 2, -cursor_size.y / 2, cursor_size.x, cursor_size.y)
-	draw_rect(rect, cursor_color, false, 3.0)  # 3.0 is border width
+	# Define corner size (how long each line of the L will be)
+	var corner_length = cursor_size.x / 4
+	var half_width = cursor_size.x / 2
+	var half_height = cursor_size.y / 2
 	
-	# Draw diagonal lines for better visibility
-	#draw_line(Vector2(-cursor_size.x / 2, -cursor_size.y / 2), 
-			  #Vector2(cursor_size.x / 2, cursor_size.y / 2), 
-			  #cursor_color, 2.0)
-	#
-	#draw_line(Vector2(cursor_size.x / 2, -cursor_size.y / 2), 
-			  #Vector2(-cursor_size.x / 2, cursor_size.y / 2), 
-			  #cursor_color, 2.0)
+	# Top-left corner
+	draw_line(Vector2(-half_width, -half_height), Vector2(-half_width + corner_length, -half_height), cursor_color, 3.0)
+	draw_line(Vector2(-half_width, -half_height), Vector2(-half_width, -half_height + corner_length), cursor_color, 3.0)
+	
+	# Top-right corner
+	draw_line(Vector2(half_width, -half_height), Vector2(half_width - corner_length, -half_height), cursor_color, 3.0)
+	draw_line(Vector2(half_width, -half_height), Vector2(half_width, -half_height + corner_length), cursor_color, 3.0)
+	
+	# Bottom-left corner
+	draw_line(Vector2(-half_width, half_height), Vector2(-half_width + corner_length, half_height), cursor_color, 3.0)
+	draw_line(Vector2(-half_width, half_height), Vector2(-half_width, half_height - corner_length), cursor_color, 3.0)
+	
+	# Bottom-right corner
+	draw_line(Vector2(half_width, half_height), Vector2(half_width - corner_length, half_height), cursor_color, 3.0)
+	draw_line(Vector2(half_width, half_height), Vector2(half_width, half_height - corner_length), cursor_color, 3.0)
 
 func _on_cursor_move_requested(grid_pos: Vector2i):
 	current_position = grid_pos

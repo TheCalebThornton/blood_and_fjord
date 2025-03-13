@@ -1,5 +1,5 @@
 extends Node2D
-class_name Unit
+class_name GameUnit
 
 enum Faction {
 	PLAYER,
@@ -73,6 +73,7 @@ var is_selected: bool = false
 var team: int = 0  # 0 = player, 1 = enemy
 
 var grid_position: Vector2i = Vector2i(0, 0)
+var original_position: Vector2i
 
 # References
 var battle_manager = null

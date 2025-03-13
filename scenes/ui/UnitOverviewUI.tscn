@@ -1,0 +1,82 @@
+[gd_scene load_steps=6 format=3 uid="uid://c305inhdmiai4"]
+
+[ext_resource type="Script" uid="uid://d1fa8m8rmym0f" path="res://scripts/ui/UnitOverviewUI.gd" id="1_xm45k"]
+
+[sub_resource type="Theme" id="Theme_xm45k"]
+MarginContainer/constants/margin_bottom = 0
+MarginContainer/constants/margin_left = 5
+MarginContainer/constants/margin_right = 0
+MarginContainer/constants/margin_top = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_xm45k"]
+content_margin_left = 0.0
+content_margin_top = 0.0
+content_margin_right = 0.0
+content_margin_bottom = 0.0
+bg_color = Color(0.0666667, 0.0901961, 0.690196, 0.435294)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+corner_detail = 5
+
+[sub_resource type="Theme" id="Theme_xayqy"]
+Panel/styles/panel = SubResource("StyleBoxFlat_xm45k")
+
+[sub_resource type="Theme" id="Theme_na5g3"]
+MarginContainer/constants/margin_bottom = 5
+MarginContainer/constants/margin_left = 5
+MarginContainer/constants/margin_right = 5
+MarginContainer/constants/margin_top = 5
+
+[node name="UnitOverviewUI" type="CanvasLayer"]
+script = ExtResource("1_xm45k")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+offset_right = 40.0
+offset_bottom = 54.0
+size_flags_horizontal = 0
+size_flags_vertical = 0
+theme = SubResource("Theme_xm45k")
+
+[node name="UnitStatsPanel" type="PanelContainer" parent="MarginContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme = SubResource("Theme_xayqy")
+
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/UnitStatsPanel"]
+layout_mode = 2
+theme = SubResource("Theme_na5g3")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/UnitStatsPanel/MarginContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/UnitStatsPanel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Portrait" type="TextureRect" parent="MarginContainer/UnitStatsPanel/MarginContainer/VBoxContainer/HBoxContainer"]
+clip_contents = true
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+stretch_mode = 5
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/UnitStatsPanel/MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="UnitName" type="Label" parent="MarginContainer/UnitStatsPanel/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer"]
+clip_contents = true
+custom_minimum_size = Vector2(50, 10)
+layout_mode = 2
+
+[node name="Level" type="Label" parent="MarginContainer/UnitStatsPanel/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="HPLabel" type="Label" parent="MarginContainer/UnitStatsPanel/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(20, 10)
+layout_mode = 2
+
+[node name="HPBar" type="ProgressBar" parent="MarginContainer/UnitStatsPanel/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(20, 10)
+layout_mode = 2

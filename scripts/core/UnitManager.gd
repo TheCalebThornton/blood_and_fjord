@@ -7,17 +7,17 @@ var player_units: Array = []
 var enemy_units: Array = []
 var ally_units: Array = []  # NPCs that are friendly but not player-controlled
 
-var selected_unit: Unit = null
-var active_unit: Unit = null
+var selected_unit: GameUnit = null
+var active_unit: GameUnit = null
 
 @onready var grid_system: GridSystem = $"../GridSystem"
 
 # Signals
-signal unit_selected(unit: Unit)
+signal unit_selected(unit: GameUnit)
 signal unit_deselected()
-signal unit_moved(unit: Unit, from_pos: Vector2i, to_pos: Vector2i)
-signal unit_action_completed(unit: Unit)
-signal unit_defeated(unit: Unit)
+signal unit_moved(unit: GameUnit, from_pos: Vector2i, to_pos: Vector2i)
+signal unit_action_completed(unit: GameUnit)
+signal unit_defeated(unit: GameUnit)
 
 func reset() -> void:
 	player_units.clear()
@@ -27,29 +27,29 @@ func reset() -> void:
 	selected_unit = null
 	active_unit = null
 
-func add_unit(unit: Unit) -> void:
+func add_unit(unit: GameUnit) -> void:
 	match unit.faction:
-		Unit.Faction.PLAYER:
+		GameUnit.Faction.PLAYER:
 			player_units.append(unit)
-		Unit.Faction.ENEMY:
+		GameUnit.Faction.ENEMY:
 			enemy_units.append(unit)
-		Unit.Faction.ALLY:
+		GameUnit.Faction.ALLY:
 			ally_units.append(unit)
 	
 	unit.defeated.connect(_on_unit_defeated)
 
-func remove_unit(unit: Unit) -> void:
+func remove_unit(unit: GameUnit) -> void:
 	match unit.faction:
-		Unit.Faction.PLAYER:
+		GameUnit.Faction.PLAYER:
 			player_units.erase(unit)
-		Unit.Faction.ENEMY:
+		GameUnit.Faction.ENEMY:
 			enemy_units.erase(unit)
-		Unit.Faction.ALLY:
+		GameUnit.Faction.ALLY:
 			ally_units.erase(unit)
 	
 	unit.defeated.disconnect(_on_unit_defeated)
 
-func get_unit_at(grid_pos: Vector2i) -> Unit:
+func get_unit_at(grid_pos: Vector2i) -> GameUnit:
 	for unit in player_units + enemy_units + ally_units:
 		if unit.grid_position == grid_pos:
 			return unit
@@ -58,7 +58,7 @@ func get_unit_at(grid_pos: Vector2i) -> Unit:
 func has_unit_at(grid_pos: Vector2i) -> bool:
 	return get_unit_at(grid_pos) != null
 
-func select_unit(unit: Unit) -> void:
+func select_unit(unit: GameUnit) -> void:
 	if selected_unit == unit:
 		return
 		
@@ -98,9 +98,14 @@ func deselect_unit() -> void:
 		grid_system.clear_highlights()
 		unit_deselected.emit()
 
-func move_unit(unit: Unit, target_pos: Vector2i) -> void:
+func move_unit(unit: GameUnit, target_pos: Vector2i, record_move: bool = true) -> void:
 	if not unit.can_move:
 		return
+	
+	if record_move and not unit.has_moved:
+		unit.original_position = unit.grid_position
+		unit.has_moved = true
+		
 	var from_pos = unit.grid_position
 	var path = grid_system.find_path(from_pos, target_pos)
 	if path.is_empty():
@@ -109,28 +114,37 @@ func move_unit(unit: Unit, target_pos: Vector2i) -> void:
 	active_unit = unit
 	grid_system.clear_highlights()
 	
+	unit.set_state(unit.UnitState.SELECTED)
+	
+	# Convert path positions to world coordinates
+	var world_positions = []
+	for pos in path:
+		world_positions.append(grid_system.grid_to_world_centered(pos))
+	
+	# Calculate total path length for consistent speed
+	var total_distance = 0.0
+	for i in range(1, world_positions.size()):
+		total_distance += world_positions[i-1].distance_to(world_positions[i])
+	
 	var tween = create_tween()
-	tween.set_ease(Tween.EASE_OUT)
-	tween.set_trans(Tween.TRANS_CUBIC)
+	tween.tween_method(
+		func(progress: float):
+			var current_pos = _get_position_along_path(world_positions, progress)
+			unit.position = current_pos
+			
+			# Update unit facing direction
+			if progress < 1.0:  # Don't update direction at the end
+				var next_pos = _get_position_along_path(world_positions, min(progress + 0.1, 1.0))
+				if next_pos.x > current_pos.x:
+					unit.set_state(unit.UnitState.MOVING_RIGHT)
+				elif next_pos.x < current_pos.x:
+					unit.set_state(unit.UnitState.MOVING_LEFT),
+		0.0,
+		1.0,
+		(total_distance / grid_system.CELL_SIZE.x) / 3 # 3 grids per second movespeed
+	)
 	
-	# Set initial state to moving
-	unit.set_state(unit.UnitState.IDLE)
-	
-	# Move along each point in the path
-	for i in range(1, path.size()):
-		var current_pos = path[i-1]
-		var next_pos = path[i]
-		var next_world_pos = grid_system.grid_to_world_centered(next_pos)
-		
-		tween.tween_callback(func():
-			if next_pos.x > current_pos.x:
-				unit.set_state(unit.UnitState.MOVING_RIGHT)
-			elif next_pos.x < current_pos.x:
-				unit.set_state(unit.UnitState.MOVING_LEFT)
-		)
-		tween.tween_property(unit, "position", next_world_pos, 0.3)
-	
-	# When tween steps are all completed
+	# When movement is completed
 	tween.finished.connect(func():
 		unit.grid_position = target_pos
 		if unit.is_selected:
@@ -141,7 +155,6 @@ func move_unit(unit: Unit, target_pos: Vector2i) -> void:
 		unit.can_move = false
 		
 		if unit == selected_unit:
-			# Show attack range from new position
 			var attack_range = grid_system.calculate_attack_range(
 				[unit.grid_position],
 				unit.min_attack_range,
@@ -152,7 +165,35 @@ func move_unit(unit: Unit, target_pos: Vector2i) -> void:
 		unit_moved.emit(unit, from_pos, target_pos)
 	)
 
-func end_unit_turn(unit: Unit) -> void:
+# Helper function to interpolate position along path
+func _get_position_along_path(points: Array, progress: float) -> Vector2:
+	if progress <= 0:
+		return points[0]
+	if progress >= 1:
+		return points[-1]
+		
+	var total_length = 0
+	var lengths = []
+	
+	# Calculate segment lengths
+	for i in range(1, points.size()):
+		var length = points[i-1].distance_to(points[i])
+		total_length += length
+		lengths.append(length)
+	
+	var target_length = total_length * progress
+	var current_length = 0
+	
+	# Find current segment
+	for i in range(lengths.size()):
+		if current_length + lengths[i] >= target_length:
+			var segment_progress = (target_length - current_length) / lengths[i]
+			return points[i].lerp(points[i + 1], segment_progress)
+		current_length += lengths[i]
+	
+	return points[-1]
+
+func end_unit_turn(unit: GameUnit) -> void:
 	unit.can_move = false
 	unit.can_act = false
 	
@@ -162,53 +203,50 @@ func end_unit_turn(unit: Unit) -> void:
 	active_unit = null
 	unit_action_completed.emit(unit)
 
-# Prepare player units for a new turn
 func prepare_player_units_for_turn() -> void:
 	for unit in player_units:
 		unit.can_move = true
 		unit.can_act = true
 
-# Prepare enemy units for a new turn
 func prepare_enemy_units_for_turn() -> void:
 	for unit in enemy_units:
 		unit.can_move = true
 		unit.can_act = true
 
-# Check if all player units have completed their actions
 func are_all_player_units_done() -> bool:
 	for unit in player_units:
 		if unit.can_move or unit.can_act:
 			return false
 	return true
 
-# Check if all enemy units have completed their actions
 func are_all_enemy_units_done() -> bool:
 	for unit in enemy_units:
 		if unit.can_move or unit.can_act:
 			return false
 	return true
 
-# Check if all units of a faction are defeated
 func is_faction_defeated(faction: int) -> bool:
 	match faction:
-		Unit.Faction.PLAYER:
+		GameUnit.Faction.PLAYER:
 			return player_units.is_empty()
-		Unit.Faction.ENEMY:
+		GameUnit.Faction.ENEMY:
 			return enemy_units.is_empty()
-		Unit.Faction.ALLY:
+		GameUnit.Faction.ALLY:
 			return ally_units.is_empty()
 	return false
 
-# Handle unit defeat
-func _on_unit_defeated(unit: Unit) -> void:
-	# Emit signal first before removing
+func _on_unit_defeated(unit: GameUnit) -> void:
 	unit_defeated.emit(unit)
-	
-	# Remove unit from the game
 	remove_unit(unit)
 	
 	# Check for victory/defeat conditions
-	if is_faction_defeated(Unit.Faction.PLAYER):
+	if is_faction_defeated(GameUnit.Faction.PLAYER):
 		get_parent().change_state(get_parent().GameState.GAME_OVER)
-	elif is_faction_defeated(Unit.Faction.ENEMY):
-		get_parent().change_state(get_parent().GameState.VICTORY) 
+	elif is_faction_defeated(GameUnit.Faction.ENEMY):
+		get_parent().change_state(get_parent().GameState.VICTORY)
+
+func revert_unit_movement(unit: GameUnit) -> void:
+	if unit.has_moved:
+		move_unit(unit, unit.original_position, false) # Don't record this as a new move
+		unit.has_moved = false
+		unit.can_move = true  # Allow the unit to move again 

@@ -17,13 +17,13 @@ var terrain_scenes: Dictionary = {
 }
 
 var unit_scenes: Dictionary = {
-	Unit.UnitClass.WARRIOR: preload("res://scenes/units/Warrior.tscn"),
+	GameUnit.UnitClass.WARRIOR: preload("res://scenes/units/Warrior.tscn"),
 	# TODO Implement more classes
-	#Unit.UnitClass.ARCHER: preload("res://scenes/units/Archer.tscn"),
-	#Unit.UnitClass.MAGE: preload("res://scenes/units/Mage.tscn"),
-	#Unit.UnitClass.HEALER: preload("res://scenes/units/Healer.tscn"),
-	#Unit.UnitClass.CAVALRY: preload("res://scenes/units/Cavalry.tscn"),
-	#Unit.UnitClass.FLIER: preload("res://scenes/units/Flier.tscn")
+	#GameUnit.UnitClass.ARCHER: preload("res://scenes/units/Archer.tscn"),
+	#GameUnit.UnitClass.MAGE: preload("res://scenes/units/Mage.tscn"),
+	#GameUnit.UnitClass.HEALER: preload("res://scenes/units/Healer.tscn"),
+	#GameUnit.UnitClass.CAVALRY: preload("res://scenes/units/Cavalry.tscn"),
+	#GameUnit.UnitClass.FLIER: preload("res://scenes/units/Flier.tscn")
 }
 
 var terrain_node: Node2D
@@ -92,14 +92,14 @@ func spawn_units() -> void:
 		return
 	
 	for spawn_data in current_map.player_spawns:
-		spawn_unit(spawn_data, Unit.Faction.PLAYER)
+		spawn_unit(spawn_data, GameUnit.Faction.PLAYER)
 	for spawn_data in current_map.enemy_spawns:
-		spawn_unit(spawn_data, Unit.Faction.ENEMY)
+		spawn_unit(spawn_data, GameUnit.Faction.ENEMY)
 	for spawn_data in current_map.ally_spawns:
-		spawn_unit(spawn_data, Unit.Faction.ALLY)
+		spawn_unit(spawn_data, GameUnit.Faction.ALLY)
 
-func spawn_unit(spawn_data: Dictionary, faction: int) -> Unit:
-	var unit_class: int = spawn_data.get("unit_class", Unit.UnitClass.WARRIOR)
+func spawn_unit(spawn_data: Dictionary, faction: int) -> GameUnit:
+	var unit_class: int = spawn_data.get("unit_class", GameUnit.UnitClass.WARRIOR)
 	
 	# Check if we have a scene for this unit class
 	if not unit_scenes.has(unit_class):
@@ -134,7 +134,7 @@ func check_victory_condition() -> bool:
 	
 	match current_map.victory_condition:
 		MapData.VictoryCondition.DEFEAT_ALL:
-			return unit_manager.is_faction_defeated(Unit.Faction.ENEMY)
+			return unit_manager.is_faction_defeated(GameUnit.Faction.ENEMY)
 		MapData.VictoryCondition.DEFEAT_COMMANDER:
 			# Would need to implement commander tracking
 			return false

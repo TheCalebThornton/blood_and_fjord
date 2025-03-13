@@ -164,14 +164,14 @@ static func create_sample_map() -> MapData:
 	
 	# Add player spawns
 	map.add_player_spawn({
-		"unit_class": Unit.UnitClass.WARRIOR,
+		"unit_class": GameUnit.UnitClass.WARRIOR,
 		"position": {"x": 1, "y": 1},
 		"level": 1,
 		"name": "Hero"
 	})
 	
 	map.add_player_spawn({
-		"unit_class": Unit.UnitClass.ARCHER,
+		"unit_class": GameUnit.UnitClass.ARCHER,
 		"position": {"x": 2, "y": 1},
 		"level": 1,
 		"name": "Archer"
@@ -179,14 +179,14 @@ static func create_sample_map() -> MapData:
 	
 	# Add enemy spawns
 	map.add_enemy_spawn({
-		"unit_class": Unit.UnitClass.WARRIOR,
+		"unit_class": GameUnit.UnitClass.WARRIOR,
 		"position": {"x": 8, "y": 8},
 		"level": 1,
 		"name": "Bandit"
 	})
 	
 	map.add_enemy_spawn({
-		"unit_class": Unit.UnitClass.WARRIOR,
+		"unit_class": GameUnit.UnitClass.WARRIOR,
 		"position": {"x": 7, "y": 8},
 		"level": 1,
 		"name": "Bandit"

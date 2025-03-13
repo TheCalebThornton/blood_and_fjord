@@ -3,19 +3,20 @@ extends Node2D
 class_name InputManager
 
 enum InputState {
-	NORMAL,
-	UNIT_SELECTED,
+	GRID_SELECTION,
 	MOVEMENT_SELECTION,
+	ACTION_SELECTION,
 	TARGET_SELECTION,
-	MENU_OPEN
+	MENU_OPEN,
+	LOCKED
 }
 
-var current_state: int = InputState.NORMAL
+var current_state: int = InputState.GRID_SELECTION
 
 var game_manager: GameManager
 @onready var grid_system: GridSystem = $"../GridSystem"
 @onready var unit_manager: UnitManager = $"../UnitManager"
-#var battle_ui: BattleUI
+@onready var unit_overview_ui: UnitOverviewUI = $"../UIManager/UnitOverviewUI"
 
 var cursor_position: Vector2i = Vector2i(0, 0)
 
@@ -31,6 +32,8 @@ func _ready():
 	game_manager = get_parent()
 	
 	game_manager.state_changed.connect(_on_game_state_changed)
+	# Initialize UI based on cursor position
+	call_deferred("_update_hover_ui")
 
 func _unhandled_input(event: InputEvent) -> void:
 	# Only process input during player turn
@@ -38,7 +41,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 	
 	match current_state:
-		InputState.NORMAL:
+		InputState.GRID_SELECTION:
 			_handle_cursor_movement(event)
 			_handle_selection(event)
 			_handle_cancel(event)
@@ -75,18 +78,29 @@ func _handle_cursor_movement(event: InputEvent) -> void:
 		if grid_system.is_within_grid(new_pos):
 			cursor_position = new_pos
 			cursor_move_request.emit(cursor_position)
+			_update_hover_ui()
+
+func _update_hover_ui() -> void:
+	var unit = unit_manager.get_unit_at(cursor_position)
+	
+	if unit:
+		var is_player = unit.faction == GameUnit.Faction.PLAYER
+		unit_overview_ui.show_unit_stats(unit, is_player)
+	else:
+		unit_overview_ui.hide_unit_stats()
 
 func _handle_selection(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_accept"):
 		tile_selected.emit(cursor_position)
 		
-		# Check if there's a unit at the cursor position
 		var unit = unit_manager.get_unit_at(cursor_position)
 		
 		if unit:
-			if unit.faction == Unit.Faction.PLAYER and unit.can_move:
+			if unit.faction == GameUnit.Faction.PLAYER and unit.can_move:
 				unit_manager.select_unit(unit)
 				change_state(InputState.MOVEMENT_SELECTION)
+				# Hide unit stats UI when selecting a unit
+				unit_overview_ui.hide_unit_stats()
 
 func _handle_movement_selection(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_accept"):
@@ -103,10 +117,10 @@ func _handle_movement_selection(event: InputEvent) -> void:
 				unit_manager.move_unit(selected_unit, cursor_position)
 				
 				if selected_unit.can_act:
-					change_state(InputState.UNIT_SELECTED)
+					change_state(InputState.ACTION_SELECTION)
 				else:
 					unit_manager.deselect_unit()
-					change_state(InputState.NORMAL)
+					change_state(InputState.GRID_SELECTION)
 			else:
 				# Invalid movement position
 				# Could play a sound or show a message
@@ -122,16 +136,13 @@ func _handle_target_selection(event: InputEvent) -> void:
 			if target_unit:
 				match action_type:
 					"attack":
-						# Execute attack
 						game_manager.battle_manager.execute_combat(selected_unit, target_unit)
-						
-						# End unit's turn
 						unit_manager.end_unit_turn(selected_unit)
 						
 						# Reset state
 						valid_targets.clear()
 						action_type = ""
-						change_state(InputState.NORMAL)
+						change_state(InputState.GRID_SELECTION)
 					# Other action types can be added here
 			
 			# Reset target selection
@@ -141,21 +152,28 @@ func _handle_target_selection(event: InputEvent) -> void:
 func _handle_cancel(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_cancel"):
 		match current_state:
-			InputState.UNIT_SELECTED, InputState.MOVEMENT_SELECTION:
+			InputState.MOVEMENT_SELECTION:
+				
 				unit_manager.deselect_unit()
-				change_state(InputState.NORMAL)
+				unit_overview_ui.hide_unit_stats()
+				change_state(InputState.GRID_SELECTION)
+			InputState.ACTION_SELECTION:
+				# Revert unit to original position if it has moved
+				if unit_manager.selected_unit and unit_manager.selected_unit.has_moved:
+					unit_manager.revert_unit_movement(unit_manager.selected_unit)
+				change_state(InputState.MOVEMENT_SELECTION)
 			InputState.TARGET_SELECTION:
 				# Cancel target selection
 				valid_targets.clear()
 				action_type = ""
-				change_state(InputState.UNIT_SELECTED)
+				change_state(InputState.ACTION_SELECTION)
 			InputState.MENU_OPEN:
 				# Close menu
-				change_state(InputState.UNIT_SELECTED)
+				change_state(InputState.GRID_SELECTION)
 		
 		action_canceled.emit()
 
-func _try_attack(attacker: Unit, defender: Unit) -> void:
+func _try_attack(attacker: GameUnit, defender: GameUnit) -> void:
 	var attack_range = grid_system.calculate_attack_range(
 		[attacker.grid_position],
 		attacker.min_attack_range,
@@ -167,7 +185,7 @@ func _try_attack(attacker: Unit, defender: Unit) -> void:
 		
 		unit_manager.end_unit_turn(attacker)
 		
-		change_state(InputState.NORMAL)
+		change_state(InputState.GRID_SELECTION)
 	else:
 		# Target not in range, show attack range and enter target selection
 		valid_targets = attack_range
@@ -181,17 +199,19 @@ func change_state(new_state: int) -> void:
 	current_state = new_state
 	
 	match new_state:
-		InputState.NORMAL:
+		InputState.GRID_SELECTION:
 			grid_system.clear_highlights()
+			_update_hover_ui()
+		InputState.MOVEMENT_SELECTION:
+			unit_overview_ui.hide_unit_stats()
 		InputState.TARGET_SELECTION:
+			unit_overview_ui.hide_unit_stats()
 			grid_system.highlight_attack_range(valid_targets)
 
 func _on_game_state_changed(new_state: int) -> void:
 	match new_state:
 		GameManager.GameState.PLAYER_TURN:
-			# Reset to normal input state at start of player turn
-			change_state(InputState.NORMAL)
+			change_state(InputState.GRID_SELECTION)
 		_:
-			# Disable input for other game states
-			change_state(InputState.NORMAL)
-			unit_manager.deselect_unit() 
+			change_state(InputState.LOCKED)
+	unit_manager.deselect_unit()
