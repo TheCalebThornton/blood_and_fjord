@@ -32,6 +32,7 @@ func _ready():
 	game_manager = get_parent()
 	
 	game_manager.state_changed.connect(_on_game_state_changed)
+	unit_manager.cursor_move_request.connect(_on_cursor_move_request)
 	# Initialize UI based on cursor position
 	call_deferred("_update_hover_ui")
 
@@ -49,6 +50,10 @@ func _unhandled_input(event: InputEvent) -> void:
 			_handle_cursor_movement(event)
 			_handle_movement_selection(event)
 			_handle_cancel(event)
+		InputState.ACTION_SELECTION:
+			# TODO add Action UI selection handler
+			#_handle_cursor_movement(event)
+			_handle_cancel(event)
 		InputState.TARGET_SELECTION:
 			_handle_cursor_movement(event)
 			_handle_target_selection(event)
@@ -57,7 +62,6 @@ func _unhandled_input(event: InputEvent) -> void:
 			# Menu input is handled by UI
 			_handle_cancel(event)
 
-# Handle cursor movement
 func _handle_cursor_movement(event: InputEvent) -> void:
 	var movement = Vector2i(0, 0)
 	
@@ -79,6 +83,12 @@ func _handle_cursor_movement(event: InputEvent) -> void:
 			cursor_position = new_pos
 			cursor_move_request.emit(cursor_position)
 			_update_hover_ui()
+
+func _on_cursor_move_request(grid_position: Vector2i) -> void:
+	if grid_system.is_within_grid(grid_position):
+		cursor_position = grid_position
+		cursor_move_request.emit(cursor_position)
+		_update_hover_ui()
 
 func _update_hover_ui() -> void:
 	var unit = unit_manager.get_unit_at(cursor_position)
@@ -153,13 +163,11 @@ func _handle_cancel(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_cancel"):
 		match current_state:
 			InputState.MOVEMENT_SELECTION:
-				
 				unit_manager.deselect_unit()
 				unit_overview_ui.hide_unit_stats()
 				change_state(InputState.GRID_SELECTION)
 			InputState.ACTION_SELECTION:
-				# Revert unit to original position if it has moved
-				if unit_manager.selected_unit and unit_manager.selected_unit.has_moved:
+				if unit_manager.selected_unit:
 					unit_manager.revert_unit_movement(unit_manager.selected_unit)
 				change_state(InputState.MOVEMENT_SELECTION)
 			InputState.TARGET_SELECTION:

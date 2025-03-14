@@ -18,6 +18,7 @@ signal unit_deselected()
 signal unit_moved(unit: GameUnit, from_pos: Vector2i, to_pos: Vector2i)
 signal unit_action_completed(unit: GameUnit)
 signal unit_defeated(unit: GameUnit)
+signal cursor_move_request(grid_position: Vector2i)
 
 func reset() -> void:
 	player_units.clear()
@@ -60,6 +61,7 @@ func has_unit_at(grid_pos: Vector2i) -> bool:
 
 func select_unit(unit: GameUnit) -> void:
 	if selected_unit == unit:
+		# TODO Open action menu
 		return
 		
 	if selected_unit:
@@ -98,13 +100,13 @@ func deselect_unit() -> void:
 		grid_system.clear_highlights()
 		unit_deselected.emit()
 
+#region movement:
 func move_unit(unit: GameUnit, target_pos: Vector2i, record_move: bool = true) -> void:
 	if not unit.can_move:
 		return
 	
-	if record_move and not unit.has_moved:
+	if record_move:
 		unit.original_position = unit.grid_position
-		unit.has_moved = true
 		
 	var from_pos = unit.grid_position
 	var path = grid_system.find_path(from_pos, target_pos)
@@ -113,8 +115,6 @@ func move_unit(unit: GameUnit, target_pos: Vector2i, record_move: bool = true) -
 		
 	active_unit = unit
 	grid_system.clear_highlights()
-	
-	unit.set_state(unit.UnitState.SELECTED)
 	
 	# Convert path positions to world coordinates
 	var world_positions = []
@@ -151,8 +151,8 @@ func move_unit(unit: GameUnit, target_pos: Vector2i, record_move: bool = true) -
 			unit.set_state(unit.UnitState.SELECTED)
 		else:
 			unit.set_state(unit.UnitState.IDLE)
-		
 		unit.can_move = false
+		unit.has_moved = true
 		
 		if unit == selected_unit:
 			var attack_range = grid_system.calculate_attack_range(
@@ -161,11 +161,22 @@ func move_unit(unit: GameUnit, target_pos: Vector2i, record_move: bool = true) -
 				unit.attack_range
 			)
 			grid_system.highlight_attack_range(attack_range)
-		
 		unit_moved.emit(unit, from_pos, target_pos)
 	)
 
-# Helper function to interpolate position along path
+func teleport_unit(unit: GameUnit, target_pos: Vector2i, animate: bool = false) -> void:
+	if animate:
+		# TODO add teleportation effect
+		pass
+	
+	grid_system.clear_highlights()
+	unit.position = grid_system.grid_to_world_centered(target_pos)
+	unit.grid_position = target_pos
+	if unit.is_selected:
+		unit.set_state(unit.UnitState.SELECTED)
+	else:
+		unit.set_state(unit.UnitState.IDLE)
+
 func _get_position_along_path(points: Array, progress: float) -> Vector2:
 	if progress <= 0:
 		return points[0]
@@ -192,6 +203,16 @@ func _get_position_along_path(points: Array, progress: float) -> Vector2:
 		current_length += lengths[i]
 	
 	return points[-1]
+
+func revert_unit_movement(unit: GameUnit) -> void:
+	if unit.has_moved:
+		teleport_unit(unit, unit.original_position)
+		unit.has_moved = false
+		unit.can_move = true
+		selected_unit = null
+		cursor_move_request.emit(unit.original_position)
+		select_unit(unit)
+#endregion
 
 func end_unit_turn(unit: GameUnit) -> void:
 	unit.can_move = false
@@ -244,9 +265,3 @@ func _on_unit_defeated(unit: GameUnit) -> void:
 		get_parent().change_state(get_parent().GameState.GAME_OVER)
 	elif is_faction_defeated(GameUnit.Faction.ENEMY):
 		get_parent().change_state(get_parent().GameState.VICTORY)
-
-func revert_unit_movement(unit: GameUnit) -> void:
-	if unit.has_moved:
-		move_unit(unit, unit.original_position, false) # Don't record this as a new move
-		unit.has_moved = false
-		unit.can_move = true  # Allow the unit to move again 
