@@ -9,6 +9,7 @@ class_name UnitOverviewUI
 
 # Dictionary to store unit portrait textures
 var portrait_textures = {
+	# TODO These asset paths will need to come from save file eventually
 	"warrior": preload("res://assets/Factions/Knights/Troops/Warrior/Blue/Warrior_Blue_portrait.png"),
 	#"archer": preload("res://assets/portraits/archer.png"),
 	#"mage": preload("res://assets/portraits/mage.png"),

@@ -33,6 +33,7 @@ func _ready():
 	
 	game_manager.state_changed.connect(_on_game_state_changed)
 	unit_manager.cursor_move_request.connect(_on_cursor_move_request)
+	unit_manager.unit_moved.connect(_on_unit_moved)
 	battle_ui_container.action_menu.action_selected.connect(_on_action_selected)
 	# Initialize UI based on cursor position
 	call_deferred("_update_hover_ui")
@@ -52,9 +53,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			_handle_movement_selection(event)
 			_handle_cancel(event)
 		InputState.ACTION_SELECTION:
-			# BUG If cancelled during animation, the request to revert movement will be denied.
-			# TODO add Action UI selection handler
-			#_handle_cursor_movement(event)
+			_handle_action_selection(event)
 			_handle_cancel(event)
 		InputState.TARGET_SELECTION:
 			_handle_cursor_movement(event)
@@ -90,11 +89,28 @@ func _handle_cursor_movement(event: InputEvent) -> void:
 			var cursor_world_pos = grid_system.grid_to_world_centered(cursor_position)
 			battle_ui_container.update_position(cursor_world_pos)
 
+func _handle_action_selection(event: InputEvent) -> void:
+	if event.is_action_pressed("ui_down"):
+		battle_ui_container.action_menu.select_next_action()
+	elif event.is_action_pressed("ui_up"):
+		battle_ui_container.action_menu.select_previous_action()
+	elif event.is_action_pressed("ui_accept"):
+		battle_ui_container.action_menu.confirm_selection()
+	else:
+		return
+
 func _on_cursor_move_request(grid_position: Vector2i) -> void:
 	if grid_system.is_within_grid(grid_position):
 		cursor_position = grid_position
 		cursor_move_request.emit(cursor_position)
 		_update_hover_ui()
+		
+func _on_unit_moved(unit: GameUnit, _from: Vector2i, _to:Vector2i) -> void:
+	if unit.can_act:
+		change_state(InputState.ACTION_SELECTION)
+	else:
+		unit_manager.deselect_unit()
+		change_state(InputState.GRID_SELECTION)
 
 func _update_hover_ui() -> void:
 	var unit = unit_manager.get_unit_at(cursor_position)
@@ -131,13 +147,9 @@ func _handle_movement_selection(event: InputEvent) -> void:
 			)
 			
 			if cursor_position in movement_range and not unit_manager.has_unit_at(cursor_position):
+				# Lock UI while moving
+				change_state(InputState.LOCKED)
 				unit_manager.move_unit(selected_unit, cursor_position)
-				
-				if selected_unit.can_act:
-					change_state(InputState.ACTION_SELECTION)
-				else:
-					unit_manager.deselect_unit()
-					change_state(InputState.GRID_SELECTION)
 			else:
 				# Invalid movement position
 				# Could play a sound or show a message
