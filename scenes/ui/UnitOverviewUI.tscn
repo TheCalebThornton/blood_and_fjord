@@ -1,12 +1,6 @@
-[gd_scene load_steps=6 format=3 uid="uid://c305inhdmiai4"]
+[gd_scene load_steps=5 format=3 uid="uid://c305inhdmiai4"]
 
 [ext_resource type="Script" uid="uid://d1fa8m8rmym0f" path="res://scripts/ui/UnitOverviewUI.gd" id="1_xm45k"]
-
-[sub_resource type="Theme" id="Theme_xm45k"]
-MarginContainer/constants/margin_bottom = 0
-MarginContainer/constants/margin_left = 5
-MarginContainer/constants/margin_right = 0
-MarginContainer/constants/margin_top = 5
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_xm45k"]
 content_margin_left = 0.0
@@ -29,54 +23,48 @@ MarginContainer/constants/margin_left = 5
 MarginContainer/constants/margin_right = 5
 MarginContainer/constants/margin_top = 5
 
-[node name="UnitOverviewUI" type="CanvasLayer"]
-script = ExtResource("1_xm45k")
-
-[node name="MarginContainer" type="MarginContainer" parent="."]
-offset_right = 40.0
-offset_bottom = 54.0
-size_flags_horizontal = 0
-size_flags_vertical = 0
-theme = SubResource("Theme_xm45k")
-
-[node name="UnitStatsPanel" type="PanelContainer" parent="MarginContainer"]
-layout_mode = 2
+[node name="UnitOverviewUI" type="PanelContainer"]
+offset_left = 5.0
+offset_top = 5.0
+offset_right = 133.0
+offset_bottom = 137.0
 size_flags_horizontal = 4
 size_flags_vertical = 4
 theme = SubResource("Theme_xayqy")
+script = ExtResource("1_xm45k")
 
-[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/UnitStatsPanel"]
+[node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 2
 theme = SubResource("Theme_na5g3")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/UnitStatsPanel/MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
 layout_mode = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/UnitStatsPanel/MarginContainer/VBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
 
-[node name="Portrait" type="TextureRect" parent="MarginContainer/UnitStatsPanel/MarginContainer/VBoxContainer/HBoxContainer"]
+[node name="Portrait" type="TextureRect" parent="MarginContainer/VBoxContainer/HBoxContainer"]
 clip_contents = true
 custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
 stretch_mode = 5
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/UnitStatsPanel/MarginContainer/VBoxContainer/HBoxContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="UnitName" type="Label" parent="MarginContainer/UnitStatsPanel/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer"]
+[node name="UnitName" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer"]
 clip_contents = true
 custom_minimum_size = Vector2(50, 10)
 layout_mode = 2
 
-[node name="Level" type="Label" parent="MarginContainer/UnitStatsPanel/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer"]
+[node name="Level" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer"]
 layout_mode = 2
 
-[node name="HPLabel" type="Label" parent="MarginContainer/UnitStatsPanel/MarginContainer/VBoxContainer"]
+[node name="HPLabel" type="Label" parent="MarginContainer/VBoxContainer"]
 custom_minimum_size = Vector2(20, 10)
 layout_mode = 2
 
-[node name="HPBar" type="ProgressBar" parent="MarginContainer/UnitStatsPanel/MarginContainer/VBoxContainer"]
+[node name="HPBar" type="ProgressBar" parent="MarginContainer/VBoxContainer"]
 custom_minimum_size = Vector2(20, 10)
 layout_mode = 2

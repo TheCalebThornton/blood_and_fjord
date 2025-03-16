@@ -64,13 +64,16 @@ var growth_rates: Dictionary = {
 }
 var inventory: Array = []
 var equipped_weapon = null
+var available_actions: Array[Dictionary] = [
+	{"name": "Attack", "id": "attack"},
+	{"name": "Wait", "id": "wait"}
+]
 
 # Unit state
 var current_state: int
 var has_moved: bool = false
 var has_acted: bool = false
 var is_selected: bool = false
-var team: int = 0  # 0 = player, 1 = enemy
 
 var grid_position: Vector2i = Vector2i(0, 0)
 var original_position: Vector2i
@@ -280,3 +283,16 @@ func get_class_name() -> String:
 
 func get_description() -> String:
 	return "%s (Lv. %d %s)" % [unit_name, level, UnitClass.keys()[unit_class]]
+
+func get_available_actions() -> Array[Dictionary]:
+	var actions: Array[Dictionary] = []
+	
+	# TODO No this logic belongs to the UnitManager.
+	# Only add attack if unit can act
+	if can_act:
+		actions.append({"name": "Attack", "id": "attack"})
+	
+	# Wait is always available
+	actions.append({"name": "Wait", "id": "wait"})
+	
+	return actions

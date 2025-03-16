@@ -5,7 +5,7 @@
 [ext_resource type="Script" uid="uid://s2thly0gfa2w" path="res://scripts/core/BattleManager.gd" id="3_ljw3l"]
 [ext_resource type="Script" uid="uid://c15wgmlyheh16" path="res://scripts/core/GridSystem.gd" id="4_galiw"]
 [ext_resource type="Script" uid="uid://dr1wfgkscbrq8" path="res://scripts/core/UnitManager.gd" id="5_qmftw"]
-[ext_resource type="PackedScene" uid="uid://c305inhdmiai4" path="res://scenes/ui/UnitOverviewUI.tscn" id="6_q8u5g"]
+[ext_resource type="PackedScene" uid="uid://dnh12ykp6bhmr" path="res://scenes/ui/BattleUIContainer.tscn" id="6_q8u5g"]
 [ext_resource type="Script" uid="uid://dcpmlbed6fe77" path="res://scripts/core/MapLoader.gd" id="6_r3une"]
 [ext_resource type="Script" uid="uid://c4kyfsgs26bbt" path="res://scripts/ui/GridCursor.gd" id="7_nxtc6"]
 [ext_resource type="Script" uid="uid://3njx6ci6ycf5" path="res://scripts/core/GameCamera.gd" id="8_jlsqs"]
@@ -15,6 +15,10 @@
 [node name="GameManager" type="Node2D" parent="."]
 script = ExtResource("1_1j5fm")
 metadata/_custom_type_script = "uid://b4e3smsp4e5h0"
+
+[node name="UIManager" type="CanvasLayer" parent="GameManager"]
+
+[node name="BattleUIContainer" parent="GameManager/UIManager" instance=ExtResource("6_q8u5g")]
 
 [node name="InputManager" type="Node2D" parent="GameManager"]
 script = ExtResource("2_0p0ee")
@@ -28,10 +32,6 @@ script = ExtResource("4_galiw")
 [node name="UnitManager" type="Node2D" parent="GameManager"]
 script = ExtResource("5_qmftw")
 
-[node name="UIManager" type="CanvasLayer" parent="GameManager"]
-
-[node name="UnitOverviewUI" parent="GameManager/UIManager" instance=ExtResource("6_q8u5g")]
-
 [node name="MapLoader" type="Node2D" parent="GameManager"]
 script = ExtResource("6_r3une")
 
@@ -43,5 +43,6 @@ script = ExtResource("6_r3une")
 script = ExtResource("7_nxtc6")
 
 [node name="GameCamera" type="Camera2D" parent="."]
-position = Vector2(580, 327)
+position = Vector2(377, 375)
 script = ExtResource("8_jlsqs")
+metadata/_edit_lock_ = true

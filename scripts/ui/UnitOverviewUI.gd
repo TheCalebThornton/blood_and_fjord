@@ -1,12 +1,11 @@
-extends CanvasLayer
+extends PanelContainer
 class_name UnitOverviewUI
 
-@onready var unit_stats_panel = $MarginContainer/UnitStatsPanel
-@onready var unit_portrait = $MarginContainer/UnitStatsPanel/MarginContainer/VBoxContainer/HBoxContainer/Portrait
-@onready var unit_name_label = $MarginContainer/UnitStatsPanel/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/UnitName
-@onready var lvl_label = $MarginContainer/UnitStatsPanel/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/Level
-@onready var hp_label = $MarginContainer/UnitStatsPanel/MarginContainer/VBoxContainer/HPLabel
-@onready var hp_bar = $MarginContainer/UnitStatsPanel/MarginContainer/VBoxContainer/HPBar
+@onready var unit_portrait = $MarginContainer/VBoxContainer/HBoxContainer/Portrait
+@onready var unit_name_label = $MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/UnitName
+@onready var lvl_label = $MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/Level
+@onready var hp_label = $MarginContainer/VBoxContainer/HPLabel
+@onready var hp_bar = $MarginContainer/VBoxContainer/HPBar
 
 # Dictionary to store unit portrait textures
 var portrait_textures = {
@@ -28,12 +27,9 @@ func show_unit_stats(unit: GameUnit, is_player: bool = true):
 	hp_bar.max_value = unit.max_health
 	hp_bar.value = unit.health
 	
-	# Set portrait based on unit type
-	#var portrait_key = unit.unit_type.to_lower() if unit.unit_type in portrait_textures else "default"
 	var portrait_key = "default"
 	unit_portrait.texture = portrait_textures[portrait_key]
 	
-	# Style differently based on faction
 	if is_player:
 		unit_name_label.add_theme_color_override("font_color", Color(0, 0.7, 1))
 		hp_bar.modulate = Color(0, 0.7, 1)
@@ -41,7 +37,7 @@ func show_unit_stats(unit: GameUnit, is_player: bool = true):
 		unit_name_label.add_theme_color_override("font_color", Color(1, 0.3, 0.3))
 		hp_bar.modulate = Color(1, 0.3, 0.3)
 
-	unit_stats_panel.visible = true
+	show()
 
 func hide_unit_stats():
-	unit_stats_panel.visible = false 
+	hide()

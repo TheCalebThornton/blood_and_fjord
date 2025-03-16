@@ -16,7 +16,7 @@ var current_state: int = InputState.GRID_SELECTION
 var game_manager: GameManager
 @onready var grid_system: GridSystem = $"../GridSystem"
 @onready var unit_manager: UnitManager = $"../UnitManager"
-@onready var unit_overview_ui: UnitOverviewUI = $"../UIManager/UnitOverviewUI"
+@onready var battle_ui_container: BattleUIContainer = $"../UIManager/BattleUIContainer"
 
 var cursor_position: Vector2i = Vector2i(0, 0)
 
@@ -33,6 +33,7 @@ func _ready():
 	
 	game_manager.state_changed.connect(_on_game_state_changed)
 	unit_manager.cursor_move_request.connect(_on_cursor_move_request)
+	battle_ui_container.action_menu.action_selected.connect(_on_action_selected)
 	# Initialize UI based on cursor position
 	call_deferred("_update_hover_ui")
 
@@ -51,6 +52,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			_handle_movement_selection(event)
 			_handle_cancel(event)
 		InputState.ACTION_SELECTION:
+			# BUG If cancelled during animation, the request to revert movement will be denied.
 			# TODO add Action UI selection handler
 			#_handle_cursor_movement(event)
 			_handle_cancel(event)
@@ -83,6 +85,10 @@ func _handle_cursor_movement(event: InputEvent) -> void:
 			cursor_position = new_pos
 			cursor_move_request.emit(cursor_position)
 			_update_hover_ui()
+			
+			# Update UI container position
+			var cursor_world_pos = grid_system.grid_to_world_centered(cursor_position)
+			battle_ui_container.update_position(cursor_world_pos)
 
 func _on_cursor_move_request(grid_position: Vector2i) -> void:
 	if grid_system.is_within_grid(grid_position):
@@ -92,12 +98,13 @@ func _on_cursor_move_request(grid_position: Vector2i) -> void:
 
 func _update_hover_ui() -> void:
 	var unit = unit_manager.get_unit_at(cursor_position)
+	var cursor_world_pos = grid_system.grid_to_world_centered(cursor_position)
 	
 	if unit:
 		var is_player = unit.faction == GameUnit.Faction.PLAYER
-		unit_overview_ui.show_unit_stats(unit, is_player)
+		battle_ui_container.unit_overview_ui.show_unit_stats(unit, is_player)
 	else:
-		unit_overview_ui.hide_unit_stats()
+		battle_ui_container.unit_overview_ui.hide_unit_stats()
 
 func _handle_selection(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_accept"):
@@ -110,7 +117,7 @@ func _handle_selection(event: InputEvent) -> void:
 				unit_manager.select_unit(unit)
 				change_state(InputState.MOVEMENT_SELECTION)
 				# Hide unit stats UI when selecting a unit
-				unit_overview_ui.hide_unit_stats()
+				battle_ui_container.unit_overview_ui.hide_unit_stats()
 
 func _handle_movement_selection(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_accept"):
@@ -164,7 +171,7 @@ func _handle_cancel(event: InputEvent) -> void:
 		match current_state:
 			InputState.MOVEMENT_SELECTION:
 				unit_manager.deselect_unit()
-				unit_overview_ui.hide_unit_stats()
+				battle_ui_container.unit_overview_ui.hide_unit_stats()
 				change_state(InputState.GRID_SELECTION)
 			InputState.ACTION_SELECTION:
 				if unit_manager.selected_unit:
@@ -210,10 +217,18 @@ func change_state(new_state: int) -> void:
 		InputState.GRID_SELECTION:
 			grid_system.clear_highlights()
 			_update_hover_ui()
+			battle_ui_container.action_menu.hide()
 		InputState.MOVEMENT_SELECTION:
-			unit_overview_ui.hide_unit_stats()
+			battle_ui_container.unit_overview_ui.hide_unit_stats()
+			battle_ui_container.action_menu.hide()
+		InputState.ACTION_SELECTION:
+			# Show action menu near the selected unit
+			var unit = unit_manager.selected_unit
+			if unit:
+				battle_ui_container.action_menu.show_actions(unit.get_available_actions())
 		InputState.TARGET_SELECTION:
-			unit_overview_ui.hide_unit_stats()
+			battle_ui_container.unit_overview_ui.hide_unit_stats()
+			battle_ui_container.action_menu.hide()
 			grid_system.highlight_attack_range(valid_targets)
 
 func _on_game_state_changed(new_state: int) -> void:
@@ -223,3 +238,24 @@ func _on_game_state_changed(new_state: int) -> void:
 		_:
 			change_state(InputState.LOCKED)
 	unit_manager.deselect_unit()
+
+func _on_action_selected(action_id: String) -> void:
+	var selected_unit = unit_manager.selected_unit
+	if not selected_unit:
+		return
+		
+	match action_id:
+		"attack":
+			# Set up attack targeting
+			var attack_range = grid_system.calculate_attack_range(
+				[selected_unit.grid_position],
+				selected_unit.min_attack_range,
+				selected_unit.attack_range
+			)
+			valid_targets = attack_range
+			action_type = "attack"
+			change_state(InputState.TARGET_SELECTION)
+		"wait":
+			# End unit's turn
+			unit_manager.end_unit_turn(selected_unit)
+			change_state(InputState.GRID_SELECTION)
