@@ -8,7 +8,6 @@ var enemy_units: Array = []
 var ally_units: Array = []  # NPCs that are friendly but not player-controlled
 
 var selected_unit: GameUnit = null
-var active_unit: GameUnit = null
 
 @onready var grid_system: GridSystem = $"../GridSystem"
 
@@ -16,7 +15,7 @@ var active_unit: GameUnit = null
 signal unit_selected(unit: GameUnit)
 signal unit_deselected()
 signal unit_moved(unit: GameUnit, from_pos: Vector2i, to_pos: Vector2i)
-signal unit_action_completed(unit: GameUnit)
+signal unit_turn_completed(unit: GameUnit)
 signal unit_defeated(unit: GameUnit)
 signal cursor_move_request(grid_position: Vector2i)
 
@@ -26,7 +25,6 @@ func reset() -> void:
 	ally_units.clear()
 	
 	selected_unit = null
-	active_unit = null
 
 func add_unit(unit: GameUnit) -> void:
 	match unit.faction:
@@ -113,7 +111,6 @@ func move_unit(unit: GameUnit, target_pos: Vector2i, record_move: bool = true) -
 	if path.is_empty():
 		return
 		
-	active_unit = unit
 	grid_system.clear_highlights()
 	
 	# Convert path positions to world coordinates
@@ -221,32 +218,26 @@ func end_unit_turn(unit: GameUnit) -> void:
 	if unit == selected_unit:
 		deselect_unit()
 		
-	active_unit = null
-	unit_action_completed.emit(unit)
+	selected_unit = null
+	unit_turn_completed.emit(unit)
 
-func prepare_player_units_for_turn() -> void:
-	for unit in player_units:
+func force_faction_end(faction: GameUnit.Faction) -> void:
+	for unit in _get_unit_list_for_faction(faction):
+		unit.can_move = false
+		unit.can_act = false
+
+func prepare_faction_units_for_turn(faction: GameUnit.Faction) -> void:
+	for unit in _get_unit_list_for_faction(faction):
 		unit.can_move = true
 		unit.can_act = true
 
-func prepare_enemy_units_for_turn() -> void:
-	for unit in enemy_units:
-		unit.can_move = true
-		unit.can_act = true
-
-func are_all_player_units_done() -> bool:
-	for unit in player_units:
+func are_all_faction_units_done(faction: GameUnit.Faction) -> bool:
+	for unit in _get_unit_list_for_faction(faction):
 		if unit.can_move or unit.can_act:
 			return false
 	return true
 
-func are_all_enemy_units_done() -> bool:
-	for unit in enemy_units:
-		if unit.can_move or unit.can_act:
-			return false
-	return true
-
-func is_faction_defeated(faction: int) -> bool:
+func is_faction_defeated(faction: GameUnit.Faction) -> bool:
 	match faction:
 		GameUnit.Faction.PLAYER:
 			return player_units.is_empty()
@@ -265,3 +256,11 @@ func _on_unit_defeated(unit: GameUnit) -> void:
 		get_parent().change_state(get_parent().GameState.GAME_OVER)
 	elif is_faction_defeated(GameUnit.Faction.ENEMY):
 		get_parent().change_state(get_parent().GameState.VICTORY)
+		
+func _get_unit_list_for_faction(faction: GameUnit.Faction):
+	if faction == GameUnit.Faction.PLAYER:
+		return player_units
+	elif faction == GameUnit.Faction.ENEMY:
+		return enemy_units
+	elif faction == GameUnit.Faction.ALLY:
+		return ally_units

@@ -6,6 +6,7 @@ enum GameState {
 	BATTLE_PREPARATION,
 	PLAYER_TURN,
 	ENEMY_TURN,
+	ALLY_TURN,
 	CUTSCENE,
 	GAME_OVER,
 	VICTORY
@@ -18,6 +19,7 @@ var current_state: int = GameState.MAIN_MENU
 @onready var grid_system: GridSystem = $GridSystem
 @onready var map_loader: MapLoader = $MapLoader
 @onready var input_manager: InputManager = $InputManager
+@onready var ui_manager: UIManager = $UIManager
 
 var current_map: String = ""
 var current_level: int = 0
@@ -25,6 +27,7 @@ var current_level: int = 0
 signal state_changed(new_state: int)
 
 func _ready():
+	unit_manager.unit_turn_completed.connect(_check_faction_turn_ended)
 	# Wait a frame to ensure all nodes are ready
 	await get_tree().process_frame
 	load_level(0)
@@ -32,12 +35,13 @@ func _ready():
 func change_state(new_state: int) -> void:
 	current_state = new_state
 	
-	# Handle state transition logic
 	match new_state:
 		GameState.PLAYER_TURN:
-			start_player_turn()
+			start_faction_turn(GameUnit.Faction.PLAYER)
+		GameState.ALLY_TURN:
+			start_faction_turn(GameUnit.Faction.ALLY)
 		GameState.ENEMY_TURN:
-			start_enemy_turn()
+			start_faction_turn(GameUnit.Faction.ENEMY)
 		GameState.VICTORY:
 			handle_victory()
 		GameState.GAME_OVER:
@@ -46,38 +50,33 @@ func change_state(new_state: int) -> void:
 	# Emit signal for UI and other systems
 	state_changed.emit(new_state)
 
-func start_player_turn() -> void:
-	# Reset action points, movement, etc.
-	unit_manager.prepare_player_units_for_turn()
+func start_faction_turn(faction: GameUnit.Faction) -> void:
+	unit_manager.prepare_faction_units_for_turn(faction)
+	ui_manager.announce_faction_turn(faction)
 	
-	# Enable player input
-	# Input controller handles this via signal
+	if faction == GameUnit.Faction.PLAYER:
+		input_manager.change_state(input_manager.InputState.GRID_SELECTION)
+	elif faction == GameUnit.Faction.ALLY:
+		input_manager.change_state(input_manager.InputState.LOCKED)
+		# TODO implement Ally AI
+		await get_tree().create_timer(1.0).timeout
+		end_faction_turn(faction)
+	elif faction == GameUnit.Faction.ENEMY:
+		input_manager.change_state(input_manager.InputState.LOCKED)
+		# TODO implement Enemy AI
+		await get_tree().create_timer(1.0).timeout
+		end_faction_turn(faction)
 
-func start_enemy_turn() -> void:
-	# AI processing for enemy units
-	unit_manager.prepare_enemy_units_for_turn()
-	
-	# Start AI processing
-	# For now, just end enemy turn immediately
-	# TODO implement AI
-	await get_tree().create_timer(1.0).timeout
-	end_enemy_turn()
-
-func end_player_turn() -> void:
-	# Check if all player units have acted
-	if not unit_manager.are_all_player_units_done():
-		# Force end turn for remaining units
-		for unit in unit_manager.player_units:
-			if unit.can_move or unit.can_act:
-				unit_manager.end_unit_turn(unit)
-	
-	change_state(GameState.ENEMY_TURN)
-
-func end_enemy_turn() -> void:
-	# Check for victory conditions
-	if map_loader.check_victory_condition():
-		change_state(GameState.VICTORY)
-	else:
+func end_faction_turn(faction: GameUnit.Faction) -> void:
+	unit_manager.force_faction_end(faction)
+	if faction == GameUnit.Faction.PLAYER:
+		if unit_manager.ally_units.size() > 0:
+			change_state(GameState.ALLY_TURN)
+		else:
+			change_state(GameState.ENEMY_TURN)
+	elif faction == GameUnit.Faction.ALLY:
+		change_state(GameState.ENEMY_TURN)
+	elif faction == GameUnit.Faction.ENEMY:
 		change_state(GameState.PLAYER_TURN)
 
 func handle_victory() -> void:
@@ -113,8 +112,7 @@ func load_level(level_number: int) -> void:
 func restart_level() -> void:
 	load_level(current_level)
 
-func _input(event):
-	if current_state == GameState.PLAYER_TURN:
-		pass
-		#if event.is_action_pressed("ui_end_turn"):
-			#end_player_turn() 
+func _check_faction_turn_ended(unit: GameUnit):
+	if unit_manager.are_all_faction_units_done(unit.faction):
+		end_faction_turn(unit.faction)
+	

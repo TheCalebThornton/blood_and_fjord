@@ -20,6 +20,7 @@ func show_actions(actions: Array[Dictionary]) -> void:
 	action_buttons.clear()
 	current_action_index = 0
 	
+	# TODO should implement logic to only show actions that are able to be used.
 	for action in actions:
 		var button = action_button_scene.instantiate()
 		button.text = action["name"]

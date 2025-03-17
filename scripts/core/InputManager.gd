@@ -56,7 +56,6 @@ func _unhandled_input(event: InputEvent) -> void:
 			_handle_action_selection(event)
 			_handle_cancel(event)
 		InputState.TARGET_SELECTION:
-			_handle_cursor_movement(event)
 			_handle_target_selection(event)
 			_handle_cancel(event)
 		InputState.MENU_OPEN:
@@ -156,7 +155,11 @@ func _handle_movement_selection(event: InputEvent) -> void:
 				pass
 
 func _handle_target_selection(event: InputEvent) -> void:
-	if event.is_action_pressed("ui_accept"):
+	if event.is_action_pressed("ui_down"):
+		battle_ui_container.action_menu.select_next_action()
+	elif event.is_action_pressed("ui_up"):
+		battle_ui_container.action_menu.select_previous_action()
+	elif event.is_action_pressed("ui_accept"):
 		var selected_unit = unit_manager.selected_unit
 		
 		if selected_unit and cursor_position in valid_targets:
@@ -172,11 +175,13 @@ func _handle_target_selection(event: InputEvent) -> void:
 						valid_targets.clear()
 						action_type = ""
 						change_state(InputState.GRID_SELECTION)
-					# Other action types can be added here
+					# Other action types can be added here like Trade or Heal
 			
 			# Reset target selection
 			valid_targets.clear()
 			action_type = ""
+	else:
+		return
 
 func _handle_cancel(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_cancel"):
@@ -234,7 +239,6 @@ func change_state(new_state: int) -> void:
 			battle_ui_container.unit_overview_ui.hide_unit_stats()
 			battle_ui_container.action_menu.hide()
 		InputState.ACTION_SELECTION:
-			# Show action menu near the selected unit
 			var unit = unit_manager.selected_unit
 			if unit:
 				battle_ui_container.action_menu.show_actions(unit.get_available_actions())
