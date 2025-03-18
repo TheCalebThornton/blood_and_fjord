@@ -57,6 +57,16 @@ func get_unit_at(grid_pos: Vector2i) -> GameUnit:
 func has_unit_at(grid_pos: Vector2i) -> bool:
 	return get_unit_at(grid_pos) != null
 
+func highlight_unit_attack_range(unit: GameUnit) -> void:
+	if not unit:
+		return
+
+	var attack_range = grid_system.calculate_attack_range(
+		[unit.grid_position],
+		unit.min_attack_range,
+		unit.attack_range)
+	grid_system.highlight_attack_range(attack_range)
+
 func select_unit(unit: GameUnit) -> void:
 	if selected_unit == unit:
 		# TODO Open action menu

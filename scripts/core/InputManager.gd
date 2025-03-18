@@ -62,6 +62,28 @@ func _unhandled_input(event: InputEvent) -> void:
 			# Menu input is handled by UI
 			_handle_cancel(event)
 
+func change_state(new_state: int) -> void:
+	current_state = new_state
+	
+	match new_state:
+		InputState.GRID_SELECTION:
+			grid_system.clear_highlights()
+			battle_ui_container.action_menu.hide()
+			_update_hover_ui()
+		InputState.MOVEMENT_SELECTION:
+			battle_ui_container.unit_overview_ui.hide_unit_stats()
+			battle_ui_container.action_menu.hide()
+			_update_hover_ui()
+		InputState.ACTION_SELECTION:
+			battle_ui_container.unit_overview_ui.hide_unit_stats()
+			battle_ui_container.action_menu.show_actions(unit_manager.selected_unit.get_available_actions())
+		InputState.TARGET_SELECTION:
+			_on_cursor_move_request(valid_targets[0])
+			battle_ui_container.action_menu.hide()
+			_update_hover_ui()
+			grid_system.highlight_attack_range(valid_targets)
+
+
 func _handle_cursor_movement(event: InputEvent) -> void:
 	var movement = Vector2i(0, 0)
 	
@@ -83,10 +105,6 @@ func _handle_cursor_movement(event: InputEvent) -> void:
 			cursor_position = new_pos
 			cursor_move_request.emit(cursor_position)
 			_update_hover_ui()
-			
-			# Update UI container position
-			var cursor_world_pos = grid_system.grid_to_world_centered(cursor_position)
-			battle_ui_container.update_position(cursor_world_pos)
 
 func _handle_action_selection(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_down"):
@@ -113,8 +131,6 @@ func _on_unit_moved(unit: GameUnit, _from: Vector2i, _to:Vector2i) -> void:
 
 func _update_hover_ui() -> void:
 	var unit = unit_manager.get_unit_at(cursor_position)
-	var cursor_world_pos = grid_system.grid_to_world_centered(cursor_position)
-	
 	if unit:
 		var is_player = unit.faction == GameUnit.Faction.PLAYER
 		battle_ui_container.unit_overview_ui.show_unit_stats(unit, is_player)
@@ -156,9 +172,13 @@ func _handle_movement_selection(event: InputEvent) -> void:
 
 func _handle_target_selection(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_down"):
-		battle_ui_container.action_menu.select_next_action()
+		_move_to_nearest_target(Vector2i(0, 1))
 	elif event.is_action_pressed("ui_up"):
-		battle_ui_container.action_menu.select_previous_action()
+		_move_to_nearest_target(Vector2i(0, -1))
+	elif event.is_action_pressed("ui_left"):
+		_move_to_nearest_target(Vector2i(-1, 0))
+	elif event.is_action_pressed("ui_right"):
+		_move_to_nearest_target(Vector2i(1, 0))
 	elif event.is_action_pressed("ui_accept"):
 		var selected_unit = unit_manager.selected_unit
 		
@@ -191,16 +211,17 @@ func _handle_cancel(event: InputEvent) -> void:
 				battle_ui_container.unit_overview_ui.hide_unit_stats()
 				change_state(InputState.GRID_SELECTION)
 			InputState.ACTION_SELECTION:
-				if unit_manager.selected_unit:
-					unit_manager.revert_unit_movement(unit_manager.selected_unit)
+				unit_manager.revert_unit_movement(unit_manager.selected_unit)
+				await get_tree().process_frame 
 				change_state(InputState.MOVEMENT_SELECTION)
 			InputState.TARGET_SELECTION:
-				# Cancel target selection
+				unit_manager.highlight_unit_attack_range(unit_manager.selected_unit)
 				valid_targets.clear()
 				action_type = ""
+				_on_cursor_move_request(unit_manager.selected_unit.grid_position)
 				change_state(InputState.ACTION_SELECTION)
 			InputState.MENU_OPEN:
-				# Close menu
+				# TODO Close menu
 				change_state(InputState.GRID_SELECTION)
 		
 		action_canceled.emit()
@@ -220,32 +241,12 @@ func _try_attack(attacker: GameUnit, defender: GameUnit) -> void:
 		change_state(InputState.GRID_SELECTION)
 	else:
 		# Target not in range, show attack range and enter target selection
-		valid_targets = attack_range
+		valid_targets = attack_range.filter(func(pos): return unit_manager.has_unit_at(pos) != null)
 		action_type = "attack"
 		change_state(InputState.TARGET_SELECTION)
 		
 		# Highlight valid targets
 		grid_system.highlight_attack_range(valid_targets)
-
-func change_state(new_state: int) -> void:
-	current_state = new_state
-	
-	match new_state:
-		InputState.GRID_SELECTION:
-			grid_system.clear_highlights()
-			_update_hover_ui()
-			battle_ui_container.action_menu.hide()
-		InputState.MOVEMENT_SELECTION:
-			battle_ui_container.unit_overview_ui.hide_unit_stats()
-			battle_ui_container.action_menu.hide()
-		InputState.ACTION_SELECTION:
-			var unit = unit_manager.selected_unit
-			if unit:
-				battle_ui_container.action_menu.show_actions(unit.get_available_actions())
-		InputState.TARGET_SELECTION:
-			battle_ui_container.unit_overview_ui.hide_unit_stats()
-			battle_ui_container.action_menu.hide()
-			grid_system.highlight_attack_range(valid_targets)
 
 func _on_game_state_changed(new_state: int) -> void:
 	match new_state:
@@ -268,10 +269,53 @@ func _on_action_selected(action_id: String) -> void:
 				selected_unit.min_attack_range,
 				selected_unit.attack_range
 			)
-			valid_targets = attack_range
+			valid_targets = attack_range.filter(func(pos): return unit_manager.has_unit_at(pos))
+			if valid_targets.size() <= 0:
+				# TODO Attack action shoul
+				print("NO VALID TARGETS")
+				unit_manager.end_unit_turn(selected_unit)
+				change_state(InputState.GRID_SELECTION)
+				return
 			action_type = "attack"
 			change_state(InputState.TARGET_SELECTION)
 		"wait":
 			# End unit's turn
 			unit_manager.end_unit_turn(selected_unit)
 			change_state(InputState.GRID_SELECTION)
+
+func _move_to_nearest_target(direction: Vector2i) -> void:
+	if valid_targets.is_empty():
+		return
+		
+	# First try to find targets in the pressed direction
+	var current_pos = cursor_position
+	var targets_in_direction = valid_targets.filter(func(pos): 
+		var diff = pos - current_pos
+		return sign(diff.x) == sign(direction.x) and sign(diff.y) == sign(direction.y)
+	)
+	
+	var closest
+	# If we found targets in that direction, move to the closest one
+	if not targets_in_direction.is_empty():
+		closest = targets_in_direction[0]
+		var closest_distance = current_pos.distance_squared_to(closest)
+		
+		for target in targets_in_direction:
+			var dist = current_pos.distance_squared_to(target)
+			if dist < closest_distance:
+				closest = target
+				closest_distance = dist
+		
+	else:
+		# If no targets in that direction, move to the overall closest target
+		closest = valid_targets[0]
+		var closest_distance = current_pos.distance_squared_to(closest)
+		
+		for target in valid_targets:
+			var dist = current_pos.distance_squared_to(target)
+			if dist < closest_distance:
+				closest = target
+				closest_distance = dist
+		
+	_on_cursor_move_request(closest)
+	_update_hover_ui()

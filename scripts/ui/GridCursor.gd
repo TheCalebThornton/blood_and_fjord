@@ -11,7 +11,7 @@ var input_manager: InputManager
 var cursor_color: Color = Color(255, 255, 255, 0.7)
 var cursor_size: Vector2 = Vector2(64, 64)
 
-signal cursor_moved(grid_pos)
+signal cursor_moved(current_position: Vector2i)
 
 func _ready():
 	grid_system = get_node("/root/Main/GameManager/GridSystem")

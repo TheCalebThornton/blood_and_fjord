@@ -26,6 +26,7 @@ metadata/_edit_lock_ = true
 
 [node name="Announcement" parent="GameManager/UIManager" instance=ExtResource("3_lhr70")]
 visible = false
+text = ""
 metadata/_edit_lock_ = true
 
 [node name="InputManager" type="Node2D" parent="GameManager"]
