@@ -51,30 +51,24 @@ func calculate_damage(attacker: GameUnit, defender: GameUnit, is_critical: bool 
 	return base_damage
 
 func execute_combat(attacker: GameUnit, defender: GameUnit) -> void:
-	# Signal that combat has started
 	combat_started.emit(attacker, defender)
 	
-	# First attack
-	process_attack(attacker, defender)
+	await process_attack(attacker, defender)
 	
-	# Check if defender is defeated
 	if defender.health <= 0:
 		combat_ended.emit(attacker, defender, true)
 		return
 	
-	# Counter-attack if in range and defender can counter
 	if can_counter_attack(attacker, defender):
-		process_attack(defender, attacker)
+		await process_attack(defender, attacker)
 		
-		# Check if attacker is defeated
 		if attacker.health <= 0:
 			combat_ended.emit(defender, attacker, true)
 			return
 	
 	if can_follow_up(attacker, defender):
-		process_attack(attacker, defender)
-		
-		# Check if defender is defeated
+		await process_attack(attacker, defender)
+ 
 		if defender.health <= 0:
 			combat_ended.emit(attacker, defender, true)
 			return
@@ -83,25 +77,24 @@ func execute_combat(attacker: GameUnit, defender: GameUnit) -> void:
 	combat_ended.emit(attacker, defender, false)
 
 func process_attack(attacker: GameUnit, defender: GameUnit) -> void:
+	# TODO add Miss animation
 	if calculate_hit(attacker, defender):
 		var is_critical = calculate_critical(attacker, defender)
-		
 		var damage = calculate_damage(attacker, defender, is_critical)
+		await animate_attack(attacker, defender)
 		apply_damage(defender, damage)
-		
-		# Emit signal for UI updates
-		unit_damaged.emit(defender, damage)
 
 func apply_damage(unit: GameUnit, damage: int) -> void:
 	unit.health -= damage
 	unit.health = max(0, unit.health)
+	# TODO consume this to show damage numbers above defender
 
 func apply_healing(unit: GameUnit, amount: int) -> void:
 	unit.health += amount
 	unit.health = min(unit.health, unit.max_health)
-	
-	# Emit signal for UI updates
-	unit_healed.emit(unit, amount)
+	# TODO consume this to show healing numbers above unit
+	# invoke on_healed 'animation'
+	# unit_healed.emit(unit, amount)
 
 func can_counter_attack(attacker: GameUnit, defender: GameUnit) -> bool:
 	# Check if defender is in range to counter
@@ -110,3 +103,24 @@ func can_counter_attack(attacker: GameUnit, defender: GameUnit) -> bool:
 
 func can_follow_up(attacker: GameUnit, defender: GameUnit) -> bool:
 	return attacker.speed >= (defender.speed + 5) 
+
+func animate_attack(attacker: GameUnit, target: GameUnit) -> void:
+	var direction = target.position - attacker.position
+	
+	# Store the animation completion promise
+	var animation_finished = attacker.sprite.animation_finished
+	
+	# Set the attack direction
+	if abs(direction.x) > abs(direction.y):
+		if direction.x > 0:
+			attacker.set_state(GameUnit.UnitState.ATTACK_RIGHT)
+		else:
+			attacker.set_state(GameUnit.UnitState.ATTACK_LEFT)
+	else:
+		if direction.y > 0:
+			attacker.set_state(GameUnit.UnitState.ATTACK_DOWN)
+		else:
+			attacker.set_state(GameUnit.UnitState.ATTACK_UP)
+
+	await animation_finished
+	attacker.set_state(GameUnit.UnitState.IDLE)

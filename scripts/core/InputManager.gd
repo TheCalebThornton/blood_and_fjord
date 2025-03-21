@@ -17,7 +17,7 @@ var game_manager: GameManager
 @onready var grid_system: GridSystem = $"../GridSystem"
 @onready var unit_manager: UnitManager = $"../UnitManager"
 @onready var battle_ui_container: BattleUIContainer = $"../UIManager/BattleUIContainer"
-
+@onready var battle_manager: BattleManager = $"../BattleManager"
 var cursor_position: Vector2i = Vector2i(0, 0)
 
 # For target selection
@@ -188,18 +188,15 @@ func _handle_target_selection(event: InputEvent) -> void:
 			if target_unit:
 				match action_type:
 					"attack":
-						game_manager.battle_manager.execute_combat(selected_unit, target_unit)
+						await battle_manager.execute_combat(selected_unit, target_unit)
 						unit_manager.end_unit_turn(selected_unit)
-						
-						# Reset state
-						valid_targets.clear()
-						action_type = ""
-						change_state(InputState.GRID_SELECTION)
 					# Other action types can be added here like Trade or Heal
 			
 			# Reset target selection
 			valid_targets.clear()
 			action_type = ""
+			change_state(InputState.GRID_SELECTION)
+
 	else:
 		return
 
@@ -226,28 +223,6 @@ func _handle_cancel(event: InputEvent) -> void:
 		
 		action_canceled.emit()
 
-func _try_attack(attacker: GameUnit, defender: GameUnit) -> void:
-	var attack_range = grid_system.calculate_attack_range(
-		[attacker.grid_position],
-		attacker.min_attack_range,
-		attacker.attack_range
-	)
-	
-	if defender.grid_position in attack_range:
-		game_manager.battle_manager.execute_combat(attacker, defender)
-		
-		unit_manager.end_unit_turn(attacker)
-		
-		change_state(InputState.GRID_SELECTION)
-	else:
-		# Target not in range, show attack range and enter target selection
-		valid_targets = attack_range.filter(func(pos): return unit_manager.has_unit_at(pos) != null)
-		action_type = "attack"
-		change_state(InputState.TARGET_SELECTION)
-		
-		# Highlight valid targets
-		grid_system.highlight_attack_range(valid_targets)
-
 func _on_game_state_changed(new_state: int) -> void:
 	match new_state:
 		GameManager.GameState.PLAYER_TURN:
@@ -260,7 +235,8 @@ func _on_action_selected(action_id: String) -> void:
 	var selected_unit = unit_manager.selected_unit
 	if not selected_unit:
 		return
-		
+	
+	# TODO: This could be moved to a separate class like an Action class?
 	match action_id:
 		"attack":
 			# Set up attack targeting
@@ -271,7 +247,7 @@ func _on_action_selected(action_id: String) -> void:
 			)
 			valid_targets = attack_range.filter(func(pos): return unit_manager.has_unit_at(pos))
 			if valid_targets.size() <= 0:
-				# TODO Attack action shoul
+				# TODO Attack action should be disabled if no valid targets are found
 				print("NO VALID TARGETS")
 				unit_manager.end_unit_turn(selected_unit)
 				change_state(InputState.GRID_SELECTION)

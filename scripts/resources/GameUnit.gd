@@ -82,9 +82,6 @@ var original_position: Vector2i
 var battle_manager = null
 
 # Signals
-# signal attacked(target: Unit)
-# signal healed(amount: int)
-signal moved(from_pos: Vector2i, to_pos: Vector2i)
 signal damaged(amount: int)
 signal defeated()
 signal leveled_up(old_level: int, new_level: int)
@@ -158,39 +155,6 @@ func reset_turn() -> void:
 	has_moved = false
 	has_acted = false
 
-func set_grid_position(pos: Vector2i) -> void:
-	var old_pos = grid_position
-	grid_position = pos
-	
-	# Update visual position
-	position = get_parent().grid_system.grid_to_world(pos)
-	
-	moved.emit(old_pos, pos)
-
-func perform_attack(target) -> Dictionary:
-	has_acted = true
-	
-	# Calculate damage based on attack type
-	var damage = 0
-	var is_magical = unit_class == UnitClass.MAGE || unit_class == UnitClass.HEALER
-	
-	if is_magical:
-		damage = magic - target.resistance
-	else:
-		damage = attack - target.defense
-	
-	# Ensure minimum damage of 1
-	damage = max(1, damage)
-	
-	target.take_damage(damage)
-	
-	return {
-		"attacker": self,
-		"target": target,
-		"damage": damage,
-		"is_magical": is_magical
-	}
-
 func take_damage(amount: int) -> void:
 	health -= amount
 	health = max(0, health)
@@ -199,21 +163,6 @@ func take_damage(amount: int) -> void:
 	
 	if health <= 0:
 		_on_defeated()
-
-func heal_target(target) -> Dictionary:
-	has_acted = true
-	
-	# Calculate healing amount (based on magic stat)
-	var heal_amount = magic / 2
-	heal_amount = max(1, heal_amount)
-	
-	target.receive_healing(heal_amount)
-	
-	return {
-		"healer": self,
-		"target": target,
-		"amount": heal_amount
-	}
 
 func receive_healing(amount: int) -> void:
 	health += amount
@@ -268,16 +217,6 @@ func deselect() -> void:
 	is_selected = false
 	set_state(UnitState.IDLE)
 
-func get_attack_targets() -> Array:
-	# This will be implemented to return valid attack targets
-	# For now, return an empty array
-	return []
-
-func get_movement_range() -> Array:
-	# This will be implemented to return valid movement tiles
-	# For now, return an empty array
-	return []
-
 func get_class_name() -> String:
 	return UnitClass.keys()[unit_class] 
 
@@ -287,7 +226,6 @@ func get_description() -> String:
 func get_available_actions() -> Array[Dictionary]:
 	var actions: Array[Dictionary] = []
 	
-	# TODO No this logic belongs to the UnitManager.
 	# Only add attack if unit can act
 	if can_act:
 		actions.append({"name": "Attack", "id": "attack"})

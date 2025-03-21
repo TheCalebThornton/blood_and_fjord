@@ -16,7 +16,6 @@ func _ready():
 	action_menu.visibility_changed.connect(_on_child_visibility_changed)
 	grid_cursor.cursor_moved.connect(_update_position)
 
-# TODO just do this with connect?
 func _update_position(cursor_pos: Vector2) -> void:
 	last_cursor_pos = grid_system.grid_to_world_centered(cursor_pos)
 	_update_container_position()
