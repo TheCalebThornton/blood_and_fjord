@@ -82,6 +82,7 @@ func end_faction_turn(faction: GameUnit.Faction) -> void:
 func handle_victory() -> void:
 	# TODO Save progress, show victory screen, etc.
 	print("Victory!")
+	ui_manager.announce_level_end(true)
 	
 	# In a real game, you'd show a victory screen
 	# For now, just restart the level after a delay
@@ -91,6 +92,7 @@ func handle_victory() -> void:
 func handle_game_over() -> void:
 	# TODO Show game over screen, offer restart, etc.
 	print("Game Over!")
+	ui_manager.announce_level_end(false)
 	
 	# In a real game, you'd show a game over screen
 	# For now, just restart the level after a delay

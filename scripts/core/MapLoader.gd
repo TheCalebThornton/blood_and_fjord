@@ -99,7 +99,11 @@ func spawn_units() -> void:
 		spawn_unit(spawn_data, GameUnit.Faction.ALLY)
 
 func spawn_unit(spawn_data: Dictionary, faction: int) -> GameUnit:
-	var unit_class: int = spawn_data.get("unit_class", GameUnit.UnitClass.WARRIOR)
+	var unit = spawn_data.get("unit")
+	var unit_class_str: String = unit.get("class", "Warrior")
+	var unit_class: int = GameUnit.UnitClass.keys().find(unit_class_str.to_upper())
+	var spriteColor = unit.get("sprite", "Blue")
+	
 	
 	# Check if we have a scene for this unit class
 	if not unit_scenes.has(unit_class):
@@ -112,6 +116,8 @@ func spawn_unit(spawn_data: Dictionary, faction: int) -> GameUnit:
 	unit_instance.unit_class = unit_class
 	unit_instance.faction = faction
 	unit_instance.level = spawn_data.get("level", 1)
+	unit_instance.sprite_frames_res = load("res://scripts/resources/animatedSprites/%s%s.tres" % [spriteColor, unit_class_str])
+	unit_instance.ui_icon_image = load("res://assets/Factions/Knights/Troops/%s/%s/portrait.png" % [unit_class_str, spriteColor])
 	
 	var pos_data = spawn_data.get("position", {"x": 0, "y": 0})
 	var grid_pos = Vector2i(pos_data.x, pos_data.y)

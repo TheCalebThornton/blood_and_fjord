@@ -15,7 +15,10 @@
 	],
 	"player_spawns": [
 		{
-			"unit_class": 0,
+			"unit": {
+				"class": "Warrior",
+				"sprite": "Blue"
+			},
 			"position": {
 				"x": 1,
 				"y": 1
@@ -24,7 +27,22 @@
 			"name": "Warrior"
 		},
 		{
-			"unit_class": 1,
+			"unit": {
+				"class": "Warrior",
+				"sprite": "Blue"
+			},
+			"position": {
+				"x": 2,
+				"y": 1
+			},
+			"level": 1,
+			"name": "Warr 2"
+		},
+		{
+			"unit": {
+				"class": "Archer",
+				"sprite": "Blue"
+			},
 			"position": {
 				"x": 2,
 				"y": 1
@@ -33,7 +51,10 @@
 			"name": "Archer"
 		},
 		{
-			"unit_class": 2,
+			"unit": {
+				"class": "Mage",
+				"sprite": "Blue"
+			},
 			"position": {
 				"x": 1,
 				"y": 2
@@ -42,7 +63,10 @@
 			"name": "Mage"
 		},
 		{
-			"unit_class": 3,
+			"unit": {
+				"class": "Healer",
+				"sprite": "Blue"
+			},
 			"position": {
 				"x": 2,
 				"y": 2
@@ -53,16 +77,34 @@
 	],
 	"enemy_spawns": [
 		{
-			"unit_class": 0,
+			"unit": {
+				"class": "Warrior",
+				"sprite": "Red"
+			},
 			"position": {
 				"x": 4,
-				"y": 4
+				"y": 3
 			},
 			"level": 1,
 			"name": "Enemy Warrior"
 		},
 		{
-			"unit_class": 4,
+			"unit": {
+				"class": "Warrior",
+				"sprite": "Red"
+			},
+			"position": {
+				"x": 5,
+				"y": 3
+			},
+			"level": 1,
+			"name": "Enemy Warr 2"
+		},
+		{
+			"unit": {
+				"class": "Knight",
+				"sprite": "Red"
+			},
 			"position": {
 				"x": 7,
 				"y": 8
@@ -71,7 +113,10 @@
 			"name": "Enemy Knight"
 		},
 		{
-			"unit_class": 1,
+			"unit": {
+				"class": "Archer",
+				"sprite": "Red"
+			},
 			"position": {
 				"x": 8,
 				"y": 7

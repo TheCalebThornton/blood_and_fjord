@@ -8,7 +8,7 @@ func _ready():
 	max_health = 15
 	health = max_health
 	movement = 5
-	attack = 7
+	attack = 100
 	defense = 6
 	magic = 1
 	resistance = 3

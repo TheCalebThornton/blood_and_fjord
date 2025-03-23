@@ -19,3 +19,7 @@ config/icon="res://icon.svg"
 
 window/size/viewport_width=750
 window/size/viewport_height=750
+
+[gui]
+
+theme/custom_font="uid://b1l1b7fvlj4ql"

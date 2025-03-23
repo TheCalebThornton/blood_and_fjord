@@ -26,7 +26,8 @@ enum UnitState {
 	ATTACK_LEFT,
 	ATTACK_RIGHT,
 	ATTACK_UP,
-	ATTACK_DOWN
+	ATTACK_DOWN,
+	DEATH
 }
 
 var _color_highlight: Color = Color(1.4, 1.4, 1.4)
@@ -78,8 +79,9 @@ var is_selected: bool = false
 var grid_position: Vector2i = Vector2i(0, 0)
 var original_position: Vector2i
 
-# References
-var battle_manager = null
+# Animation / graphics
+var sprite_frames_res: SpriteFrames
+var ui_icon_image = CompressedTexture2D
 
 # Signals
 signal damaged(amount: int)
@@ -95,6 +97,9 @@ func _ready():
 	if unit_name == "":
 		unit_name = UnitClass.keys()[unit_class]
 	set_state(UnitState.IDLE)
+	
+	if sprite_frames_res:
+		sprite.sprite_frames = sprite_frames_res
 
 #region animation
 func set_state(new_state: UnitState):
@@ -145,16 +150,17 @@ func set_state(new_state: UnitState):
 			sprite.play("selected")
 
 		UnitState.INACTIVE:
+			sprite.play("idle")
 			modulate = Color(0.5, 0.5, 0.5)
 			sprite.stop()
+			
+		UnitState.DEATH:
+			modulate = Color(1, 1, 1)
+			sprite.play("death")
 
 #endregion animation
 
 #region combat/movement
-func reset_turn() -> void:
-	has_moved = false
-	has_acted = false
-
 func take_damage(amount: int) -> void:
 	health -= amount
 	health = max(0, health)
@@ -162,18 +168,18 @@ func take_damage(amount: int) -> void:
 	damaged.emit(amount)
 	
 	if health <= 0:
-		_on_defeated()
+		await _on_defeated()
 
 func receive_healing(amount: int) -> void:
 	health += amount
 	health = min(health, max_health)
 
-# TODO Handle death
 func _on_defeated() -> void:
-	defeated.emit()
+	set_state(UnitState.DEATH)
+	defeated.emit(self)
 	
-	modulate = Color(0.5, 0.5, 0.5, 0.5)
-	
+	await sprite.animation_finished
+	queue_free()
 
 func gain_experience(amount: int) -> void:
 	experience += amount
@@ -215,7 +221,10 @@ func select() -> void:
 
 func deselect() -> void:
 	is_selected = false
-	set_state(UnitState.IDLE)
+	if can_act or can_move:
+		set_state(UnitState.IDLE)
+	else:
+		set_state(UnitState.INACTIVE)
 
 func get_class_name() -> String:
 	return UnitClass.keys()[unit_class] 

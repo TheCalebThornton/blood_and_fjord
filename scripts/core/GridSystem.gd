@@ -25,8 +25,8 @@ signal path_found(path: Array)
 
 func _ready():
 	# Initialize grid when ready
-	# Set the z_index to ensure this node draws above others
-	z_index = 10
+	# Set the z_index to ensure this node draws between terrain and units
+	z_index = 1
 	pass
 
 func initialize_grid(size: Vector2i) -> void:
@@ -213,12 +213,6 @@ func find_path(from_pos: Vector2i, to_pos: Vector2i) -> Array:
 	
 	path_found.emit(grid_path)
 	return grid_path
-
-# Check if a grid position is occupied by a unit
-func is_cell_occupied(grid_pos: Vector2i) -> bool:
-	# This will need to be implemented with the UnitManager
-	# For now, return false
-	return false
 
 func highlight_movement_range(cells: Array) -> void:
 	movement_tiles = cells

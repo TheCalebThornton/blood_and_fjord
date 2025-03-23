@@ -5,14 +5,19 @@ const MIN_HIT_CHANCE = 0.1  # 10% minimum hit chance
 const MAX_HIT_CHANCE = 1.0  # 100% maximum hit chance
 const CRITICAL_MULTIPLIER = 1.5  # Critical hits do 50% more damage
 
+# Preloaded assets
+const FloatingTextScene = preload("res://scenes/ui/FloatingText.tscn")
+const BloodEffectScene = preload("res://scenes/effects/CombatEffect.tscn")
+
 # Signals
 signal combat_started(attacker: GameUnit, defender: GameUnit)
 signal combat_ended(attacker: GameUnit, defender: GameUnit, defeated: bool)
-signal unit_damaged(unit: GameUnit, damage: int)
+#signal unit_damaged(unit: GameUnit, damage: int)
 signal unit_healed(unit: GameUnit, amount: int)
 
 @onready var grid_system: GridSystem = $"../GridSystem"
 @onready var unit_manager: UnitManager = $"../UnitManager"
+@onready var game_camera: Camera2D = $"/root/Main/GameCamera"
 
 func reset() -> void:
 	# Reset any battle-specific state
@@ -31,7 +36,7 @@ func calculate_hit_chance(attacker: GameUnit, defender: GameUnit) -> float:
 	# Clamp between min and max values
 	return clampf(final_hit_chance, MIN_HIT_CHANCE, MAX_HIT_CHANCE)
 
-func calculate_critical(attacker: GameUnit, defender: GameUnit) -> bool:
+func calculate_critical(attacker: GameUnit) -> bool:
 	var crit_chance = attacker.critical / 100.0
 	return randf() <= crit_chance
 
@@ -41,7 +46,6 @@ func calculate_damage(attacker: GameUnit, defender: GameUnit, is_critical: bool 
 	# Ensure minimum damage of 1
 	base_damage = max(1, base_damage)
 	
-	# Apply critical multiplier if applicable
 	if is_critical:
 		base_damage = int(base_damage * CRITICAL_MULTIPLIER)
 	
@@ -77,24 +81,35 @@ func execute_combat(attacker: GameUnit, defender: GameUnit) -> void:
 	combat_ended.emit(attacker, defender, false)
 
 func process_attack(attacker: GameUnit, defender: GameUnit) -> void:
-	# TODO add Miss animation
+	await animate_attack(attacker, defender)
+	
 	if calculate_hit(attacker, defender):
-		var is_critical = calculate_critical(attacker, defender)
+		var is_critical = calculate_critical(attacker)
 		var damage = calculate_damage(attacker, defender, is_critical)
-		await animate_attack(attacker, defender)
-		apply_damage(defender, damage)
+		await apply_damage(defender, damage, is_critical)
+	else:
+		show_floating_text(defender, "MISS", FloatingText.TextType.MISS)
 
-func apply_damage(unit: GameUnit, damage: int) -> void:
-	unit.health -= damage
-	unit.health = max(0, unit.health)
-	# TODO consume this to show damage numbers above defender
+func apply_damage(unit: GameUnit, damage: int, is_critical: bool = false) -> void:
+	show_floating_text(unit, str(damage), 
+		FloatingText.TextType.CRITICAL if is_critical else FloatingText.TextType.DAMAGE)
+	if is_critical:
+		game_camera.shake(10.0, 0.3)
+	spawn_effect(unit.position, BloodEffectScene)
+	await unit.take_damage(damage)
 
 func apply_healing(unit: GameUnit, amount: int) -> void:
 	unit.health += amount
 	unit.health = min(unit.health, unit.max_health)
-	# TODO consume this to show healing numbers above unit
-	# invoke on_healed 'animation'
-	# unit_healed.emit(unit, amount)
+	show_floating_text(unit, str(amount), FloatingText.TextType.HEAL)
+	unit_healed.emit(unit, amount)
+
+func show_floating_text(unit: GameUnit, text: String, type: int) -> void:
+	var floating_text = FloatingTextScene.instantiate()
+	floating_text.text = text
+	floating_text.type = type
+	floating_text.position = unit.position + Vector2(-20, -30)  # Position above unit's head
+	add_child(floating_text)
 
 func can_counter_attack(attacker: GameUnit, defender: GameUnit) -> bool:
 	# Check if defender is in range to counter
@@ -124,3 +139,8 @@ func animate_attack(attacker: GameUnit, target: GameUnit) -> void:
 
 	await animation_finished
 	attacker.set_state(GameUnit.UnitState.IDLE)
+
+func spawn_effect(pos: Vector2, effect) -> void:
+	var effectInstance = effect.instantiate()
+	effectInstance.position = pos
+	add_child(effectInstance)

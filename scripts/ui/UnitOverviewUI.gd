@@ -28,8 +28,7 @@ func show_unit_stats(unit: GameUnit, is_player: bool = true):
 	hp_bar.max_value = unit.max_health
 	hp_bar.value = unit.health
 	
-	var portrait_key = "default"
-	unit_portrait.texture = portrait_textures[portrait_key]
+	unit_portrait.texture = unit.ui_icon_image
 	
 	if is_player:
 		unit_name_label.add_theme_color_override("font_color", Color(0, 0.7, 1))

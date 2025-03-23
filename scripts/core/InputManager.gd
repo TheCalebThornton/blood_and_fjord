@@ -46,7 +46,7 @@ func _unhandled_input(event: InputEvent) -> void:
 	match current_state:
 		InputState.GRID_SELECTION:
 			_handle_cursor_movement(event)
-			_handle_selection(event)
+			_handle_cursor_selection(event)
 			_handle_cancel(event)
 		InputState.MOVEMENT_SELECTION:
 			_handle_cursor_movement(event)
@@ -137,7 +137,7 @@ func _update_hover_ui() -> void:
 	else:
 		battle_ui_container.unit_overview_ui.hide_unit_stats()
 
-func _handle_selection(event: InputEvent) -> void:
+func _handle_cursor_selection(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_accept"):
 		tile_selected.emit(cursor_position)
 		
@@ -155,12 +155,17 @@ func _handle_movement_selection(event: InputEvent) -> void:
 		var selected_unit = unit_manager.selected_unit
 		
 		if selected_unit:
+			if unit_manager.get_unit_at(cursor_position) == selected_unit:
+				grid_system.clear_highlights()
+				change_state(InputState.ACTION_SELECTION)
+				return
+			
 			# Check if the position is in movement range
 			var movement_range = grid_system.calculate_movement_range(
 				selected_unit.grid_position,
 				selected_unit.movement
 			)
-			
+
 			if cursor_position in movement_range and not unit_manager.has_unit_at(cursor_position):
 				# Lock UI while moving
 				change_state(InputState.LOCKED)
@@ -267,7 +272,9 @@ func _move_to_nearest_target(direction: Vector2i) -> void:
 	var current_pos = cursor_position
 	var targets_in_direction = valid_targets.filter(func(pos): 
 		var diff = pos - current_pos
-		return sign(diff.x) == sign(direction.x) and sign(diff.y) == sign(direction.y)
+		if diff == Vector2i(0, 0):
+			return false
+		return sign(diff.x) == sign(direction.x) or sign(diff.y) == sign(direction.y)
 	)
 	
 	var closest

@@ -8,6 +8,8 @@ const DEFAULT_ZOOM: float = 1.0  # Default zoom level
 
 var is_dragging: bool = false
 var drag_start_position: Vector2 = Vector2.ZERO
+var shake_strength: float = 0.0
+var shake_duration: float = 0.0
 
 @onready var grid_system: GridSystem = $"/root/Main/GameManager/GridSystem"
 @onready var grid_cursor: GridCursor = $"/root/Main/Cursor"  # Adjust path if needed
@@ -19,6 +21,22 @@ func _ready():
 	# Connect to the cursor's movement signal
 	if grid_cursor:
 		grid_cursor.connect("cursor_moved", _on_cursor_moved)
+
+func shake(strength: float = 5.0, duration: float = 0.2) -> void:
+	shake_strength = strength
+	shake_duration = duration
+
+func _process(delta):
+	if shake_duration > 0:
+		shake_duration -= delta
+		if shake_duration <= 0:
+			shake_strength = 0
+			offset = Vector2.ZERO
+		else:
+			offset = Vector2(
+				randf_range(-shake_strength, shake_strength),
+				randf_range(-shake_strength, shake_strength)
+			)
 		
 func set_position_value(newPos):
 	var viewport_size = get_viewport_rect().size

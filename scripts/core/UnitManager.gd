@@ -214,14 +214,16 @@ func _get_position_along_path(points: Array, progress: float) -> Vector2:
 func revert_unit_movement(unit: GameUnit) -> void:
 	if unit.has_moved:
 		teleport_unit(unit, unit.original_position)
-		unit.has_moved = false
-		unit.can_move = true
-		selected_unit = null
-		cursor_move_request.emit(unit.original_position)
-		select_unit(unit)
+	unit.has_moved = false
+	unit.can_move = true
+	selected_unit = null
+	cursor_move_request.emit(unit.original_position)
+	select_unit(unit)
 #endregion
 
 func end_unit_turn(unit: GameUnit) -> void:
+	# TODO this is overwriting my death animation
+	unit.original_position = unit.grid_position
 	unit.can_move = false
 	unit.can_act = false
 	
@@ -240,6 +242,7 @@ func prepare_faction_units_for_turn(faction: GameUnit.Faction) -> void:
 	for unit in _get_unit_list_for_faction(faction):
 		unit.can_move = true
 		unit.can_act = true
+		unit.set_state(GameUnit.UnitState.IDLE)
 
 func are_all_faction_units_done(faction: GameUnit.Faction) -> bool:
 	for unit in _get_unit_list_for_faction(faction):
