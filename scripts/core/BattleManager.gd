@@ -32,19 +32,18 @@ func calculate_hit_chance(attacker: GameUnit, defender: GameUnit) -> float:
 	var evasion_modifier = defender.evasion / 100.0
 	
 	var final_hit_chance = base_hit_chance * (1.0 - evasion_modifier)
-	
-	# Clamp between min and max values
 	return clampf(final_hit_chance, MIN_HIT_CHANCE, MAX_HIT_CHANCE)
 
-func calculate_critical(attacker: GameUnit) -> bool:
-	var crit_chance = attacker.critical / 100.0
+func calculate_critical(attacker: GameUnit, defender: GameUnit) -> bool:
+	var crit_chance = calculate_critical_chance(attacker, defender)
 	return randf() <= crit_chance
+	
+func calculate_critical_chance(attacker: GameUnit, defender: GameUnit):
+	# TODO apply Luck stat?
+	return attacker.critical / 100.0
 
 func calculate_damage(attacker: GameUnit, defender: GameUnit, is_critical: bool = false) -> int:
-	var base_damage = attacker.attack - defender.defense
-	
-	# Ensure minimum damage of 1
-	base_damage = max(1, base_damage)
+	var base_damage = max(1, attacker.attack - defender.defense)
 	
 	if is_critical:
 		base_damage = int(base_damage * CRITICAL_MULTIPLIER)
@@ -84,7 +83,7 @@ func process_attack(attacker: GameUnit, defender: GameUnit) -> void:
 	await animate_attack(attacker, defender)
 	
 	if calculate_hit(attacker, defender):
-		var is_critical = calculate_critical(attacker)
+		var is_critical = calculate_critical(attacker, defender)
 		var damage = calculate_damage(attacker, defender, is_critical)
 		await apply_damage(defender, damage, is_critical)
 	else:

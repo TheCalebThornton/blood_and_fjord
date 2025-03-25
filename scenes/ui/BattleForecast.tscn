@@ -1,0 +1,201 @@
+[gd_scene load_steps=12 format=3 uid="uid://ctfept6poc1js"]
+
+[ext_resource type="Script" uid="uid://cv53bxxulimeh" path="res://scripts/ui/BattleForecast.gd" id="1_cmsy6"]
+[ext_resource type="FontFile" uid="uid://b1l1b7fvlj4ql" path="res://assets/Fonts/BruceForeverRegular-X3jd2.ttf" id="2_neadd"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_cmsy6"]
+content_margin_left = 0.0
+content_margin_top = 0.0
+content_margin_right = 0.0
+content_margin_bottom = 0.0
+bg_color = Color(0.1, 0.1, 0.1, 0.6)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+corner_detail = 5
+
+[sub_resource type="Theme" id="Theme_neadd"]
+PanelContainer/styles/panel = SubResource("StyleBoxFlat_cmsy6")
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_neadd"]
+bg_color = Color(0, 0, 0, 1)
+
+[sub_resource type="Theme" id="Theme_no0xp"]
+MarginContainer/constants/margin_bottom = 4
+MarginContainer/constants/margin_left = 4
+MarginContainer/constants/margin_right = 4
+MarginContainer/constants/margin_top = 4
+
+[sub_resource type="Theme" id="Theme_cmsy6"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_no0xp"]
+content_margin_left = 2.0
+content_margin_top = 2.0
+content_margin_right = 2.0
+content_margin_bottom = 2.0
+bg_color = Color(0.1, 0.1, 0.1, 0.3)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+corner_detail = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_r5g8h"]
+content_margin_left = 2.0
+content_margin_top = 2.0
+content_margin_right = 2.0
+content_margin_bottom = 2.0
+bg_color = Color(0.0196078, 0.286275, 0.027451, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+corner_detail = 6
+
+[sub_resource type="Theme" id="Theme_g4124"]
+ProgressBar/colors/font_color = Color(0.95, 0.95, 0.95, 1)
+ProgressBar/colors/font_outline_color = Color(0, 0.564706, 0, 1)
+ProgressBar/constants/outline_size = 0
+ProgressBar/font_sizes/font_size = 10
+ProgressBar/fonts/font = ExtResource("2_neadd")
+ProgressBar/styles/background = SubResource("StyleBoxFlat_no0xp")
+ProgressBar/styles/fill = SubResource("StyleBoxFlat_r5g8h")
+
+[sub_resource type="Theme" id="Theme_xoypt"]
+ProgressBar/colors/font_color = Color(0.95, 0.95, 0.95, 1)
+ProgressBar/colors/font_outline_color = Color(0, 0, 0, 1)
+ProgressBar/constants/outline_size = 0
+ProgressBar/font_sizes/font_size = 10
+ProgressBar/fonts/font = ExtResource("2_neadd")
+ProgressBar/styles/background = SubResource("StyleBoxFlat_no0xp")
+ProgressBar/styles/fill = SubResource("StyleBoxFlat_r5g8h")
+
+[node name="BattleForecast" type="PanelContainer"]
+theme = SubResource("Theme_neadd")
+theme_override_styles/panel = SubResource("StyleBoxFlat_neadd")
+script = ExtResource("1_cmsy6")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 2
+theme = SubResource("Theme_no0xp")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+theme = SubResource("Theme_cmsy6")
+
+[node name="AttackerPanel" type="PanelContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/AttackerPanel"]
+layout_mode = 2
+
+[node name="Name" type="Label" parent="MarginContainer/VBoxContainer/AttackerPanel/VBoxContainer"]
+layout_mode = 2
+text = "Warrior"
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="HPBar" type="ProgressBar" parent="MarginContainer/VBoxContainer/AttackerPanel/VBoxContainer"]
+custom_minimum_size = Vector2(20, 10)
+layout_mode = 2
+theme = SubResource("Theme_g4124")
+step = 1.0
+value = 10.0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="AttackerColumnPanel" type="PanelContainer" parent="MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="AttackerColumn" type="VBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/AttackerColumnPanel"]
+layout_mode = 2
+
+[node name="aHp" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/AttackerColumnPanel/AttackerColumn"]
+layout_mode = 2
+text = "23 > 0"
+
+[node name="aAtk" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/AttackerColumnPanel/AttackerColumn"]
+layout_mode = 2
+text = "12"
+
+[node name="aHit" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/AttackerColumnPanel/AttackerColumn"]
+layout_mode = 2
+size_flags_horizontal = 0
+text = "100"
+
+[node name="aCrit" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/AttackerColumnPanel/AttackerColumn"]
+layout_mode = 2
+text = "12"
+
+[node name="StatLabelColumnPanel" type="PanelContainer" parent="MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="StatLabelColumn" type="VBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/StatLabelColumnPanel"]
+layout_mode = 2
+
+[node name="hpLabel" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/StatLabelColumnPanel/StatLabelColumn"]
+layout_mode = 2
+text = "HP"
+horizontal_alignment = 1
+
+[node name="atkLabel" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/StatLabelColumnPanel/StatLabelColumn"]
+layout_mode = 2
+text = "Atk"
+horizontal_alignment = 1
+
+[node name="hitLabel" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/StatLabelColumnPanel/StatLabelColumn"]
+layout_mode = 2
+text = "Hit"
+horizontal_alignment = 1
+
+[node name="critLabel" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/StatLabelColumnPanel/StatLabelColumn"]
+layout_mode = 2
+text = "Crit"
+horizontal_alignment = 1
+
+[node name="DefenderColumnPanel" type="PanelContainer" parent="MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="DefenderColumn" type="VBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/DefenderColumnPanel"]
+layout_mode = 2
+
+[node name="dHp" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/DefenderColumnPanel/DefenderColumn"]
+layout_mode = 2
+text = "34 > 0"
+horizontal_alignment = 2
+
+[node name="dAtk" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/DefenderColumnPanel/DefenderColumn"]
+layout_mode = 2
+text = "12"
+horizontal_alignment = 2
+
+[node name="dHit" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/DefenderColumnPanel/DefenderColumn"]
+layout_mode = 2
+size_flags_horizontal = 8
+text = "110"
+horizontal_alignment = 2
+
+[node name="dCrit" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/DefenderColumnPanel/DefenderColumn"]
+layout_mode = 2
+text = "23"
+horizontal_alignment = 2
+
+[node name="DefenderPanel" type="PanelContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/DefenderPanel"]
+layout_mode = 2
+
+[node name="Name" type="Label" parent="MarginContainer/VBoxContainer/DefenderPanel/VBoxContainer"]
+layout_mode = 2
+text = "Enemy Warrior"
+horizontal_alignment = 2
+
+[node name="HPBar" type="ProgressBar" parent="MarginContainer/VBoxContainer/DefenderPanel/VBoxContainer"]
+layout_mode = 2
+theme = SubResource("Theme_xoypt")

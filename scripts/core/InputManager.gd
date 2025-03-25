@@ -68,18 +68,14 @@ func change_state(new_state: int) -> void:
 	match new_state:
 		InputState.GRID_SELECTION:
 			grid_system.clear_highlights()
-			battle_ui_container.action_menu.hide()
 			_update_hover_ui()
 		InputState.MOVEMENT_SELECTION:
-			battle_ui_container.unit_overview_ui.hide_unit_stats()
-			battle_ui_container.action_menu.hide()
 			_update_hover_ui()
 		InputState.ACTION_SELECTION:
-			battle_ui_container.unit_overview_ui.hide_unit_stats()
+			battle_ui_container.hide_all_ui()
 			battle_ui_container.action_menu.show_actions(unit_manager.selected_unit.get_available_actions())
 		InputState.TARGET_SELECTION:
 			_on_cursor_move_request(valid_targets[0])
-			battle_ui_container.action_menu.hide()
 			_update_hover_ui()
 			grid_system.highlight_attack_range(valid_targets)
 
@@ -130,12 +126,14 @@ func _on_unit_moved(unit: GameUnit, _from: Vector2i, _to:Vector2i) -> void:
 		change_state(InputState.GRID_SELECTION)
 
 func _update_hover_ui() -> void:
+	battle_ui_container.hide_all_ui()
 	var unit = unit_manager.get_unit_at(cursor_position)
 	if unit:
-		var is_player = unit.faction == GameUnit.Faction.PLAYER
-		battle_ui_container.unit_overview_ui.show_unit_stats(unit, is_player)
-	else:
-		battle_ui_container.unit_overview_ui.hide_unit_stats()
+		if current_state == InputState.TARGET_SELECTION and action_type == "attack":
+			battle_ui_container.battle_forcast.show_forecast(unit_manager.selected_unit, unit, battle_manager)
+		else:
+			var is_player = unit.faction == GameUnit.Faction.PLAYER
+			battle_ui_container.unit_overview_ui.show_unit_stats(unit, is_player)
 
 func _handle_cursor_selection(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_accept"):

@@ -27,7 +27,8 @@ enum UnitState {
 	ATTACK_RIGHT,
 	ATTACK_UP,
 	ATTACK_DOWN,
-	DEATH
+	DEATH,
+	TURN_COMPLETE
 }
 
 var _color_highlight: Color = Color(1.4, 1.4, 1.4)
@@ -149,9 +150,14 @@ func set_state(new_state: UnitState):
 			modulate = _color_highlight
 			sprite.play("selected")
 
-		UnitState.INACTIVE:
+		UnitState.TURN_COMPLETE:
 			sprite.play("idle")
 			modulate = Color(0.5, 0.5, 0.5)
+			sprite.stop()
+		
+		UnitState.INACTIVE:
+			sprite.play("idle")
+			modulate = Color(1, 1, 1)
 			sprite.stop()
 			
 		UnitState.DEATH:
@@ -224,7 +230,7 @@ func deselect() -> void:
 	if can_act or can_move:
 		set_state(UnitState.IDLE)
 	else:
-		set_state(UnitState.INACTIVE)
+		set_state(UnitState.TURN_COMPLETE)
 
 func get_class_name() -> String:
 	return UnitClass.keys()[unit_class] 

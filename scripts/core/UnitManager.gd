@@ -235,6 +235,7 @@ func end_unit_turn(unit: GameUnit) -> void:
 
 func force_faction_end(faction: GameUnit.Faction) -> void:
 	for unit in _get_unit_list_for_faction(faction):
+		unit.set_state(GameUnit.UnitState.INACTIVE)
 		unit.can_move = false
 		unit.can_act = false
 

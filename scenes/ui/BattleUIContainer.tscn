@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=3 uid="uid://dnh12ykp6bhmr"]
+[gd_scene load_steps=5 format=3 uid="uid://dnh12ykp6bhmr"]
 
 [ext_resource type="Script" uid="uid://b15lxi6pd5dqc" path="res://scripts/ui/BattleUIContainer.gd" id="1_6xwfv"]
 [ext_resource type="PackedScene" uid="uid://c828fvnscprqf" path="res://scenes/ui/UnitActionMenu.tscn" id="1_agn2j"]
 [ext_resource type="PackedScene" uid="uid://c305inhdmiai4" path="res://scenes/ui/UnitOverviewUI.tscn" id="2_6xwfv"]
+[ext_resource type="PackedScene" uid="uid://ctfept6poc1js" path="res://scenes/ui/BattleForecast.tscn" id="4_4y5n0"]
 
 [node name="BattleUiContainer" type="Control"]
 layout_mode = 3
@@ -25,4 +26,7 @@ theme_override_constants/margin_bottom = 8
 layout_mode = 2
 
 [node name="UnitOverviewUI" parent="Panel/MarginContainer" instance=ExtResource("2_6xwfv")]
+layout_mode = 2
+
+[node name="BattleForecast" parent="Panel/MarginContainer" instance=ExtResource("4_4y5n0")]
 layout_mode = 2

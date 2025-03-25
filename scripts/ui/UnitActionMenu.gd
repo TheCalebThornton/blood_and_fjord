@@ -70,7 +70,7 @@ func _on_action_button_pressed(action_id: String) -> void:
 	action_selected.emit(action_id)
 	hide()
 
-func close() -> void:
+func hide_actions() -> void:
 	# Remove focus before hiding
 	if has_focus():
 		release_focus()
