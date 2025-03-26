@@ -6,7 +6,7 @@ const MAX_HIT_CHANCE = 1.0  # 100% maximum hit chance
 const CRITICAL_MULTIPLIER = 1.5  # Critical hits do 50% more damage
 
 # Preloaded assets
-const FloatingTextScene = preload("res://scenes/ui/FloatingText.tscn")
+const FloatingTextScene = preload("res://scenes/ui/Battle/FloatingText.tscn")
 const BloodEffectScene = preload("res://scenes/effects/CombatEffect.tscn")
 
 # Signals
@@ -38,7 +38,7 @@ func calculate_critical(attacker: GameUnit, defender: GameUnit) -> bool:
 	var crit_chance = calculate_critical_chance(attacker, defender)
 	return randf() <= crit_chance
 	
-func calculate_critical_chance(attacker: GameUnit, defender: GameUnit):
+func calculate_critical_chance(attacker: GameUnit, _defender: GameUnit):
 	# TODO apply Luck stat?
 	return attacker.critical / 100.0
 

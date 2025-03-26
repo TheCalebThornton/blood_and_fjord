@@ -1,0 +1,32 @@
+[gd_scene load_steps=4 format=3 uid="uid://dsqr2tln6tnyy"]
+
+[ext_resource type="Script" uid="uid://duqx6nc7bh1qk" path="res://scripts/ui/BattleMenu.gd" id="1_5gk2c"]
+[ext_resource type="Theme" uid="uid://dkcj355wmilmj" path="res://scripts/resources/ui/MenuButton.tres" id="2_qpc4b"]
+[ext_resource type="Script" uid="uid://cnv8t4xu0mbv" path="res://scripts/ui/MenuActionButton.gd" id="3_t52xq"]
+
+[node name="BattleMenu" type="PanelContainer"]
+script = ExtResource("1_5gk2c")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+
+[node name="QuitToMenu" type="Button" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme = ExtResource("2_qpc4b")
+text = "Quit to menu"
+script = ExtResource("3_t52xq")
+
+[node name="Surrender" type="Button" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme = ExtResource("2_qpc4b")
+text = "Surrender"
+script = ExtResource("3_t52xq")
+
+[node name="EndTurn" type="Button" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme = ExtResource("2_qpc4b")
+text = "End turn"
+script = ExtResource("3_t52xq")

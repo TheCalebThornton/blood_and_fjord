@@ -116,7 +116,7 @@ func spawn_unit(spawn_data: Dictionary, faction: int) -> GameUnit:
 	unit_instance.unit_class = unit_class
 	unit_instance.faction = faction
 	unit_instance.level = spawn_data.get("level", 1)
-	unit_instance.sprite_frames_res = load("res://scripts/resources/animatedSprites/%s%s.tres" % [spriteColor, unit_class_str])
+	unit_instance.sprite_frames_res = load("res://scripts/resources/animatedSprites/%s/%s%s.tres" % [unit_class_str, spriteColor, unit_class_str])
 	unit_instance.ui_icon_image = load("res://assets/Factions/Knights/Troops/%s/%s/portrait.png" % [unit_class_str, spriteColor])
 	
 	var pos_data = spawn_data.get("position", {"x": 0, "y": 0})

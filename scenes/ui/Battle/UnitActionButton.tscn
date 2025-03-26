@@ -1,0 +1,8 @@
+[gd_scene load_steps=3 format=3 uid="uid://ce1uwnbiqwxir"]
+
+[ext_resource type="Script" uid="uid://cnv8t4xu0mbv" path="res://scripts/ui/MenuActionButton.gd" id="1_586t5"]
+[ext_resource type="Theme" uid="uid://dkcj355wmilmj" path="res://scripts/resources/ui/MenuButton.tres" id="1_c2kjl"]
+
+[node name="UnitActionButton" type="Button"]
+theme = ExtResource("1_c2kjl")
+script = ExtResource("1_586t5")

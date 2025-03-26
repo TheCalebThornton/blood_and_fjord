@@ -1,4 +1,4 @@
-extends Control
+extends PanelContainer
 class_name UnitActionMenu
 
 signal action_selected(action_id: String)
@@ -6,7 +6,7 @@ signal menu_closed()
 
 @onready var button_container = $MarginContainer/VBoxContainer
 
-var action_button_scene = preload("res://scenes/ui/UnitActionButton.tscn")
+var action_button_scene = preload("res://scenes/ui/Battle/UnitActionButton.tscn")
 var current_action_index: int = 0
 var action_buttons: Array = []
 

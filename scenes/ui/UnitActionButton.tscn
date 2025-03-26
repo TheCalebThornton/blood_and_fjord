@@ -1,7 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://ce1uwnbiqwxir"]
-
-[ext_resource type="Script" uid="uid://cnv8t4xu0mbv" path="res://scripts/ui/UnitActionButton.gd" id="1_586t5"]
-
-[node name="UnitActionButton" type="Button"]
-script = ExtResource("1_586t5")
-metadata/_custom_type_script = "uid://xe5dql5v7srp"

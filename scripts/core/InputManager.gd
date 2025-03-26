@@ -53,13 +53,13 @@ func _unhandled_input(event: InputEvent) -> void:
 			_handle_movement_selection(event)
 			_handle_cancel(event)
 		InputState.ACTION_SELECTION:
-			_handle_action_selection(event)
+			_handle_menu_selection(event, battle_ui_container.action_menu)
 			_handle_cancel(event)
 		InputState.TARGET_SELECTION:
 			_handle_target_selection(event)
 			_handle_cancel(event)
 		InputState.MENU_OPEN:
-			# Menu input is handled by UI
+			_handle_menu_selection(event, battle_ui_container.battle_menu)
 			_handle_cancel(event)
 
 func change_state(new_state: int) -> void:
@@ -101,14 +101,14 @@ func _handle_cursor_movement(event: InputEvent) -> void:
 			cursor_position = new_pos
 			cursor_move_request.emit(cursor_position)
 			_update_hover_ui()
-
-func _handle_action_selection(event: InputEvent) -> void:
+		
+func _handle_menu_selection(event: InputEvent, menu: PanelContainer) -> void:
 	if event.is_action_pressed("ui_down"):
-		battle_ui_container.action_menu.select_next_action()
+		menu.select_next_action()
 	elif event.is_action_pressed("ui_up"):
-		battle_ui_container.action_menu.select_previous_action()
+		menu.select_previous_action()
 	elif event.is_action_pressed("ui_accept"):
-		battle_ui_container.action_menu.confirm_selection()
+		menu.confirm_selection()
 	else:
 		return
 
@@ -145,8 +145,9 @@ func _handle_cursor_selection(event: InputEvent) -> void:
 			if unit.faction == GameUnit.Faction.PLAYER and unit.can_move:
 				unit_manager.select_unit(unit)
 				change_state(InputState.MOVEMENT_SELECTION)
-				# Hide unit stats UI when selecting a unit
-				battle_ui_container.unit_overview_ui.hide_unit_stats()
+		else:
+			change_state(InputState.MENU_OPEN)
+			battle_ui_container.battle_menu.show_battle_menu()
 
 func _handle_movement_selection(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_accept"):
@@ -208,7 +209,6 @@ func _handle_cancel(event: InputEvent) -> void:
 		match current_state:
 			InputState.MOVEMENT_SELECTION:
 				unit_manager.deselect_unit()
-				battle_ui_container.unit_overview_ui.hide_unit_stats()
 				change_state(InputState.GRID_SELECTION)
 			InputState.ACTION_SELECTION:
 				unit_manager.revert_unit_movement(unit_manager.selected_unit)
@@ -221,7 +221,6 @@ func _handle_cancel(event: InputEvent) -> void:
 				_on_cursor_move_request(unit_manager.selected_unit.grid_position)
 				change_state(InputState.ACTION_SELECTION)
 			InputState.MENU_OPEN:
-				# TODO Close menu
 				change_state(InputState.GRID_SELECTION)
 		
 		action_canceled.emit()

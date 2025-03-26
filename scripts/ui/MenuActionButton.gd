@@ -1,5 +1,5 @@
 extends Button
-class_name UnitActionButton
+class_name MenuActionButton
 
 func _ready():
 	focus_mode = Control.FOCUS_ALL  # Ensure button can receive focus

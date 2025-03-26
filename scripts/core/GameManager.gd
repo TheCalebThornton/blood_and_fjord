@@ -20,6 +20,7 @@ var current_state: int = GameState.MAIN_MENU
 @onready var map_loader: MapLoader = $MapLoader
 @onready var input_manager: InputManager = $InputManager
 @onready var ui_manager: UIManager = $UIManager
+@onready var battle_menu: BattleMenu = $UIManager/BattleUIContainer/Panel/MarginContainer/BattleMenu
 
 var current_map: String = ""
 var current_level: int = 0
@@ -28,11 +29,13 @@ signal state_changed(new_state: int)
 
 func _ready():
 	unit_manager.unit_turn_completed.connect(_check_faction_turn_ended)
+	battle_menu.battle_menu_action.connect(_on_battle_menu_action)
+	
 	# Wait a frame to ensure all nodes are ready
 	await get_tree().process_frame
 	load_level(0)
 
-func change_state(new_state: int) -> void:
+func change_state(new_state: GameState) -> void:
 	current_state = new_state
 	
 	match new_state:
@@ -84,7 +87,6 @@ func handle_victory() -> void:
 	print("Victory!")
 	ui_manager.announce_level_end(true)
 	
-	# In a real game, you'd show a victory screen
 	# For now, just restart the level after a delay
 	await get_tree().create_timer(3.0).timeout
 	restart_level()
@@ -114,7 +116,26 @@ func load_level(level_number: int) -> void:
 func restart_level() -> void:
 	load_level(current_level)
 
-func _check_faction_turn_ended(unit: GameUnit):
+func _check_faction_turn_ended(unit: GameUnit) -> void:
 	if unit_manager.are_all_faction_units_done(unit.faction):
 		end_faction_turn(unit.faction)
+
+func _on_battle_menu_action(action: BattleMenu.MenuActions) -> void:
+
+	match action:
+		BattleMenu.MenuActions.QuitToMenu:
+			change_state(GameState.MAIN_MENU)
+		BattleMenu.MenuActions.Surrender:
+			handle_game_over()
+		BattleMenu.MenuActions.EndTurn:
+			var faction = null
+			match current_state:
+				GameState.PLAYER_TURN:
+					faction = GameUnit.Faction.PLAYER
+				GameState.ENEMY_TURN:
+					faction = GameUnit.Faction.ENEMY
+				GameState.ALLY_TURN:
+					faction = GameUnit.Faction.ALLY
+			if not faction == null:
+				end_faction_turn(faction)
 	
