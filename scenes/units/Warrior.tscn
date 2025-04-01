@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://dclvetjaonogg"]
 
 [ext_resource type="Script" uid="uid://ctv6ey1ubinpv" path="res://scripts/resources/classes/WarriorClass.gd" id="1_8j38m"]
-[ext_resource type="SpriteFrames" uid="uid://dd5tjfy8jcc25" path="res://scripts/resources/animatedSprites/Warrior/BlueWarrior.tres" id="2_8j38m"]
+[ext_resource type="SpriteFrames" uid="uid://dd5tjfy8jcc25" path="res://scripts/resources/animatedSprites/Warrior/YellowWarrior.tres" id="2_8j38m"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_i21d6"]
 

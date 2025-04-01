@@ -2,7 +2,6 @@ extends Node2D
 
 class_name MapLoader
 
-var game_manager: GameManager
 @onready var grid_system: GridSystem = $"../GridSystem"
 @onready var unit_manager: UnitManager = $"../UnitManager"
 
@@ -16,44 +15,28 @@ var terrain_scenes: Dictionary = {
 	"wall": preload("res://scenes/terrain/Wall.tscn")
 }
 
-var unit_scenes: Dictionary = {
-	GameUnit.UnitClass.WARRIOR: preload("res://scenes/units/Warrior.tscn"),
-	# TODO Implement more classes
-	#GameUnit.UnitClass.ARCHER: preload("res://scenes/units/Archer.tscn"),
-	#GameUnit.UnitClass.MAGE: preload("res://scenes/units/Mage.tscn"),
-	#GameUnit.UnitClass.HEALER: preload("res://scenes/units/Healer.tscn"),
-	#GameUnit.UnitClass.CAVALRY: preload("res://scenes/units/Cavalry.tscn"),
-	#GameUnit.UnitClass.FLIER: preload("res://scenes/units/Flier.tscn")
-}
-
 var terrain_node: Node2D
 var units_node: Node2D
 
 func _ready():
-	game_manager = get_parent()
-	
 	terrain_node = get_node("/root/Main/Terrain")
 	units_node = get_node("/root/Main/Units")
 
-func load_map(map_path: String) -> bool:
+func load_map(map_path: String, player_units: Array[UnitData]) -> bool:
 	var map_data = MapData.load_from_file(map_path)
 	
 	if not map_data:
 		return false
 	
-	return initialize_map(map_data)
+	return initialize_map(map_data, player_units)
 
-func load_sample_map() -> bool:
-	var map_data = MapData.create_sample_map()
-	return initialize_map(map_data)
-
-func initialize_map(map_data: MapData) -> bool:
+func initialize_map(map_data: MapData, player_units: Array[UnitData]) -> bool:
 	clear_map()
 	current_map = map_data
 	
 	grid_system.initialize_grid(map_data.grid_size)
 	create_terrain()
-	spawn_units()
+	spawn_units(player_units)
 	
 	return true
 
@@ -87,45 +70,58 @@ func create_terrain() -> void:
 				terrain_instance.position = grid_system.grid_to_world(pos)
 				terrain_node.add_child(terrain_instance)
 
-func spawn_units() -> void:
+func spawn_units(player_unit_data: Array[UnitData]) -> void:
 	if not current_map:
 		return
 	
-	for spawn_data in current_map.player_spawns:
-		spawn_unit(spawn_data, GameUnit.Faction.PLAYER)
+	for player_unit in player_unit_data:
+		spawn_player_unit(current_map.player_spawn_options, player_unit)
 	for spawn_data in current_map.enemy_spawns:
 		spawn_unit(spawn_data, GameUnit.Faction.ENEMY)
 	for spawn_data in current_map.ally_spawns:
 		spawn_unit(spawn_data, GameUnit.Faction.ALLY)
 
+func spawn_player_unit(spawn_options: Array, player_unit: UnitData):
+	var available_spawns = spawn_options.filter(func(pos_data): 
+		var grid_pos = Vector2i(int(pos_data.x), int(pos_data.y))
+		return not unit_manager.get_unit_at(grid_pos)
+	)
+	
+	if available_spawns.is_empty():
+		print("No available spawn positions for player unit!")
+		return
+	
+	var unit_factory = UnitFactory.new()
+	var unit_instance = unit_factory.create_unit(player_unit, GameUnit.Faction.PLAYER)
+	
+	if unit_instance:
+		var pos_data = available_spawns[0]
+		var grid_pos = Vector2i(int(pos_data.x), int(pos_data.y))
+		unit_instance.grid_position = grid_pos
+		unit_instance.position = grid_system.grid_to_world_centered(grid_pos)
+		units_node.add_child(unit_instance)
+		unit_manager.add_unit(unit_instance)
+
 func spawn_unit(spawn_data: Dictionary, faction: int) -> GameUnit:
 	var unit = spawn_data.get("unit")
-	var unit_class_str: String = unit.get("class", "Warrior")
-	var unit_class: int = GameUnit.UnitClass.keys().find(unit_class_str.to_upper())
-	var spriteColor = unit.get("sprite", "Blue")
+	var unit_data = UnitData.new(
+		spawn_data.get("name", "Unit"),
+		GameUnit.UnitClass.keys().find(unit.get("class", "WARRIOR").to_upper()),
+		unit.get("sprite", "Blue"),
+		spawn_data.get("level", 1)
+	)
 	
+	var unit_factory = UnitFactory.new()
+	var unit_instance = unit_factory.create_unit(unit_data, faction)
 	
-	# Check if we have a scene for this unit class
-	if not unit_scenes.has(unit_class):
-		return null
-	
-	var unit_scene = unit_scenes[unit_class]
-	var unit_instance = unit_scene.instantiate()
-	
-	unit_instance.unit_name = spawn_data.get("name", "Unit")
-	unit_instance.unit_class = unit_class
-	unit_instance.faction = faction
-	unit_instance.level = spawn_data.get("level", 1)
-	unit_instance.sprite_frames_res = load("res://scripts/resources/animatedSprites/%s/%s%s.tres" % [unit_class_str, spriteColor, unit_class_str])
-	unit_instance.ui_icon_image = load("res://assets/Factions/Knights/Troops/%s/%s/portrait.png" % [unit_class_str, spriteColor])
-	
-	var pos_data = spawn_data.get("position", {"x": 0, "y": 0})
-	var grid_pos = Vector2i(pos_data.x, pos_data.y)
-	unit_instance.grid_position = grid_pos
-	unit_instance.position = grid_system.grid_to_world_centered(grid_pos)
-	
-	units_node.add_child(unit_instance)
-	unit_manager.add_unit(unit_instance)
+	# TODO Update this logic for map data having 'spawn locations' then assiging units from a player.json to an available position
+	if unit_instance:
+		var pos_data = spawn_data.get("position", {"x": 0, "y": 0})
+		var grid_pos = Vector2i(pos_data.x, pos_data.y)
+		unit_instance.grid_position = grid_pos
+		unit_instance.position = grid_system.grid_to_world_centered(grid_pos)
+		units_node.add_child(unit_instance)
+		unit_manager.add_unit(unit_instance)
 	
 	return unit_instance
 

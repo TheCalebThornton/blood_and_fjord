@@ -1,0 +1,10 @@
+[gd_resource type="StyleBoxTexture" load_steps=2 format=3 uid="uid://bosgk65v06bjt"]
+
+[ext_resource type="Texture2D" uid="uid://cpfwnyl8i2cma" path="res://assets/UI/Ribbons/Ribbon_Red_3Slides.png" id="1_270hv"]
+
+[resource]
+texture = ExtResource("1_270hv")
+texture_margin_left = 4.0
+texture_margin_top = 2.0
+texture_margin_right = 4.0
+texture_margin_bottom = 2.0

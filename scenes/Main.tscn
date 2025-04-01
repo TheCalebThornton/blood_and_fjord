@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://dxi8u8w6ijsrw"]
+[gd_scene load_steps=13 format=3 uid="uid://dxi8u8w6ijsrw"]
 
 [ext_resource type="Script" uid="uid://b4e3smsp4e5h0" path="res://scripts/core/GameManager.gd" id="1_1j5fm"]
 [ext_resource type="Script" uid="uid://bj3gc32uohnqa" path="res://scripts/core/InputManager.gd" id="2_0p0ee"]
@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://c82jejpef23xc" path="res://scenes/ui/Announcement.tscn" id="3_lhr70"]
 [ext_resource type="Script" uid="uid://s2thly0gfa2w" path="res://scripts/core/BattleManager.gd" id="3_ljw3l"]
 [ext_resource type="Script" uid="uid://c15wgmlyheh16" path="res://scripts/core/GridSystem.gd" id="4_galiw"]
+[ext_resource type="PackedScene" uid="uid://doxfvqbkb7a5j" path="res://scenes/ui/GameMenu.tscn" id="5_bjd11"]
 [ext_resource type="Script" uid="uid://dr1wfgkscbrq8" path="res://scripts/core/UnitManager.gd" id="5_qmftw"]
 [ext_resource type="PackedScene" uid="uid://dnh12ykp6bhmr" path="res://scenes/ui/Battle/BattleUIContainer.tscn" id="6_q8u5g"]
 [ext_resource type="Script" uid="uid://dcpmlbed6fe77" path="res://scripts/core/MapLoader.gd" id="6_r3une"]
@@ -27,6 +28,9 @@ metadata/_edit_lock_ = true
 [node name="Announcement" parent="GameManager/UIManager" instance=ExtResource("3_lhr70")]
 visible = false
 text = ""
+metadata/_edit_lock_ = true
+
+[node name="GameMenu" parent="GameManager/UIManager" instance=ExtResource("5_bjd11")]
 metadata/_edit_lock_ = true
 
 [node name="InputManager" type="Node2D" parent="GameManager"]

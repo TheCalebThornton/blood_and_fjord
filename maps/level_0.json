@@ -13,67 +13,12 @@
 		["plains", "plains", "plains", "plains", "plains", "plains", "plains", "plains", "plains", "wall"],
 		["plains", "plains", "plains", "plains", "plains", "plains", "plains", "plains", "wall", "wall"]
 	],
-	"player_spawns": [
-		{
-			"unit": {
-				"class": "Warrior",
-				"sprite": "Blue"
-			},
-			"position": {
-				"x": 1,
-				"y": 1
-			},
-			"level": 1,
-			"name": "Warrior"
-		},
-		{
-			"unit": {
-				"class": "Warrior",
-				"sprite": "Blue"
-			},
-			"position": {
-				"x": 2,
-				"y": 1
-			},
-			"level": 1,
-			"name": "Warr 2"
-		},
-		{
-			"unit": {
-				"class": "Archer",
-				"sprite": "Blue"
-			},
-			"position": {
-				"x": 2,
-				"y": 1
-			},
-			"level": 1,
-			"name": "Archer"
-		},
-		{
-			"unit": {
-				"class": "Mage",
-				"sprite": "Blue"
-			},
-			"position": {
-				"x": 1,
-				"y": 2
-			},
-			"level": 1,
-			"name": "Mage"
-		},
-		{
-			"unit": {
-				"class": "Healer",
-				"sprite": "Blue"
-			},
-			"position": {
-				"x": 2,
-				"y": 2
-			},
-			"level": 1,
-			"name": "Healer"
-		}
+	"player_spawn_options": [
+		{"x": 1, "y": 1},
+		{"x": 2, "y": 1},
+		{"x": 1, "y": 2},
+		{"x": 2, "y": 2},
+		{"x": 3, "y": 3}
 	],
 	"enemy_spawns": [
 		{

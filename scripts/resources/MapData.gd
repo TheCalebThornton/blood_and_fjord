@@ -11,7 +11,7 @@ var grid_size: Vector2i = Vector2i(16, 16)
 var terrain_data: Array = []
 
 # Unit spawn data
-var player_spawns: Array = []
+var player_spawn_options: Array = []
 var enemy_spawns: Array = []
 var ally_spawns: Array = []
 
@@ -59,7 +59,7 @@ func is_valid_position(pos: Vector2i) -> bool:
 
 # Add a player unit spawn
 func add_player_spawn(unit_data: Dictionary) -> void:
-	player_spawns.append(unit_data)
+	player_spawn_options.append(unit_data)
 
 # Add an enemy unit spawn
 func add_enemy_spawn(unit_data: Dictionary) -> void:
@@ -94,7 +94,7 @@ func save_to_file(path: String) -> Error:
 		"map_id": map_id,
 		"grid_size": {"x": grid_size.x, "y": grid_size.y},
 		"terrain_data": terrain_data,
-		"player_spawns": player_spawns,
+		"player_spawn_options": player_spawn_options,
 		"enemy_spawns": enemy_spawns,
 		"ally_spawns": ally_spawns,
 		"victory_condition": victory_condition,
@@ -133,7 +133,7 @@ static func load_from_file(path: String) -> MapData:
 		
 		map_data.terrain_data = json_result.get("terrain_data", [])
 		map_data.grid_size = Vector2i(map_data.terrain_data.size(), map_data.terrain_data[0].size())
-		map_data.player_spawns = json_result.get("player_spawns", [])
+		map_data.player_spawn_options = json_result.get("player_spawn_options", [])
 		map_data.enemy_spawns = json_result.get("enemy_spawns", [])
 		map_data.ally_spawns = json_result.get("ally_spawns", [])
 		

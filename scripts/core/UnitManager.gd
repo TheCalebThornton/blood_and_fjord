@@ -222,7 +222,6 @@ func revert_unit_movement(unit: GameUnit) -> void:
 #endregion
 
 func end_unit_turn(unit: GameUnit) -> void:
-	# TODO this is overwriting my death animation
 	unit.original_position = unit.grid_position
 	unit.can_move = false
 	unit.can_act = false
@@ -267,9 +266,9 @@ func _on_unit_defeated(unit: GameUnit) -> void:
 	
 	# Check for victory/defeat conditions
 	if is_faction_defeated(GameUnit.Faction.PLAYER):
-		get_parent().change_state(get_parent().GameState.GAME_OVER)
+		get_parent().change_battle_state(get_parent().BattleState.GAME_OVER)
 	elif is_faction_defeated(GameUnit.Faction.ENEMY):
-		get_parent().change_state(get_parent().GameState.VICTORY)
+		get_parent().change_battle_state(get_parent().BattleState.VICTORY)
 		
 func _get_unit_list_for_faction(faction: GameUnit.Faction):
 	if faction == GameUnit.Faction.PLAYER:

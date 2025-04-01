@@ -1,3 +1,387 @@
-[gd_scene format=3 uid="uid://doxfvqbkb7a5j"]
+[gd_scene load_steps=32 format=3 uid="uid://doxfvqbkb7a5j"]
 
-[node name="GameMenu" type="Node2D"]
+[ext_resource type="Script" uid="uid://cs40chpscfjgv" path="res://scripts/ui/GameMenu.gd" id="1_678jd"]
+[ext_resource type="FontFile" uid="uid://b1l1b7fvlj4ql" path="res://assets/Fonts/BruceForeverRegular-X3jd2.ttf" id="1_f5x3b"]
+[ext_resource type="Theme" uid="uid://culyxjfcwkuoh" path="res://scripts/resources/ui/GameMenuStandard.tres" id="2_c1yq5"]
+[ext_resource type="Theme" uid="uid://cvpon1wgi2d1m" path="res://scripts/resources/ui/TitleButton.tres" id="2_lit2r"]
+[ext_resource type="Script" uid="uid://b1qnn8uwi877x" path="res://scripts/ui/GameMenu/HomeView.gd" id="3_js0bc"]
+[ext_resource type="StyleBox" uid="uid://bosgk65v06bjt" path="res://scripts/resources/ui/GameMenuTitle.tres" id="5_hcv51"]
+[ext_resource type="Texture2D" uid="uid://dge37bmfvb178" path="res://assets/Factions/Knights/Troops/Warrior/Blue/portrait.png" id="7_678jd"]
+[ext_resource type="Script" uid="uid://1rmwgcqy2o1l" path="res://scripts/ui/GameMenu/ArmySelection.gd" id="7_js0bc"]
+[ext_resource type="Script" uid="uid://2epfdgfqmiti" path="res://scripts/resources/classes/UnitData.gd" id="8_c1yq5"]
+[ext_resource type="Script" uid="uid://k7nqbgnmbi2f" path="res://scripts/ui/GameMenu/NewGame.gd" id="8_js0bc"]
+[ext_resource type="Texture2D" uid="uid://catd1uoqwq5i7" path="res://assets/Factions/Knights/Troops/Warrior/Purple/portrait.png" id="8_ruaqy"]
+[ext_resource type="Texture2D" uid="uid://qshinj5ey16b" path="res://assets/Factions/Knights/Troops/Warrior/Yellow/portrait.png" id="9_c1yq5"]
+[ext_resource type="Texture2D" uid="uid://dw8kyxc1esku3" path="res://assets/UI/Buttons/Button_Red_9Slides.png" id="13_02n1o"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hcv51"]
+bg_color = Color(0.6, 0.6, 0.6, 0)
+
+[sub_resource type="Theme" id="Theme_vmjd0"]
+MarginContainer/constants/margin_bottom = 8
+MarginContainer/constants/margin_left = 8
+MarginContainer/constants/margin_right = 8
+MarginContainer/constants/margin_top = 8
+
+[sub_resource type="Theme" id="Theme_7ye8g"]
+
+[sub_resource type="Theme" id="Theme_ruaqy"]
+MarginContainer/constants/margin_bottom = 0
+MarginContainer/constants/margin_left = 0
+MarginContainer/constants/margin_right = 0
+
+[sub_resource type="FontVariation" id="FontVariation_c1yq5"]
+base_font = ExtResource("1_f5x3b")
+variation_embolden = 1.2
+
+[sub_resource type="FontVariation" id="FontVariation_hcv51"]
+base_font = ExtResource("1_f5x3b")
+variation_embolden = 1.2
+variation_transform = Transform2D(1, 0.2, 0, 1, 0, 0)
+
+[sub_resource type="FontVariation" id="FontVariation_02n1o"]
+base_font = ExtResource("1_f5x3b")
+variation_transform = Transform2D(1, 0.2, 0, 1, 0, 0)
+
+[sub_resource type="Theme" id="Theme_lit2r"]
+default_font = ExtResource("1_f5x3b")
+default_font_size = 36
+RichTextLabel/colors/default_color = Color(1, 1, 1, 1)
+RichTextLabel/colors/font_outline_color = Color(0, 0, 0, 1)
+RichTextLabel/colors/font_selected_color = Color(0, 0, 0, 0)
+RichTextLabel/colors/font_shadow_color = Color(0, 0, 0, 0)
+RichTextLabel/colors/selection_color = Color(0.1, 0.1, 1, 0.8)
+RichTextLabel/colors/table_border = Color(0, 0, 0, 0)
+RichTextLabel/colors/table_even_row_bg = Color(0, 0, 0, 0)
+RichTextLabel/colors/table_odd_row_bg = Color(0, 0, 0, 0)
+RichTextLabel/constants/line_separation = 0
+RichTextLabel/constants/outline_size = 0
+RichTextLabel/constants/shadow_offset_x = 1
+RichTextLabel/constants/shadow_offset_y = 1
+RichTextLabel/constants/shadow_outline_size = 1
+RichTextLabel/constants/table_h_separation = 3
+RichTextLabel/constants/table_v_separation = 3
+RichTextLabel/constants/text_highlight_h_padding = 3
+RichTextLabel/constants/text_highlight_v_padding = 3
+RichTextLabel/font_sizes/bold_font_size = 48
+RichTextLabel/font_sizes/bold_italics_font_size = 48
+RichTextLabel/font_sizes/italics_font_size = 48
+RichTextLabel/font_sizes/mono_font_size = 48
+RichTextLabel/font_sizes/normal_font_size = 48
+RichTextLabel/fonts/bold_font = SubResource("FontVariation_c1yq5")
+RichTextLabel/fonts/bold_italics_font = SubResource("FontVariation_hcv51")
+RichTextLabel/fonts/italics_font = SubResource("FontVariation_02n1o")
+RichTextLabel/fonts/mono_font = ExtResource("1_f5x3b")
+RichTextLabel/fonts/normal_font = ExtResource("1_f5x3b")
+RichTextLabel/styles/normal = ExtResource("5_hcv51")
+
+[sub_resource type="Theme" id="Theme_1xkm3"]
+MarginContainer/constants/margin_bottom = 20
+MarginContainer/constants/margin_left = 20
+MarginContainer/constants/margin_right = 20
+MarginContainer/constants/margin_top = 5
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_ruaqy"]
+
+[sub_resource type="Theme" id="Theme_c1yq5"]
+PanelContainer/styles/panel = SubResource("StyleBoxTexture_ruaqy")
+
+[sub_resource type="Theme" id="Theme_vfex5"]
+VBoxContainer/constants/separation = 20
+
+[sub_resource type="Resource" id="Resource_02n1o"]
+script = ExtResource("8_c1yq5")
+unit_name = "Purp"
+unit_class = 0
+sprite_color = "Purple"
+level = 1
+metadata/_custom_type_script = "uid://2epfdgfqmiti"
+
+[sub_resource type="Resource" id="Resource_cq80k"]
+script = ExtResource("8_c1yq5")
+unit_name = "Yellow"
+unit_class = 0
+sprite_color = "Yellow"
+level = 1
+metadata/_custom_type_script = "uid://2epfdgfqmiti"
+
+[sub_resource type="Resource" id="Resource_7w1i5"]
+script = ExtResource("8_c1yq5")
+unit_name = "Blu"
+unit_class = 0
+sprite_color = "Blue"
+level = 2
+metadata/_custom_type_script = "uid://2epfdgfqmiti"
+
+[sub_resource type="Resource" id="Resource_te1xk"]
+script = ExtResource("8_c1yq5")
+unit_name = "Kirito"
+unit_class = 0
+sprite_color = "Purple"
+level = 8
+metadata/_custom_type_script = "uid://2epfdgfqmiti"
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_cq80k"]
+texture = ExtResource("13_02n1o")
+texture_margin_left = 15.0
+texture_margin_right = 15.0
+
+[sub_resource type="Theme" id="Theme_7w1i5"]
+
+[node name="GameMenu" type="PanelContainer"]
+offset_right = 753.0
+offset_bottom = 746.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_hcv51")
+script = ExtResource("1_678jd")
+
+[node name="HomeView" type="PanelContainer" parent="."]
+visible = false
+layout_mode = 2
+theme = ExtResource("2_c1yq5")
+script = ExtResource("3_js0bc")
+
+[node name="MarginContainer" type="MarginContainer" parent="HomeView"]
+layout_mode = 2
+theme = SubResource("Theme_vmjd0")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HomeView/MarginContainer"]
+layout_mode = 2
+theme = SubResource("Theme_7ye8g")
+
+[node name="TitleMargin" type="MarginContainer" parent="HomeView/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme = SubResource("Theme_ruaqy")
+
+[node name="RichTextLabel" type="RichTextLabel" parent="HomeView/MarginContainer/VBoxContainer/TitleMargin"]
+layout_mode = 2
+theme = SubResource("Theme_lit2r")
+text = "Blood and 
+Fjord
+
+"
+fit_content = true
+horizontal_alignment = 1
+
+[node name="ButtonsMargin" type="MarginContainer" parent="HomeView/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme = SubResource("Theme_1xkm3")
+
+[node name="PanelContainer" type="PanelContainer" parent="HomeView/MarginContainer/VBoxContainer/ButtonsMargin"]
+layout_mode = 2
+size_flags_vertical = 3
+theme = SubResource("Theme_c1yq5")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HomeView/MarginContainer/VBoxContainer/ButtonsMargin/PanelContainer"]
+layout_mode = 2
+size_flags_vertical = 4
+theme = SubResource("Theme_vfex5")
+
+[node name="NewGame" type="Button" parent="HomeView/MarginContainer/VBoxContainer/ButtonsMargin/PanelContainer/VBoxContainer"]
+custom_minimum_size = Vector2(400, 40)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 0
+theme = ExtResource("2_lit2r")
+text = "New Game"
+clip_text = true
+
+[node name="Resume" type="Button" parent="HomeView/MarginContainer/VBoxContainer/ButtonsMargin/PanelContainer/VBoxContainer"]
+custom_minimum_size = Vector2(400, 40)
+layout_mode = 2
+size_flags_horizontal = 4
+theme = ExtResource("2_lit2r")
+text = "Resume"
+
+[node name="Unlockables" type="Button" parent="HomeView/MarginContainer/VBoxContainer/ButtonsMargin/PanelContainer/VBoxContainer"]
+custom_minimum_size = Vector2(400, 40)
+layout_mode = 2
+size_flags_horizontal = 4
+tooltip_text = "Coming Soon!"
+theme = ExtResource("2_lit2r")
+disabled = true
+text = "Unlockables"
+
+[node name="ClassInfo" type="Button" parent="HomeView/MarginContainer/VBoxContainer/ButtonsMargin/PanelContainer/VBoxContainer"]
+custom_minimum_size = Vector2(400, 40)
+layout_mode = 2
+size_flags_horizontal = 4
+tooltip_text = "Coming Soon!"
+theme = ExtResource("2_lit2r")
+disabled = true
+text = "Class Info"
+
+[node name="NewGameView" type="PanelContainer" parent="."]
+layout_mode = 2
+theme = ExtResource("2_c1yq5")
+script = ExtResource("8_js0bc")
+
+[node name="MarginContainer" type="MarginContainer" parent="NewGameView"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="NewGameView/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 24
+
+[node name="TitleMargin" type="MarginContainer" parent="NewGameView/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="RichTextLabel" type="RichTextLabel" parent="NewGameView/MarginContainer/VBoxContainer/TitleMargin"]
+layout_mode = 2
+theme = SubResource("Theme_lit2r")
+text = "Choose your
+ army!
+
+"
+fit_content = true
+horizontal_alignment = 1
+
+[node name="MarginContainer" type="MarginContainer" parent="NewGameView/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_right = 12
+
+[node name="ScrollContainer" type="ScrollContainer" parent="NewGameView/MarginContainer/VBoxContainer/MarginContainer"]
+custom_minimum_size = Vector2(500, 435)
+layout_mode = 2
+size_flags_vertical = 0
+
+[node name="GridContainer" type="GridContainer" parent="NewGameView/MarginContainer/VBoxContainer/MarginContainer/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/h_separation = 16
+theme_override_constants/v_separation = 24
+columns = 3
+
+[node name="TripleWarr" type="VBoxContainer" parent="NewGameView/MarginContainer/VBoxContainer/MarginContainer/ScrollContainer/GridContainer"]
+clip_contents = true
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 0
+alignment = 1
+script = ExtResource("7_js0bc")
+units = Array[ExtResource("8_c1yq5")]([SubResource("Resource_02n1o"), SubResource("Resource_cq80k"), SubResource("Resource_7w1i5")])
+
+[node name="Label" type="Label" parent="NewGameView/MarginContainer/VBoxContainer/MarginContainer/ScrollContainer/GridContainer/TripleWarr"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 24
+text = "Triple Warrior"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="NewGameView/MarginContainer/VBoxContainer/MarginContainer/ScrollContainer/GridContainer/TripleWarr"]
+layout_mode = 2
+
+[node name="TextureRect" type="TextureRect" parent="NewGameView/MarginContainer/VBoxContainer/MarginContainer/ScrollContainer/GridContainer/TripleWarr/HBoxContainer"]
+layout_mode = 2
+texture = ExtResource("8_ruaqy")
+expand_mode = 3
+
+[node name="TextureRect2" type="TextureRect" parent="NewGameView/MarginContainer/VBoxContainer/MarginContainer/ScrollContainer/GridContainer/TripleWarr/HBoxContainer"]
+layout_mode = 2
+texture = ExtResource("9_c1yq5")
+stretch_mode = 2
+
+[node name="TextureRect3" type="TextureRect" parent="NewGameView/MarginContainer/VBoxContainer/MarginContainer/ScrollContainer/GridContainer/TripleWarr/HBoxContainer"]
+layout_mode = 2
+texture = ExtResource("7_678jd")
+stretch_mode = 2
+
+[node name="SoloWarr" type="VBoxContainer" parent="NewGameView/MarginContainer/VBoxContainer/MarginContainer/ScrollContainer/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 0
+script = ExtResource("7_js0bc")
+units = Array[ExtResource("8_c1yq5")]([SubResource("Resource_te1xk")])
+
+[node name="Label" type="Label" parent="NewGameView/MarginContainer/VBoxContainer/MarginContainer/ScrollContainer/GridContainer/SoloWarr"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 24
+text = "Solo Warrior"
+
+[node name="TextureRect" type="TextureRect" parent="NewGameView/MarginContainer/VBoxContainer/MarginContainer/ScrollContainer/GridContainer/SoloWarr"]
+layout_mode = 2
+texture = ExtResource("8_ruaqy")
+stretch_mode = 3
+
+[node name="VBoxContainer3" type="VBoxContainer" parent="NewGameView/MarginContainer/VBoxContainer/MarginContainer/ScrollContainer/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 0
+script = ExtResource("7_js0bc")
+
+[node name="Label" type="Label" parent="NewGameView/MarginContainer/VBoxContainer/MarginContainer/ScrollContainer/GridContainer/VBoxContainer3"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 24
+text = "Test Army"
+
+[node name="TextureRect" type="TextureRect" parent="NewGameView/MarginContainer/VBoxContainer/MarginContainer/ScrollContainer/GridContainer/VBoxContainer3"]
+layout_mode = 2
+texture = ExtResource("8_ruaqy")
+stretch_mode = 3
+
+[node name="VBoxContainer4" type="VBoxContainer" parent="NewGameView/MarginContainer/VBoxContainer/MarginContainer/ScrollContainer/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 0
+script = ExtResource("7_js0bc")
+
+[node name="Label" type="Label" parent="NewGameView/MarginContainer/VBoxContainer/MarginContainer/ScrollContainer/GridContainer/VBoxContainer4"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 24
+text = "Test Army"
+
+[node name="TextureRect" type="TextureRect" parent="NewGameView/MarginContainer/VBoxContainer/MarginContainer/ScrollContainer/GridContainer/VBoxContainer4"]
+layout_mode = 2
+texture = ExtResource("8_ruaqy")
+stretch_mode = 3
+
+[node name="VBoxContainer5" type="VBoxContainer" parent="NewGameView/MarginContainer/VBoxContainer/MarginContainer/ScrollContainer/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 0
+script = ExtResource("7_js0bc")
+
+[node name="Label" type="Label" parent="NewGameView/MarginContainer/VBoxContainer/MarginContainer/ScrollContainer/GridContainer/VBoxContainer5"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 24
+text = "Test Army"
+
+[node name="TextureRect" type="TextureRect" parent="NewGameView/MarginContainer/VBoxContainer/MarginContainer/ScrollContainer/GridContainer/VBoxContainer5"]
+layout_mode = 2
+texture = ExtResource("8_ruaqy")
+stretch_mode = 3
+
+[node name="DescriptionContainer" type="PanelContainer" parent="NewGameView/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxTexture_cq80k")
+
+[node name="Description" type="RichTextLabel" parent="NewGameView/MarginContainer/VBoxContainer/DescriptionContainer"]
+custom_minimum_size = Vector2(0, 90)
+layout_mode = 2
+theme = SubResource("Theme_7w1i5")
+bbcode_enabled = true
+text = "<Place holder for army info> [br] test"
+fit_content = true
+
+[node name="UnlockablesView" type="PanelContainer" parent="."]
+visible = false
+layout_mode = 2
+
+[node name="ClassInfoView" type="PanelContainer" parent="."]
+visible = false
+layout_mode = 2

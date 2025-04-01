@@ -8,6 +8,12 @@ enum InputState {
 	ACTION_SELECTION,
 	TARGET_SELECTION,
 	MENU_OPEN,
+	GAME_MENU,
+	GAME_MENU_HOME,
+	GAME_MENU_NEW_GAME,
+	GAME_MENU_NEW_CUSTOM,
+	GAME_MENU_UNLOCKABLES,
+	GAME_MENU_CLASS_INFO,
 	LOCKED
 }
 
@@ -18,6 +24,8 @@ var game_manager: GameManager
 @onready var unit_manager: UnitManager = $"../UnitManager"
 @onready var battle_ui_container: BattleUIContainer = $"../UIManager/BattleUIContainer"
 @onready var battle_manager: BattleManager = $"../BattleManager"
+@onready var game_menu: GameMenu = $"../UIManager/GameMenu"
+
 var cursor_position: Vector2i = Vector2i(0, 0)
 
 # For target selection
@@ -31,16 +39,19 @@ signal action_canceled()
 func _ready():
 	game_manager = get_parent()
 	
-	game_manager.state_changed.connect(_on_game_state_changed)
+	game_manager.battle_state_changed.connect(_on_game_state_changed)
 	unit_manager.cursor_move_request.connect(_on_cursor_move_request)
 	unit_manager.unit_moved.connect(_on_unit_moved)
 	battle_ui_container.action_menu.action_selected.connect(_on_action_selected)
-	# Initialize UI based on cursor position
-	call_deferred("_update_hover_ui")
+	
+	if game_manager.current_game_state == GameManager.GameState.BATTLE:
+		# Initialize UI based on cursor position
+		call_deferred("_update_hover_ui")
 
 func _unhandled_input(event: InputEvent) -> void:
 	# Only process input during player turn
-	if game_manager.current_state != GameManager.GameState.PLAYER_TURN:
+	if game_manager.current_game_state == GameManager.GameState.BATTLE and \
+		game_manager.current_battle_state != GameManager.BattleState.PLAYER_TURN:
 		return
 	
 	match current_state:
@@ -53,13 +64,28 @@ func _unhandled_input(event: InputEvent) -> void:
 			_handle_movement_selection(event)
 			_handle_cancel(event)
 		InputState.ACTION_SELECTION:
-			_handle_menu_selection(event, battle_ui_container.action_menu)
+			_handle_vertical_menu_selection(event, battle_ui_container.action_menu)
 			_handle_cancel(event)
 		InputState.TARGET_SELECTION:
 			_handle_target_selection(event)
 			_handle_cancel(event)
 		InputState.MENU_OPEN:
-			_handle_menu_selection(event, battle_ui_container.battle_menu)
+			_handle_vertical_menu_selection(event, battle_ui_container.battle_menu)
+			_handle_cancel(event)
+		InputState.GAME_MENU_HOME:
+			_handle_vertical_menu_selection(event, game_menu.home_view)
+			_handle_cancel(event)
+		InputState.GAME_MENU_NEW_GAME:
+			_handle_grid_menu_selection(event, game_menu.new_game_view)
+			_handle_cancel(event)
+		InputState.GAME_MENU_NEW_CUSTOM:
+			_handle_grid_menu_selection(event, game_menu.new_game_view)
+			_handle_cancel(event)
+		InputState.GAME_MENU_UNLOCKABLES:
+			_handle_grid_menu_selection(event, game_menu.unlockables_view)
+			_handle_cancel(event)
+		InputState.GAME_MENU_CLASS_INFO:
+			_handle_grid_menu_selection(event, game_menu.class_info_view)
 			_handle_cancel(event)
 
 func change_state(new_state: int) -> void:
@@ -102,11 +128,26 @@ func _handle_cursor_movement(event: InputEvent) -> void:
 			cursor_move_request.emit(cursor_position)
 			_update_hover_ui()
 		
-func _handle_menu_selection(event: InputEvent, menu: PanelContainer) -> void:
+func _handle_vertical_menu_selection(event: InputEvent, menu: PanelContainer) -> void:
 	if event.is_action_pressed("ui_down"):
 		menu.select_next_action()
 	elif event.is_action_pressed("ui_up"):
 		menu.select_previous_action()
+	elif event.is_action_pressed("ui_accept"):
+		menu.confirm_selection()
+	else:
+		return
+
+func _handle_grid_menu_selection(event: InputEvent, menu: PanelContainer) -> void:
+	# For some reason the ScrollContainer/GridContainer doesn't do well with 'is_action_pressed' 
+	if event.is_action("ui_right"):
+		menu.select_next_action(Vector2i(1, 0))
+	elif event.is_action("ui_left"):
+		menu.select_next_action(Vector2i(-1, 0))
+	elif event.is_action("ui_down"):
+		menu.select_next_action(Vector2i(0, 1))
+	elif event.is_action("ui_up"):
+		menu.select_next_action(Vector2i(0, -1))
 	elif event.is_action_pressed("ui_accept"):
 		menu.confirm_selection()
 	else:
@@ -222,12 +263,14 @@ func _handle_cancel(event: InputEvent) -> void:
 				change_state(InputState.ACTION_SELECTION)
 			InputState.MENU_OPEN:
 				change_state(InputState.GRID_SELECTION)
+			InputState.GAME_MENU_HOME, InputState.GAME_MENU_NEW_GAME, InputState.GAME_MENU_UNLOCKABLES, InputState.GAME_MENU_CLASS_INFO:
+				game_manager.change_game_state(GameManager.GameState.MAIN_MENU)
 		
 		action_canceled.emit()
 
 func _on_game_state_changed(new_state: int) -> void:
 	match new_state:
-		GameManager.GameState.PLAYER_TURN:
+		GameManager.BattleState.PLAYER_TURN:
 			change_state(InputState.GRID_SELECTION)
 		_:
 			change_state(InputState.LOCKED)
