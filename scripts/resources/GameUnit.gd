@@ -33,24 +33,27 @@ enum UnitState {
 
 var _color_highlight: Color = Color(1.4, 1.4, 1.4)
 
-# Basic unit properties
 var unit_name: String = "Unit"
 var unit_class: UnitClass = UnitClass.WARRIOR
 var faction: int = Faction.PLAYER
+
+# Basic unit properties
 var level: int = 1
-var health: int = 10
 var max_health: int = 10
-var movement: int = 8
 var attack: int = 5
-var defense: int = 5
 var magic: int = 2
+var defense: int = 5
 var resistance: int = 2
 var speed: int = 5
+var movement: int = 8
+var attack_range: int = 1
+var min_attack_range: int = 1
+
+# Calcualted stats
+var health: int = 10
 var accuracy: int = 85
 var evasion: int = 10
 var critical: int = 5
-var attack_range: int = 1
-var min_attack_range: int = 1
 var can_counter_attack: bool = true
 var can_act: bool = true
 var can_move: bool = true

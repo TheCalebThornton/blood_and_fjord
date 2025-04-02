@@ -23,11 +23,14 @@ var astar: AStar2D = AStar2D.new()
 signal grid_initialized
 signal path_found(path: Array)
 
+@onready var unit_manager: UnitManager = $"../UnitManager"
+
 func _ready():
 	# Initialize grid when ready
 	# Set the z_index to ensure this node draws between terrain and units
 	z_index = 1
-	pass
+	# Add signal connection
+	unit_manager.unit_moved.connect(_on_unit_moved)
 
 func initialize_grid(size: Vector2i) -> void:
 	grid_size = size
@@ -66,7 +69,8 @@ func initialize_astar() -> void:
 	# Connect points (4-way adjacency)
 	for x in range(grid_size.x):
 		for y in range(grid_size.y):
-			var point_id = get_point_id(Vector2i(x, y))
+			var current_pos = Vector2i(x, y)
+			var point_id = get_point_id(current_pos)
 			
 			# Connect to adjacent cells
 			var adjacent_cells = [
@@ -80,9 +84,18 @@ func initialize_astar() -> void:
 				if is_within_grid(adjacent):
 					var adjacent_id = get_point_id(adjacent)
 					
+					# Check for enemy units using UnitManager
+					var unit = unit_manager.get_unit_at(adjacent)
+					if unit and unit.faction == GameUnit.Faction.ENEMY:
+						continue  # Skip creating connection entirely for enemy positions
+					
 					# Get movement cost for this connection
 					var terrain_type = terrain_map[adjacent.x][adjacent.y]
 					var weight = terrain_costs.get(terrain_type, 1)
+					
+					# Skip impassable terrain
+					if weight >= 99:
+						continue
 					
 					# Connect points with appropriate weight
 					if not astar.are_points_connected(point_id, adjacent_id):
@@ -140,7 +153,6 @@ func calculate_movement_range(unit_pos: Vector2i, movement_points: int) -> Array
 		closed_set[current_id] = true
 		reachable_cells.append(current)
 		
-		# Check adjacent cells
 		var adjacent_cells = [
 			Vector2i(current.x + 1, current.y),
 			Vector2i(current.x - 1, current.y),
@@ -159,6 +171,11 @@ func calculate_movement_range(unit_pos: Vector2i, movement_points: int) -> Array
 				
 			var terrain_type = terrain_map[adjacent.x][adjacent.y]
 			var move_cost = terrain_costs.get(terrain_type, 1)
+			
+			# Check for enemy units using UnitManager
+			var unit = unit_manager.get_unit_at(adjacent)
+			if unit and unit.faction == GameUnit.Faction.ENEMY:
+				continue  # Skip enemy positions
 			
 			# Skip impassable terrain
 			if move_cost >= 99:
@@ -248,4 +265,9 @@ func _draw() -> void:
 			CELL_SIZE.x,
 			CELL_SIZE.y
 		)
-		draw_rect(rect, Color(1, 0, 0, 0.3), true) 
+		draw_rect(rect, Color(1, 0, 0, 0.3), true)
+
+# Add handler for unit movement
+func _on_unit_moved(_unit: GameUnit, _from_pos: Vector2i, _to_pos: Vector2i) -> void:
+	# Reinitialize AStar when any unit moves to update valid paths
+	initialize_astar()
