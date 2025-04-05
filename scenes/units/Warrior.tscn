@@ -16,4 +16,4 @@ shape = SubResource("CapsuleShape2D_i21d6")
 position = Vector2(1.00001, -4.99998)
 scale = Vector2(0.8, 0.8)
 sprite_frames = ExtResource("2_8j38m")
-animation = &"idle"
+animation = &"attack_right"

@@ -139,14 +139,13 @@ func _handle_vertical_menu_selection(event: InputEvent, menu: PanelContainer) ->
 		return
 
 func _handle_grid_menu_selection(event: InputEvent, menu: PanelContainer) -> void:
-	# For some reason the ScrollContainer/GridContainer doesn't do well with 'is_action_pressed' 
-	if event.is_action("ui_right"):
+	if event.is_action_pressed("ui_right"):
 		menu.select_next_action(Vector2i(1, 0))
-	elif event.is_action("ui_left"):
+	elif event.is_action_pressed("ui_left"):
 		menu.select_next_action(Vector2i(-1, 0))
-	elif event.is_action("ui_down"):
+	elif event.is_action_pressed("ui_down"):
 		menu.select_next_action(Vector2i(0, 1))
-	elif event.is_action("ui_up"):
+	elif event.is_action_pressed("ui_up"):
 		menu.select_next_action(Vector2i(0, -1))
 	elif event.is_action_pressed("ui_accept"):
 		menu.confirm_selection()

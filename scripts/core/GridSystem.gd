@@ -58,6 +58,7 @@ func reset() -> void:
 	astar = AStar2D.new()
 
 func initialize_astar() -> void:
+	# Is this getting called on player movement?
 	astar.clear()
 	
 	# Add points for each grid cell

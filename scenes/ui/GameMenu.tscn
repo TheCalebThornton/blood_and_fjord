@@ -1,4 +1,4 @@
-[gd_scene load_steps=32 format=3 uid="uid://doxfvqbkb7a5j"]
+[gd_scene load_steps=28 format=3 uid="uid://doxfvqbkb7a5j"]
 
 [ext_resource type="Script" uid="uid://cs40chpscfjgv" path="res://scripts/ui/GameMenu.gd" id="1_678jd"]
 [ext_resource type="FontFile" uid="uid://b1l1b7fvlj4ql" path="res://assets/Fonts/BruceForeverRegular-X3jd2.ttf" id="1_f5x3b"]
@@ -8,11 +8,11 @@
 [ext_resource type="StyleBox" uid="uid://bosgk65v06bjt" path="res://scripts/resources/ui/GameMenuTitle.tres" id="5_hcv51"]
 [ext_resource type="Texture2D" uid="uid://dge37bmfvb178" path="res://assets/Factions/Knights/Troops/Warrior/Blue/portrait.png" id="7_678jd"]
 [ext_resource type="Script" uid="uid://1rmwgcqy2o1l" path="res://scripts/ui/GameMenu/ArmySelection.gd" id="7_js0bc"]
-[ext_resource type="Script" uid="uid://2epfdgfqmiti" path="res://scripts/resources/classes/UnitData.gd" id="8_c1yq5"]
 [ext_resource type="Script" uid="uid://k7nqbgnmbi2f" path="res://scripts/ui/GameMenu/NewGame.gd" id="8_js0bc"]
 [ext_resource type="Texture2D" uid="uid://catd1uoqwq5i7" path="res://assets/Factions/Knights/Troops/Warrior/Purple/portrait.png" id="8_ruaqy"]
 [ext_resource type="Texture2D" uid="uid://qshinj5ey16b" path="res://assets/Factions/Knights/Troops/Warrior/Yellow/portrait.png" id="9_c1yq5"]
 [ext_resource type="Texture2D" uid="uid://dw8kyxc1esku3" path="res://assets/UI/Buttons/Button_Red_9Slides.png" id="13_02n1o"]
+[ext_resource type="Texture2D" uid="uid://dfv1rxl1w5vsr" path="res://assets/UI/Icons/question_mark_block.png" id="13_cq80k"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hcv51"]
 bg_color = Color(0.6, 0.6, 0.6, 0)
@@ -88,38 +88,6 @@ PanelContainer/styles/panel = SubResource("StyleBoxTexture_ruaqy")
 
 [sub_resource type="Theme" id="Theme_vfex5"]
 VBoxContainer/constants/separation = 20
-
-[sub_resource type="Resource" id="Resource_02n1o"]
-script = ExtResource("8_c1yq5")
-unit_name = "Purp"
-unit_class = 0
-sprite_color = "Purple"
-level = 1
-metadata/_custom_type_script = "uid://2epfdgfqmiti"
-
-[sub_resource type="Resource" id="Resource_cq80k"]
-script = ExtResource("8_c1yq5")
-unit_name = "Yellow"
-unit_class = 0
-sprite_color = "Yellow"
-level = 1
-metadata/_custom_type_script = "uid://2epfdgfqmiti"
-
-[sub_resource type="Resource" id="Resource_7w1i5"]
-script = ExtResource("8_c1yq5")
-unit_name = "Blu"
-unit_class = 0
-sprite_color = "Blue"
-level = 2
-metadata/_custom_type_script = "uid://2epfdgfqmiti"
-
-[sub_resource type="Resource" id="Resource_te1xk"]
-script = ExtResource("8_c1yq5")
-unit_name = "Kirito"
-unit_class = 0
-sprite_color = "Purple"
-level = 8
-metadata/_custom_type_script = "uid://2epfdgfqmiti"
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_cq80k"]
 texture = ExtResource("13_02n1o")
@@ -213,7 +181,6 @@ disabled = true
 text = "Class Info"
 
 [node name="NewGameView" type="PanelContainer" parent="."]
-visible = false
 layout_mode = 2
 theme = ExtResource("2_c1yq5")
 script = ExtResource("8_js0bc")
@@ -251,18 +218,16 @@ size_flags_vertical = 0
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_constants/h_separation = 16
+theme_override_constants/h_separation = 24
 theme_override_constants/v_separation = 24
 columns = 3
+script = ExtResource("7_js0bc")
 
 [node name="TripleWarr" type="VBoxContainer" parent="NewGameView/MarginContainer/VBoxContainer/MarginContainer/ScrollContainer/GridContainer"]
-clip_contents = true
+custom_minimum_size = Vector2(180, 180)
 layout_mode = 2
-size_flags_horizontal = 6
-size_flags_vertical = 0
+size_flags_horizontal = 4
 alignment = 1
-script = ExtResource("7_js0bc")
-units = Array[ExtResource("8_c1yq5")]([SubResource("Resource_02n1o"), SubResource("Resource_cq80k"), SubResource("Resource_7w1i5")])
 
 [node name="Label" type="Label" parent="NewGameView/MarginContainer/VBoxContainer/MarginContainer/ScrollContainer/GridContainer/TripleWarr"]
 layout_mode = 2
@@ -273,29 +238,29 @@ theme_override_font_sizes/font_size = 24
 text = "Triple Warrior"
 
 [node name="HBoxContainer" type="HBoxContainer" parent="NewGameView/MarginContainer/VBoxContainer/MarginContainer/ScrollContainer/GridContainer/TripleWarr"]
+custom_minimum_size = Vector2(180, 180)
 layout_mode = 2
 
 [node name="TextureRect" type="TextureRect" parent="NewGameView/MarginContainer/VBoxContainer/MarginContainer/ScrollContainer/GridContainer/TripleWarr/HBoxContainer"]
 layout_mode = 2
 texture = ExtResource("8_ruaqy")
-expand_mode = 3
+stretch_mode = 3
 
 [node name="TextureRect2" type="TextureRect" parent="NewGameView/MarginContainer/VBoxContainer/MarginContainer/ScrollContainer/GridContainer/TripleWarr/HBoxContainer"]
 layout_mode = 2
 texture = ExtResource("9_c1yq5")
-stretch_mode = 2
+stretch_mode = 3
 
 [node name="TextureRect3" type="TextureRect" parent="NewGameView/MarginContainer/VBoxContainer/MarginContainer/ScrollContainer/GridContainer/TripleWarr/HBoxContainer"]
 layout_mode = 2
 texture = ExtResource("7_678jd")
-stretch_mode = 2
+stretch_mode = 3
 
 [node name="SoloWarr" type="VBoxContainer" parent="NewGameView/MarginContainer/VBoxContainer/MarginContainer/ScrollContainer/GridContainer"]
+custom_minimum_size = Vector2(180, 180)
 layout_mode = 2
 size_flags_horizontal = 6
 size_flags_vertical = 0
-script = ExtResource("7_js0bc")
-units = Array[ExtResource("8_c1yq5")]([SubResource("Resource_te1xk")])
 
 [node name="Label" type="Label" parent="NewGameView/MarginContainer/VBoxContainer/MarginContainer/ScrollContainer/GridContainer/SoloWarr"]
 layout_mode = 2
@@ -305,67 +270,95 @@ theme_override_colors/font_outline_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/font_size = 24
 text = "Solo Warrior"
 
-[node name="TextureRect" type="TextureRect" parent="NewGameView/MarginContainer/VBoxContainer/MarginContainer/ScrollContainer/GridContainer/SoloWarr"]
+[node name="HBoxContainer" type="HBoxContainer" parent="NewGameView/MarginContainer/VBoxContainer/MarginContainer/ScrollContainer/GridContainer/SoloWarr"]
+clip_contents = true
+custom_minimum_size = Vector2(180, 180)
 layout_mode = 2
-texture = ExtResource("8_ruaqy")
-stretch_mode = 3
 
-[node name="VBoxContainer3" type="VBoxContainer" parent="NewGameView/MarginContainer/VBoxContainer/MarginContainer/ScrollContainer/GridContainer"]
+[node name="TextureRect4" type="TextureRect" parent="NewGameView/MarginContainer/VBoxContainer/MarginContainer/ScrollContainer/GridContainer/SoloWarr/HBoxContainer"]
+custom_minimum_size = Vector2(60, 60)
+layout_mode = 2
+size_flags_horizontal = 6
+texture = ExtResource("8_ruaqy")
+stretch_mode = 5
+
+[node name="Unlockable_1" type="VBoxContainer" parent="NewGameView/MarginContainer/VBoxContainer/MarginContainer/ScrollContainer/GridContainer"]
+custom_minimum_size = Vector2(180, 180)
 layout_mode = 2
 size_flags_horizontal = 6
 size_flags_vertical = 0
-script = ExtResource("7_js0bc")
 
-[node name="Label" type="Label" parent="NewGameView/MarginContainer/VBoxContainer/MarginContainer/ScrollContainer/GridContainer/VBoxContainer3"]
+[node name="Label" type="Label" parent="NewGameView/MarginContainer/VBoxContainer/MarginContainer/ScrollContainer/GridContainer/Unlockable_1"]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_shadow_color = Color(1, 1, 1, 1)
 theme_override_colors/font_outline_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/font_size = 24
-text = "Test Army"
+text = "???"
+horizontal_alignment = 1
 
-[node name="TextureRect" type="TextureRect" parent="NewGameView/MarginContainer/VBoxContainer/MarginContainer/ScrollContainer/GridContainer/VBoxContainer3"]
+[node name="HBoxContainer" type="HBoxContainer" parent="NewGameView/MarginContainer/VBoxContainer/MarginContainer/ScrollContainer/GridContainer/Unlockable_1"]
+custom_minimum_size = Vector2(180, 180)
 layout_mode = 2
-texture = ExtResource("8_ruaqy")
-stretch_mode = 3
 
-[node name="VBoxContainer4" type="VBoxContainer" parent="NewGameView/MarginContainer/VBoxContainer/MarginContainer/ScrollContainer/GridContainer"]
+[node name="TextureRect" type="TextureRect" parent="NewGameView/MarginContainer/VBoxContainer/MarginContainer/ScrollContainer/GridContainer/Unlockable_1/HBoxContainer"]
+custom_minimum_size = Vector2(150, 180)
+layout_mode = 2
+texture = ExtResource("13_cq80k")
+expand_mode = 3
+stretch_mode = 5
+
+[node name="Unlockable_2" type="VBoxContainer" parent="NewGameView/MarginContainer/VBoxContainer/MarginContainer/ScrollContainer/GridContainer"]
+custom_minimum_size = Vector2(180, 180)
 layout_mode = 2
 size_flags_horizontal = 6
 size_flags_vertical = 0
-script = ExtResource("7_js0bc")
 
-[node name="Label" type="Label" parent="NewGameView/MarginContainer/VBoxContainer/MarginContainer/ScrollContainer/GridContainer/VBoxContainer4"]
+[node name="Label" type="Label" parent="NewGameView/MarginContainer/VBoxContainer/MarginContainer/ScrollContainer/GridContainer/Unlockable_2"]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_shadow_color = Color(1, 1, 1, 1)
 theme_override_colors/font_outline_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/font_size = 24
-text = "Test Army"
+text = "???"
+horizontal_alignment = 1
 
-[node name="TextureRect" type="TextureRect" parent="NewGameView/MarginContainer/VBoxContainer/MarginContainer/ScrollContainer/GridContainer/VBoxContainer4"]
+[node name="HBoxContainer" type="HBoxContainer" parent="NewGameView/MarginContainer/VBoxContainer/MarginContainer/ScrollContainer/GridContainer/Unlockable_2"]
+custom_minimum_size = Vector2(180, 180)
 layout_mode = 2
-texture = ExtResource("8_ruaqy")
-stretch_mode = 3
 
-[node name="VBoxContainer5" type="VBoxContainer" parent="NewGameView/MarginContainer/VBoxContainer/MarginContainer/ScrollContainer/GridContainer"]
+[node name="TextureRect" type="TextureRect" parent="NewGameView/MarginContainer/VBoxContainer/MarginContainer/ScrollContainer/GridContainer/Unlockable_2/HBoxContainer"]
+custom_minimum_size = Vector2(150, 180)
+layout_mode = 2
+texture = ExtResource("13_cq80k")
+expand_mode = 3
+stretch_mode = 5
+
+[node name="Unlockable_3" type="VBoxContainer" parent="NewGameView/MarginContainer/VBoxContainer/MarginContainer/ScrollContainer/GridContainer"]
+custom_minimum_size = Vector2(180, 180)
 layout_mode = 2
 size_flags_horizontal = 6
 size_flags_vertical = 0
-script = ExtResource("7_js0bc")
 
-[node name="Label" type="Label" parent="NewGameView/MarginContainer/VBoxContainer/MarginContainer/ScrollContainer/GridContainer/VBoxContainer5"]
+[node name="Label" type="Label" parent="NewGameView/MarginContainer/VBoxContainer/MarginContainer/ScrollContainer/GridContainer/Unlockable_3"]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_shadow_color = Color(1, 1, 1, 1)
 theme_override_colors/font_outline_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/font_size = 24
-text = "Test Army"
+text = "???"
+horizontal_alignment = 1
 
-[node name="TextureRect" type="TextureRect" parent="NewGameView/MarginContainer/VBoxContainer/MarginContainer/ScrollContainer/GridContainer/VBoxContainer5"]
+[node name="HBoxContainer" type="HBoxContainer" parent="NewGameView/MarginContainer/VBoxContainer/MarginContainer/ScrollContainer/GridContainer/Unlockable_3"]
+custom_minimum_size = Vector2(180, 180)
 layout_mode = 2
-texture = ExtResource("8_ruaqy")
-stretch_mode = 3
+
+[node name="TextureRect" type="TextureRect" parent="NewGameView/MarginContainer/VBoxContainer/MarginContainer/ScrollContainer/GridContainer/Unlockable_3/HBoxContainer"]
+custom_minimum_size = Vector2(150, 180)
+layout_mode = 2
+texture = ExtResource("13_cq80k")
+expand_mode = 3
+stretch_mode = 5
 
 [node name="DescriptionContainer" type="PanelContainer" parent="NewGameView/MarginContainer/VBoxContainer"]
 custom_minimum_size = Vector2(0, 130)

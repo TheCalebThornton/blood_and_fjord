@@ -28,6 +28,7 @@ var current_battle_state: BattleState
 @onready var units_node: Node2D = $"../Units"
 @onready var terrain_node: Node2D = $"../Terrain"
 @onready var battle_menu: BattleMenu = $UIManager/BattleUIContainer/Panel/MarginContainer/BattleMenu
+@onready var player_save_data: PlayerSaveData = $PlayerSaveData
 
 var current_map: String = ""
 var current_level: int = 0
@@ -178,24 +179,9 @@ func _on_resume_battle() -> void:
 
 func load_player_units() -> Array[UnitData]:
 	var units: Array[UnitData] = []
-	var file = FileAccess.open("res://saveData/player.json", FileAccess.READ)
+	player_save_data.load_from_json()
 	
-	if file == null:
-		print("Error loading player data: ", FileAccess.get_open_error())
-		return units
-	
-	var json_text = file.get_as_text()
-	var json = JSON.parse_string(json_text)
-	
-	if json == null:
-		print("Error parsing player data JSON")
-		return units
-	
-	if not json.has("units"):
-		print("Player data missing units array")
-		return units
-	
-	for unit_data in json["units"]:
+	for unit_data in player_save_data.units:
 		var unit = UnitData.new()
 		unit.unit_name = unit_data["name"]
 		unit.unit_class = unit_data["unit_class"]
@@ -204,5 +190,18 @@ func load_player_units() -> Array[UnitData]:
 		units.append(unit)
 	
 	return units
+
+func save_player_units(units: Array[GameUnit]) -> void:
+	# Convert UnitData objects to save format
+	player_save_data.units.clear()
+	for unit:GameUnit in units:
+		player_save_data.units.append({
+			"name": unit.unit_name,
+			"unit_class": unit.unit_class,
+			"sprite_color": unit.sprite_color,
+			"level": unit.level
+		})
+	
+	player_save_data.save_to_json()
 
 	

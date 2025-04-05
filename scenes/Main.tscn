@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://dxi8u8w6ijsrw"]
+[gd_scene load_steps=15 format=3 uid="uid://dxi8u8w6ijsrw"]
 
 [ext_resource type="Script" uid="uid://b4e3smsp4e5h0" path="res://scripts/core/GameManager.gd" id="1_1j5fm"]
 [ext_resource type="Script" uid="uid://bj3gc32uohnqa" path="res://scripts/core/InputManager.gd" id="2_0p0ee"]
@@ -12,6 +12,8 @@
 [ext_resource type="Script" uid="uid://dcpmlbed6fe77" path="res://scripts/core/MapLoader.gd" id="6_r3une"]
 [ext_resource type="Script" uid="uid://c4kyfsgs26bbt" path="res://scripts/ui/GridCursor.gd" id="7_nxtc6"]
 [ext_resource type="Script" uid="uid://3njx6ci6ycf5" path="res://scripts/core/GameCamera.gd" id="8_jlsqs"]
+[ext_resource type="Script" uid="uid://dbesgk61cy7yc" path="res://scripts/core/UnlockableManager.gd" id="11_mwfav"]
+[ext_resource type="Script" uid="uid://dw1dv7w8woccf" path="res://scripts/core/PlayerSaveData.gd" id="12_qmy6f"]
 
 [node name="Main" type="Node2D"]
 
@@ -47,6 +49,12 @@ script = ExtResource("5_qmftw")
 
 [node name="MapLoader" type="Node2D" parent="GameManager"]
 script = ExtResource("6_r3une")
+
+[node name="UnlockableManager" type="Node2D" parent="GameManager"]
+script = ExtResource("11_mwfav")
+
+[node name="PlayerSaveData" type="Node2D" parent="GameManager"]
+script = ExtResource("12_qmy6f")
 
 [node name="Units" type="Node2D" parent="."]
 

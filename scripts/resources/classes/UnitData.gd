@@ -14,3 +14,11 @@ func _init(p_name: String = "Unit",
 	unit_class = p_class
 	sprite_color = p_color
 	level = p_level
+
+static func create(params: Dictionary) -> UnitData:
+	return UnitData.new(
+		params.get("name", ""),
+		params.get("class", GameUnit.UnitClass.WARRIOR),
+		params.get("color", "Blue"),
+		params.get("level", 1)
+	)

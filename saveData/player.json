@@ -1,17 +1,19 @@
 {
 	"units": [
 		{
-			"name": "Warr1",
+			"unit_name": "Warr1",
 			"unit_class": "Warrior",
 			"sprite_color": "Purple",
 			"level": 1
 		},
 		{
-			"name": "Warr2",
+			"unit_name": "Warr2",
 			"unit_class": "Warrior",
 			"sprite_color": "Blue",
 			"level": 1
 		}
 	],
+	"unlocked_armies": [1,2],
+	"unlocked_auras": [1],
 	"current_level": 0
 }
