@@ -3,7 +3,7 @@ class_name BattleManager
 
 const MIN_HIT_CHANCE = 0.1  # 10% minimum hit chance
 const MAX_HIT_CHANCE = 1.0  # 100% maximum hit chance
-const CRITICAL_MULTIPLIER = 1.5  # Critical hits do 50% more damage
+const CRITICAL_MULTIPLIER = 2.0  # Critical hits do 1% more damage
 
 # Preloaded assets
 const FloatingTextScene = preload("res://scenes/ui/Battle/FloatingText.tscn")
@@ -39,11 +39,20 @@ func calculate_critical(attacker: GameUnit, defender: GameUnit) -> bool:
 	return randf() <= crit_chance
 	
 func calculate_critical_chance(attacker: GameUnit, _defender: GameUnit):
-	# TODO apply Luck stat?
 	return attacker.critical / 100.0
 
 func calculate_damage(attacker: GameUnit, defender: GameUnit, is_critical: bool = false) -> int:
-	var base_damage = max(1, attacker.attack - defender.defense)
+	var defensive_power = attacker.combat_stats.defense
+	match attacker.attack_type:
+		GameUnit.AttackType.PHYSICAL:
+			defensive_power = defender.combat_stats.defense
+		GameUnit.AttackType.MAGICAL:
+			defensive_power = defender.combat_stats.resistance
+		GameUnit.AttackType.TRUE:
+			defensive_power = 0
+		_:
+			defensive_power = defender.combat_stats.defense
+	var base_damage = max(1, attacker.attacking_power - defensive_power)
 	
 	if is_critical:
 		base_damage = int(base_damage * CRITICAL_MULTIPLIER)
@@ -113,10 +122,10 @@ func show_floating_text(unit: GameUnit, text: String, type: int) -> void:
 func can_counter_attack(attacker: GameUnit, defender: GameUnit) -> bool:
 	# Check if defender is in range to counter
 	var distance = grid_system.get_distance(attacker.grid_position, defender.grid_position)
-	return distance <= defender.attack_range and defender.can_counter_attack
+	return distance <= defender.combat_stats.attack_range and defender.can_counter_attack
 
 func can_follow_up(attacker: GameUnit, defender: GameUnit) -> bool:
-	return attacker.speed >= (defender.speed + 5) 
+	return attacker.combat_stats.speed >= (defender.combat_stats.speed + 5) 
 
 func animate_attack(attacker: GameUnit, target: GameUnit) -> void:
 	var direction = target.position - attacker.position

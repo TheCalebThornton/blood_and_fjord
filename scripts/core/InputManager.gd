@@ -202,7 +202,7 @@ func _handle_movement_selection(event: InputEvent) -> void:
 			# Check if the position is in movement range
 			var movement_range = grid_system.calculate_movement_range(
 				selected_unit.grid_position,
-				selected_unit.movement
+				selected_unit.combat_stats.movement
 			)
 
 			if cursor_position in movement_range and not unit_manager.has_unit_at(cursor_position):
@@ -232,8 +232,10 @@ func _handle_target_selection(event: InputEvent) -> void:
 			if target_unit:
 				match action_type:
 					"attack":
+						change_state(InputState.LOCKED)
 						await battle_manager.execute_combat(selected_unit, target_unit)
-						unit_manager.end_unit_turn(selected_unit)
+						if selected_unit:
+							unit_manager.end_unit_turn(selected_unit)
 					# Other action types can be added here like Trade or Heal
 			
 			# Reset target selection
@@ -286,8 +288,8 @@ func _on_action_selected(action_id: String) -> void:
 			# Set up attack targeting
 			var attack_range = grid_system.calculate_attack_range(
 				[selected_unit.grid_position],
-				selected_unit.min_attack_range,
-				selected_unit.attack_range
+				selected_unit.combat_stats.min_attack_range,
+				selected_unit.combat_stats.attack_range
 			)
 			valid_targets = attack_range.filter(func(pos): return unit_manager.has_unit_at(pos))
 			if valid_targets.size() <= 0:

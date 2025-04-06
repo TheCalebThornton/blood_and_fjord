@@ -10,7 +10,7 @@ metadata={
 
 [deps]
 
-source_file="res://assets/Factions/Knights/Troops/Warrior/Blue/Warrior_Blue_portrait.png"
+source_file="res://assets/Factions/Knights/Troops/Warrior/Blue/portrait.png"
 dest_files=["res://.godot/imported/Warrior_Blue_portrait.png-d4a0baa649f407504954ed672d2df77f.ctex"]
 
 [params]

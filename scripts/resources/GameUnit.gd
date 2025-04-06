@@ -31,42 +31,48 @@ enum UnitState {
 	TURN_COMPLETE
 }
 
+enum AttackType {
+	PHYSICAL,
+	MAGICAL,
+	TRUE
+}
+
 var _color_highlight: Color = Color(1.4, 1.4, 1.4)
 
 var unit_name: String = "Unit"
 var unit_class: UnitClass = UnitClass.WARRIOR
 var faction: int = Faction.PLAYER
 
-# Basic unit properties
+var combat_stats: UnitCombatStats = UnitCombatStats.new()
 var level: int = 1
-var max_health: int = 10
-var attack: int = 5
-var magic: int = 2
-var defense: int = 5
-var resistance: int = 2
-var speed: int = 5
-var movement: int = 8
-var attack_range: int = 1
-var min_attack_range: int = 1
 
-# Calcualted stats
-var health: int = 10
-var accuracy: int = 85
-var evasion: int = 10
-var critical: int = 5
+# Calculated stats
+var attack_type: AttackType= AttackType.PHYSICAL # This is calculated because some units may change attack type in battle
+var health: int = combat_stats.max_health
+var attacking_power: int:
+	get:
+		match attack_type:
+			AttackType.PHYSICAL:
+				return combat_stats.strength
+			AttackType.MAGICAL:
+				return combat_stats.magic
+			AttackType.TRUE:
+				return max(combat_stats.strength, combat_stats.magic, combat_stats.skill)
+		return combat_stats.strength
+var accuracy: int:
+	get:
+		return 75 + roundi(combat_stats.skill * 2.0)
+var evasion: int:
+	get:
+		return floori((combat_stats.speed * 2 + combat_stats.skill) / 4.0)
+var critical: int:
+	get:
+		return 5 + floori(combat_stats.skill / 4.0)
+
 var can_counter_attack: bool = true
 var can_act: bool = true
 var can_move: bool = true
-var experience: int = 0
-var exp_to_level: int = 100
-var growth_rates: Dictionary = {
-	"hp": 60,        # 60% chance to gain 1 HP on level up
-	"attack": 40,    # 40% chance to gain 1 Attack on level up
-	"defense": 30,   # etc.
-	"magic": 20,
-	"resistance": 25,
-	"speed": 35
-}
+
 var inventory: Array = []
 var equipped_weapon = null
 var available_actions: Array[Dictionary] = [
@@ -95,8 +101,6 @@ signal leveled_up(old_level: int, new_level: int)
 @onready var sprite = $AnimatedSprite2D
 
 func _ready():
-	health = max_health
-	
 	# Set default unit name based on class if not specified
 	if unit_name == "":
 		unit_name = UnitClass.keys()[unit_class]
@@ -181,7 +185,7 @@ func take_damage(amount: int) -> void:
 
 func receive_healing(amount: int) -> void:
 	health += amount
-	health = min(health, max_health)
+	health = min(health, combat_stats.max_health)
 
 func _on_defeated() -> void:
 	set_state(UnitState.DEATH)
@@ -191,37 +195,43 @@ func _on_defeated() -> void:
 	queue_free()
 
 func gain_experience(amount: int) -> void:
-	experience += amount
+	combat_stats.experience += amount
 	
-	while experience >= exp_to_level:
-		experience -= exp_to_level
+	while combat_stats.experience >= combat_stats.exp_to_level:
+		combat_stats.experience -= combat_stats.exp_to_level
 		level_up()
 
-func level_up() -> void:
-	var old_level = level
-	level += 1
-	
-	for stat in growth_rates:
-		var growth = growth_rates[stat]
+func apply_levels() -> void:
+	for lvl in range(level - 1):
+		level_up(false)
+
+func level_up(inc_lvl: bool = true) -> void:
+	for stat_name in combat_stats.growth_rates:
+		var growth_rate = combat_stats.growth_rates[stat_name]
 		var roll = randi() % 100
 		
-		if roll < growth:
-			match stat:
+		if roll < int(growth_rate):
+			match stat_name:
 				"hp":
-					max_health += 1
-					health += 1
-				"attack":
-					attack += 1
-				"defense":
-					defense += 1
+					combat_stats.max_health += 2
+					health += 2
+				"strength":
+					combat_stats.strength += 1
+				"skill":
+					combat_stats.skill += 1
 				"magic":
-					magic += 1
+					combat_stats.magic += 1
+				"defense":
+					combat_stats.defense += 1
 				"resistance":
-					resistance += 1
+					combat_stats.resistance += 1
 				"speed":
-					speed += 1
-	
-	leveled_up.emit(old_level, level)
+					combat_stats.speed += 1
+	if inc_lvl:
+		var old_level = level
+		level += 1
+		leveled_up.emit(old_level, level)
+
 #endregion combat
 
 func select() -> void:

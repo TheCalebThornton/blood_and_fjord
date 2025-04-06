@@ -10,11 +10,11 @@ class_name UnitOverviewUI
 # Dictionary to store unit portrait textures
 var portrait_textures = {
 	# TODO These asset paths will need to come from save file eventually
-	"warrior": preload("res://assets/Factions/Knights/Troops/Warrior/Blue/Warrior_Blue_portrait.png"),
+	"warrior": preload("res://assets/Factions/Knights/Troops/Warrior/Blue/portrait.png"),
 	#"archer": preload("res://assets/portraits/archer.png"),
 	#"mage": preload("res://assets/portraits/mage.png"),
 	# Add more unit types as needed
-	"default": preload("res://assets/Factions/Knights/Troops/Warrior/Blue/Warrior_Blue_portrait.png")
+	"default": preload("res://assets/Factions/Knights/Troops/Warrior/Blue/portrait.png")
 }
 
 func _ready():
@@ -24,8 +24,8 @@ func show_unit_stats(unit: GameUnit, is_player: bool = true):
 	unit_name_label.text = unit.unit_name
 	lvl_label.text = "Level: %s" % [str(unit.level)]
 	
-	hp_label.text = "HP: %d/%d" % [unit.health, unit.max_health]
-	hp_bar.max_value = unit.max_health
+	hp_label.text = "HP: %d/%d" % [unit.health, unit.combat_stats.max_health]
+	hp_bar.max_value = unit.combat_stats.max_health
 	hp_bar.value = unit.health
 	
 	unit_portrait.texture = unit.ui_icon_image

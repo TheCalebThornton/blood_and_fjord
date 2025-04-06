@@ -63,8 +63,8 @@ func highlight_unit_attack_range(unit: GameUnit) -> void:
 
 	var attack_range = grid_system.calculate_attack_range(
 		[unit.grid_position],
-		unit.min_attack_range,
-		unit.attack_range)
+		unit.combat_stats.min_attack_range,
+		unit.combat_stats.attack_range)
 	grid_system.highlight_attack_range(attack_range)
 
 func select_unit(unit: GameUnit) -> void:
@@ -81,14 +81,14 @@ func select_unit(unit: GameUnit) -> void:
 	if unit.can_move:
 		var valid_moves = grid_system.calculate_movement_range(
 			unit.grid_position, 
-			unit.movement
+			unit.combat_stats.movement
 		)
 		grid_system.highlight_movement_range(valid_moves)
 		
 		var valid_attacks = grid_system.calculate_attack_range(
 			valid_moves + [unit.grid_position],
-			unit.min_attack_range,
-			unit.attack_range
+			unit.combat_stats.min_attack_range,
+			unit.combat_stats.attack_range
 		)
 		
 		# Filter out cells that are in valid_moves
@@ -164,8 +164,8 @@ func move_unit(unit: GameUnit, target_pos: Vector2i, record_move: bool = true) -
 		if unit == selected_unit:
 			var attack_range = grid_system.calculate_attack_range(
 				[unit.grid_position],
-				unit.min_attack_range,
-				unit.attack_range
+				unit.combat_stats.min_attack_range,
+				unit.combat_stats.attack_range
 			)
 			grid_system.highlight_attack_range(attack_range)
 		unit_moved.emit(unit, from_pos, target_pos)

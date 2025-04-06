@@ -45,7 +45,7 @@ func show_forecast(attacker: GameUnit, defender: GameUnit, battle_manager: Battl
 	defender_column_panel.add_theme_stylebox_override("panel", defender_style_box)
 	attacker_name_label.text = attacker.unit_name
 	attacker_hp_bar.min_value = 0
-	attacker_hp_bar.max_value = attacker.max_health
+	attacker_hp_bar.max_value = attacker.combat_stats.max_health
 	attacker_hp_bar.value = attacker.health
 	var attacker_dmg = battle_manager.calculate_damage(attacker, defender)
 	attacker_atk_label.text = str(attacker_dmg)
@@ -54,7 +54,7 @@ func show_forecast(attacker: GameUnit, defender: GameUnit, battle_manager: Battl
 	
 	defender_name_label.text = defender.unit_name
 	defender_hp_bar.min_value = 0
-	defender_hp_bar.max_value = defender.max_health
+	defender_hp_bar.max_value = defender.combat_stats.max_health
 	defender_hp_bar.value = defender.health
 	var defender_dmg = battle_manager.calculate_damage(defender, attacker)
 	defender_atk_label.text = str(defender_dmg)
