@@ -28,7 +28,7 @@ func _ready():
 	hide()
 
 func show_battle_menu() -> void:
-	_update_selection(0)
+	_update_selection(0, true)
 	show()
 	
 func hide_battle_menu() -> void:
@@ -46,10 +46,10 @@ func select_previous_action() -> void:
 		prev_index = menu_buttons.size() - 1
 	_update_selection(prev_index)
 
-func _update_selection(new_index: int) -> void:
+func _update_selection(new_index: int, is_init: bool = false) -> void:
 	current_action_index = new_index
 	for i in range(menu_buttons.size()):
-		menu_buttons[i].set_selected(i == current_action_index)
+		menu_buttons[i].set_selected(i == current_action_index, is_init)
 	menu_buttons[current_action_index].grab_focus()
 
 func _on_button_focused(button: Button) -> void:

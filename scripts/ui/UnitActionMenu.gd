@@ -5,6 +5,7 @@ signal action_selected(action_id: String)
 signal menu_closed()
 
 @onready var button_container = $MarginContainer/VBoxContainer
+@onready var audio_manager = $"/root/Main/GameManager/AudioManager"
 
 var action_button_scene = preload("res://scenes/ui/Battle/UnitActionButton.tscn")
 var current_action_index: int = 0
@@ -30,7 +31,7 @@ func show_actions(actions: Array[Dictionary]) -> void:
 		action_buttons.append(button)
 	
 	if not action_buttons.is_empty():
-		_update_selection(0)
+		_update_selection(0, true)
 	
 	await get_tree().process_frame
 	show()
@@ -51,10 +52,10 @@ func select_previous_action() -> void:
 		prev_index = action_buttons.size() - 1
 	_update_selection(prev_index)
 
-func _update_selection(new_index: int) -> void:
+func _update_selection(new_index: int, is_init: bool = false) -> void:
 	current_action_index = new_index
 	for i in range(action_buttons.size()):
-		action_buttons[i].set_selected(i == current_action_index)
+		action_buttons[i].set_selected(i == current_action_index, is_init)
 	action_buttons[current_action_index].grab_focus()
 
 func _on_button_focused(button: Button) -> void:

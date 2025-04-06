@@ -12,8 +12,6 @@ const BloodEffectScene = preload("res://scenes/effects/CombatEffect.tscn")
 # Signals
 signal combat_started(attacker: GameUnit, defender: GameUnit)
 signal combat_ended(attacker: GameUnit, defender: GameUnit, defeated: bool)
-#signal unit_damaged(unit: GameUnit, damage: int)
-signal unit_healed(unit: GameUnit, amount: int)
 
 @onready var grid_system: GridSystem = $"../GridSystem"
 @onready var unit_manager: UnitManager = $"../UnitManager"
@@ -110,7 +108,6 @@ func apply_healing(unit: GameUnit, amount: int) -> void:
 	unit.health += amount
 	unit.health = min(unit.health, unit.max_health)
 	show_floating_text(unit, str(amount), FloatingText.TextType.HEAL)
-	unit_healed.emit(unit, amount)
 
 func show_floating_text(unit: GameUnit, text: String, type: int) -> void:
 	var floating_text = FloatingTextScene.instantiate()

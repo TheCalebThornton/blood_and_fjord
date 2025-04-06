@@ -94,11 +94,11 @@ var sprite_frames_res: SpriteFrames
 var ui_icon_image = CompressedTexture2D
 
 # Signals
-signal damaged(amount: int)
 signal defeated()
 signal leveled_up(old_level: int, new_level: int)
 
 @onready var sprite = $AnimatedSprite2D
+@onready var hp_bar = $UnitHPBar
 
 func _ready():
 	# Set default unit name based on class if not specified
@@ -108,6 +108,9 @@ func _ready():
 	
 	if sprite_frames_res:
 		sprite.sprite_frames = sprite_frames_res
+	
+	if hp_bar:
+		hp_bar.update_health(health, combat_stats.max_health, faction)
 
 #region animation
 func set_state(new_state: UnitState):
@@ -178,7 +181,8 @@ func take_damage(amount: int) -> void:
 	health -= amount
 	health = max(0, health)
 	
-	damaged.emit(amount)
+	if hp_bar:
+		hp_bar.update_health(health, combat_stats.max_health, faction)
 	
 	if health <= 0:
 		await _on_defeated()
@@ -186,6 +190,9 @@ func take_damage(amount: int) -> void:
 func receive_healing(amount: int) -> void:
 	health += amount
 	health = min(health, combat_stats.max_health)
+	
+	if hp_bar:
+		hp_bar.update_health(health, combat_stats.max_health, faction)
 
 func _on_defeated() -> void:
 	set_state(UnitState.DEATH)

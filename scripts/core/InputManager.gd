@@ -25,7 +25,7 @@ var game_manager: GameManager
 @onready var battle_ui_container: BattleUIContainer = $"../UIManager/BattleUIContainer"
 @onready var battle_manager: BattleManager = $"../BattleManager"
 @onready var game_menu: GameMenu = $"../UIManager/GameMenu"
-
+@onready var audio_manager: AudioManager = $"../AudioManager"
 var cursor_position: Vector2i = Vector2i(0, 0)
 
 # For target selection
@@ -125,9 +125,11 @@ func _handle_cursor_movement(event: InputEvent) -> void:
 		
 		if grid_system.is_within_grid(new_pos):
 			cursor_position = new_pos
+			audio_manager.play_ui_sound("cursor_move")
 			cursor_move_request.emit(cursor_position)
 			_update_hover_ui()
-		
+		else:
+			audio_manager.play_ui_sound("error", 0.5)
 func _handle_vertical_menu_selection(event: InputEvent, menu: PanelContainer) -> void:
 	if event.is_action_pressed("ui_down"):
 		menu.select_next_action()
@@ -185,6 +187,7 @@ func _handle_cursor_selection(event: InputEvent) -> void:
 			if unit.faction == GameUnit.Faction.PLAYER and unit.can_move:
 				unit_manager.select_unit(unit)
 				change_state(InputState.MOVEMENT_SELECTION)
+				audio_manager.play_combat_sound("character_select")
 		else:
 			change_state(InputState.MENU_OPEN)
 			battle_ui_container.battle_menu.show_battle_menu()
@@ -251,6 +254,7 @@ func _handle_cancel(event: InputEvent) -> void:
 		match current_state:
 			InputState.MOVEMENT_SELECTION:
 				unit_manager.deselect_unit()
+				audio_manager.play_combat_sound("character_unselect")
 				change_state(InputState.GRID_SELECTION)
 			InputState.ACTION_SELECTION:
 				unit_manager.revert_unit_movement(unit_manager.selected_unit)
@@ -291,7 +295,10 @@ func _on_action_selected(action_id: String) -> void:
 				selected_unit.combat_stats.min_attack_range,
 				selected_unit.combat_stats.attack_range
 			)
-			valid_targets = attack_range.filter(func(pos): return unit_manager.has_unit_at(pos))
+			valid_targets = attack_range.filter(func(pos): 
+				return unit_manager.has_unit_at(pos) and \
+					unit_manager.get_unit_at(pos).faction != selected_unit.faction
+			)
 			if valid_targets.size() <= 0:
 				# TODO Attack action should be disabled if no valid targets are found
 				print("NO VALID TARGETS")
