@@ -20,5 +20,16 @@ For detailed information about game features and mechanics, see [GameFeatures.md
 ## Development Status
 🚧 Currently in early development
 
+### TODO List
+1. More maps (at least 5)
+2. Auras
+3. Add map items
+  - These items should spawn at a random spot on the map (indicated by an available spawn list in mapData)
+5. Add classes
+  - Shieldbearer, Berserker, and Reaver to start
+6. Add weather
+7. Update UI textures
+8. Update sprites with custom art
+
 ## License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
