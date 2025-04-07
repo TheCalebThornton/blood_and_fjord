@@ -129,7 +129,7 @@ func _handle_cursor_movement(event: InputEvent) -> void:
 			cursor_move_request.emit(cursor_position)
 			_update_hover_ui()
 		else:
-			audio_manager.play_ui_sound("error", 0.5)
+			audio_manager.play_ui_sound("error", 0.25)
 func _handle_vertical_menu_selection(event: InputEvent, menu: PanelContainer) -> void:
 	if event.is_action_pressed("ui_down"):
 		menu.select_next_action()

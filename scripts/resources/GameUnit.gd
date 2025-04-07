@@ -67,7 +67,7 @@ var evasion: int:
 		return floori((combat_stats.speed * 2 + combat_stats.skill) / 4.0)
 var critical: int:
 	get:
-		return 5 + floori(combat_stats.skill / 4.0)
+		return 5 + floori(combat_stats.skill / 2.0)
 
 var can_counter_attack: bool = true
 var can_act: bool = true

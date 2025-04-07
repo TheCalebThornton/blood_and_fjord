@@ -92,17 +92,24 @@ func process_attack(attacker: GameUnit, defender: GameUnit) -> void:
 	if calculate_hit(attacker, defender):
 		var is_critical = calculate_critical(attacker, defender)
 		var damage = calculate_damage(attacker, defender, is_critical)
-		await apply_damage(defender, damage, is_critical)
+		await apply_damage(attacker, defender, damage, is_critical)
 	else:
 		show_floating_text(defender, "MISS", FloatingText.TextType.MISS)
+		attacker.play_miss_audio()
 
-func apply_damage(unit: GameUnit, damage: int, is_critical: bool = false) -> void:
-	show_floating_text(unit, str(damage), 
+func apply_damage(attacker: GameUnit, defender: GameUnit, damage: int, is_critical: bool = false) -> void:
+	show_floating_text(defender, str(damage), 
 		FloatingText.TextType.CRITICAL if is_critical else FloatingText.TextType.DAMAGE)
-	if is_critical:
+	if is_critical and damage > 0:
 		game_camera.shake(10.0, 0.3)
-	spawn_effect(unit.position, BloodEffectScene)
-	await unit.take_damage(damage)
+		attacker.play_critical_audio()
+		spawn_effect(defender.position, BloodEffectScene)
+	elif damage > 0:
+		attacker.play_flesh_dmg_audio()
+		spawn_effect(defender.position, BloodEffectScene)
+	else:
+		attacker.play_blocked_audio()
+	await defender.take_damage(damage)
 
 func apply_healing(unit: GameUnit, amount: int) -> void:
 	unit.health += amount

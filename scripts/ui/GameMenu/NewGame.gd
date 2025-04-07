@@ -5,6 +5,7 @@ signal start_new_game(units: Array[UnitData])
 
 @onready var selection_grid: ArmySelection = $MarginContainer/VBoxContainer/MarginContainer/ScrollContainer/GridContainer
 @onready var description: RichTextLabel = $MarginContainer/VBoxContainer/DescriptionContainer/Description
+@onready var audio_manager = $"/root/Main/GameManager/AudioManager"
 
 var current_action_index: int = 0
 var menu_buttons: Array = []
@@ -17,7 +18,7 @@ func show_menu() -> void:
 	menu_buttons = []
 	for child in selection_grid.get_children():
 		menu_buttons.append(child)
-	_update_selection(0)
+	_update_selection(0, true)
 	show()
 	
 func select_next_action(deltaVector: Vector2i) -> void:
@@ -34,13 +35,15 @@ func select_next_action(deltaVector: Vector2i) -> void:
 	next_index = clampi(next_index, 0, menu_buttons.size() - 1)
 	_update_selection(next_index)
 	
-func _update_selection(new_index: int) -> void:
+func _update_selection(new_index: int, is_init: bool = false) -> void:
 	if menu_buttons.size()-1 < new_index or new_index < 0:
 		return
 	current_action_index = new_index
 	for i in range(menu_buttons.size()):
 		_set_menu_button_selected(i, i == current_action_index)
 	var active_btn = menu_buttons[current_action_index]
+	if not is_init: audio_manager.play_ui_sound("button_focus")
+
 	# TODO Refactor this to use separate textFields instead of phony spacing
 	var desc_text = ""
 	if menu_buttons[current_action_index].is_unlocked:
@@ -63,3 +66,4 @@ func _set_menu_button_selected(index: int, selected: bool) -> void:
 func confirm_selection() -> void:
 	if menu_buttons[current_action_index].is_unlocked:
 		start_new_game.emit(menu_buttons[current_action_index].army.units)
+		audio_manager.play_ui_sound("button_click")

@@ -17,7 +17,7 @@ var music_volume: float = 1.0
 
 # Preloaded sound effects
 var ui_sounds = {
-	"button_hover": preload("res://assets/audio/ui/button_hover.wav"),
+	"button_focus": preload("res://assets/audio/ui/button_focus.wav"),
 	"button_click": preload("res://assets/audio/ui/button_click.wav"),
 	"menu_open": preload("res://assets/audio/ui/menu_open.wav"),
 	"menu_close": preload("res://assets/audio/ui/menu_close.wav"),
@@ -27,7 +27,13 @@ var ui_sounds = {
 
 var combat_sounds = {
 	"character_select": preload("res://assets/audio/combat/character_select.wav"),
-	"character_unselect": preload("res://assets/audio/combat/character_unselect.wav")
+	"character_unselect": preload("res://assets/audio/combat/character_unselect.wav"),
+	"blade_swing": preload("res://assets/audio/combat/blade_swing.wav"),
+	"impact_flesh": preload("res://assets/audio/combat/impact_flesh.wav"),
+	"impact_blocked": preload("res://assets/audio/combat/impact_blocked.wav"),
+	"miss": preload("res://assets/audio/combat/miss.wav"),
+	"death": preload("res://assets/audio/combat/death.wav"),
+	"critical": preload("res://assets/audio/combat/critical.wav"),
 }
 
 var audio_players: Array[AudioStreamPlayer] = []
@@ -58,17 +64,19 @@ func set_master_volume(volume: float) -> void:
 
 func set_sfx_volume(volume: float) -> void:
 	sfx_volume = clampf(volume, 0.0, 1.0)
-	AudioServer.set_bus_volume_db(
-		AudioServer.get_bus_index(SFX_BUS),
-		linear_to_db(sfx_volume)
-	)
+	if AudioServer.get_bus_index(SFX_BUS) >= 0:
+		AudioServer.set_bus_volume_db(
+			AudioServer.get_bus_index(SFX_BUS),
+			linear_to_db(sfx_volume)
+		)
 
 func set_music_volume(volume: float) -> void:
 	music_volume = clampf(volume, 0.0, 1.0)
-	AudioServer.set_bus_volume_db(
-		AudioServer.get_bus_index(MUSIC_BUS),
-		linear_to_db(music_volume)
-	)
+	if AudioServer.get_bus_index(MUSIC_BUS) >= 0:
+		AudioServer.set_bus_volume_db(
+			AudioServer.get_bus_index(MUSIC_BUS),
+			linear_to_db(music_volume)
+		)
 
 func play_combat_sound(sound_name: String, volume_override: float = 1.0) -> void:
 	if not combat_sounds.has(sound_name):

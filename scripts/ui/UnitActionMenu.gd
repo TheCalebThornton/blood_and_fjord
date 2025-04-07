@@ -35,6 +35,7 @@ func show_actions(actions: Array[Dictionary]) -> void:
 	
 	await get_tree().process_frame
 	show()
+	audio_manager.play_ui_sound("menu_open")
 	
 func select_next_action() -> void:
 	if action_buttons.is_empty():

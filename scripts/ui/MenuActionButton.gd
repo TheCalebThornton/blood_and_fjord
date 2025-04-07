@@ -8,7 +8,7 @@ func _ready():
 	pressed.connect(_on_pressed)
 
 func _on_focus_entered() -> void:
-	audio_manager.play_ui_sound("button_hover")
+	audio_manager.play_ui_sound("button_focus")
 
 func _on_pressed() -> void:
 	audio_manager.play_ui_sound("button_click")

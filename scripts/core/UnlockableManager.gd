@@ -16,18 +16,21 @@ var unlockable_armies: Array[UnlockableArmy] = [
 				"class": GameUnit.UnitClass.WARRIOR,
 				"color": "Blue",
 				"level": 2,
+				"combat_stats": UnitCombatStats.create({"strength": 50})
 			},			
 			{
 				"name": "Purp",
 				"class": GameUnit.UnitClass.WARRIOR,
 				"color": "Purple",
 				"level": 1,
+				"combat_stats": UnitCombatStats.create({"defense": 50})
 			},
 			{
 				"name": "Yell",
 				"class": GameUnit.UnitClass.WARRIOR,
 				"color": "Yellow",
 				"level": 1,
+				"combat_stats": UnitCombatStats.create({"skill": 100, "speed": 50})
 			}
 		],
 		"auras": [],
