@@ -1,0 +1,75 @@
+[gd_scene load_steps=11 format=3 uid="uid://byyep3yegev2s"]
+
+[ext_resource type="Texture2D" uid="uid://dulrckccad1v7" path="res://assets/Resources/Resources/M_Idle.png" id="1_fmogo"]
+[ext_resource type="Texture2D" uid="uid://b47f56m7pbien" path="res://assets/Resources/Resources/M_Spawn.png" id="2_55mup"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0jn02"]
+atlas = ExtResource("2_55mup")
+region = Rect2(0, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_aqyda"]
+atlas = ExtResource("2_55mup")
+region = Rect2(128, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_eqiu3"]
+atlas = ExtResource("2_55mup")
+region = Rect2(256, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1upep"]
+atlas = ExtResource("2_55mup")
+region = Rect2(384, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mkbie"]
+atlas = ExtResource("2_55mup")
+region = Rect2(512, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_w7wof"]
+atlas = ExtResource("2_55mup")
+region = Rect2(640, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_a140u"]
+atlas = ExtResource("2_55mup")
+region = Rect2(768, 0, 128, 128)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_qwdif"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_fmogo")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0jn02")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_aqyda")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_eqiu3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1upep")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mkbie")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_w7wof")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_a140u")
+}],
+"loop": false,
+"name": &"spawn",
+"speed": 5.0
+}]
+
+[node name="Heart" type="Node2D"]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_qwdif")
+animation = &"spawn"

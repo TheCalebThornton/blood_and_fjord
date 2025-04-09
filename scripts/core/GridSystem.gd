@@ -26,10 +26,8 @@ signal path_found(path: Array)
 @onready var unit_manager: UnitManager = $"../UnitManager"
 
 func _ready():
-	# Initialize grid when ready
 	# Set the z_index to ensure this node draws between terrain and units
 	z_index = 1
-	# Add signal connection
 	unit_manager.unit_moved.connect(_on_unit_moved)
 
 func initialize_grid(size: Vector2i) -> void:
@@ -44,10 +42,8 @@ func initialize_grid(size: Vector2i) -> void:
 			# Default terrain is plains
 			terrain_map[x][y] = "plains"
 	
-	# Initialize AStar pathfinding
 	initialize_astar()
 	
-	# Signal that grid is initialized
 	grid_initialized.emit()
 
 func reset() -> void:

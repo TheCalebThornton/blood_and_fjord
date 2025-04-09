@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://dxi8u8w6ijsrw"]
+[gd_scene load_steps=17 format=3 uid="uid://dxi8u8w6ijsrw"]
 
 [ext_resource type="Script" uid="uid://b4e3smsp4e5h0" path="res://scripts/core/GameManager.gd" id="1_1j5fm"]
 [ext_resource type="Script" uid="uid://bj3gc32uohnqa" path="res://scripts/core/InputManager.gd" id="2_0p0ee"]
@@ -15,6 +15,7 @@
 [ext_resource type="Script" uid="uid://dbesgk61cy7yc" path="res://scripts/core/UnlockableManager.gd" id="11_mwfav"]
 [ext_resource type="Script" uid="uid://dw1dv7w8woccf" path="res://scripts/core/PlayerSaveData.gd" id="12_qmy6f"]
 [ext_resource type="Script" uid="uid://dvw18kol3n7vr" path="res://scripts/core/AudioManager.gd" id="13_3p2gp"]
+[ext_resource type="Script" uid="uid://brlhbmqxrhiop" path="res://scripts/core/ItemManager.gd" id="14_cvmbd"]
 
 [node name="Main" type="Node2D"]
 
@@ -60,12 +61,17 @@ script = ExtResource("12_qmy6f")
 [node name="AudioManager" type="Node2D" parent="GameManager"]
 script = ExtResource("13_3p2gp")
 
+[node name="ItemManager" type="Node2D" parent="GameManager"]
+script = ExtResource("14_cvmbd")
+
 [node name="Units" type="Node2D" parent="."]
 
 [node name="Terrain" type="Node2D" parent="."]
 
 [node name="Cursor" type="Node2D" parent="."]
 script = ExtResource("7_nxtc6")
+
+[node name="Items" type="Node2D" parent="."]
 
 [node name="GameCamera" type="Camera2D" parent="."]
 position = Vector2(377, 375)

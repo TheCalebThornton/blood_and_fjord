@@ -71,6 +71,20 @@
 		}
 	],
 	"ally_spawns": [],
+	"items": {
+		"spawn_count": 1,
+		"possible_items": [
+			"heart",
+			"multi-heart"
+		],
+		"spawn_options": [
+			{"x": 0, "y": 0},
+			{"x": 9, "y": 7},
+			{"x": 7, "y": 9},
+			{"x": 6, "y": 9},
+			{"x": 8, "y": 8}
+		]
+	},
 	"victory_condition": 0,
 	"victory_param": 0,
 	"map_description": "A small skirmish to learn the basics of combat.",

@@ -1,6 +1,10 @@
 extends Resource
-
 class_name MapData
+
+class ItemSpawnData:
+	var item_count: int = 0
+	var spawn_options: Array = []
+	var available_items: Array = []
 
 # Map properties
 var map_name: String = "Untitled Map"
@@ -10,10 +14,11 @@ var grid_size: Vector2i = Vector2i(16, 16)
 # Terrain data
 var terrain_data: Array = []
 
-# Unit spawn data
+# Spawn data
 var player_spawn_options: Array = []
 var enemy_spawns: Array = []
 var ally_spawns: Array = []
+var item_spawn_data: ItemSpawnData = ItemSpawnData.new()
 
 # Victory conditions
 enum VictoryCondition {
@@ -31,7 +36,6 @@ var victory_param: int = 0  # Used for turns to survive or target unit ID
 var map_description: String = ""
 var map_objective: String = "Defeat all enemies"
 
-# Initialize a new map with default terrain
 func initialize(size: Vector2i, default_terrain: String = "plains") -> void:
 	grid_size = size
 	terrain_data.resize(size.x)
@@ -47,29 +51,23 @@ func set_terrain(pos: Vector2i, terrain_type: String) -> void:
 	if is_valid_position(pos):
 		terrain_data[pos.x][pos.y] = terrain_type
 
-# Get terrain at a specific position
 func get_terrain(pos: Vector2i) -> String:
 	if is_valid_position(pos):
 		return terrain_data[pos.x][pos.y]
 	return "invalid"
 
-# Check if a position is valid
 func is_valid_position(pos: Vector2i) -> bool:
 	return pos.x >= 0 and pos.x < grid_size.x and pos.y >= 0 and pos.y < grid_size.y
 
-# Add a player unit spawn
 func add_player_spawn(unit_data: Dictionary) -> void:
 	player_spawn_options.append(unit_data)
 
-# Add an enemy unit spawn
 func add_enemy_spawn(unit_data: Dictionary) -> void:
 	enemy_spawns.append(unit_data)
 
-# Add an ally unit spawn
 func add_ally_spawn(unit_data: Dictionary) -> void:
 	ally_spawns.append(unit_data)
 
-# Set victory condition
 func set_victory_condition(condition: int, param: int = 0) -> void:
 	victory_condition = condition
 	victory_param = param
@@ -87,7 +85,7 @@ func set_victory_condition(condition: int, param: int = 0) -> void:
 		VictoryCondition.SEIZE_POINT:
 			map_objective = "Seize the target point"
 
-# Save map data to a file
+# TODO not used yet - not sure if I want to allow in progress map loading
 func save_to_file(path: String) -> Error:
 	var map_dict = {
 		"map_name": map_name,
@@ -112,7 +110,6 @@ func save_to_file(path: String) -> Error:
 	
 	return ERR_CANT_OPEN
 
-# Load map data from a file
 static func load_from_file(path: String) -> MapData:
 	var map_data = MapData.new()
 	
@@ -136,6 +133,10 @@ static func load_from_file(path: String) -> MapData:
 		map_data.player_spawn_options = json_result.get("player_spawn_options", [])
 		map_data.enemy_spawns = json_result.get("enemy_spawns", [])
 		map_data.ally_spawns = json_result.get("ally_spawns", [])
+		var items_dict = json_result.get("items", {})
+		map_data.item_spawn_data.item_count = items_dict.get("item_count", 0)
+		map_data.item_spawn_data.spawn_options = items_dict.get("spawn_options", [])
+		map_data.item_spawn_data.available_items = items_dict.get("available_items", [])
 		
 		map_data.victory_condition = json_result.get("victory_condition", VictoryCondition.DEFEAT_ALL)
 		map_data.victory_param = json_result.get("victory_param", 0)
@@ -144,58 +145,3 @@ static func load_from_file(path: String) -> MapData:
 		map_data.map_objective = json_result.get("map_objective", "Defeat all enemies")
 	
 	return map_data
-
-# Create a sample map for testing
-static func create_sample_map() -> MapData:
-	var map = MapData.new()
-	map.map_name = "Tutorial Battle"
-	map.map_id = "tutorial_01"
-	map.grid_size = Vector2i(10, 10)
-	
-	# Initialize with plains
-	map.initialize(map.grid_size, "plains")
-	
-	# Add some forest and mountains
-	map.set_terrain(Vector2i(2, 3), "forest")
-	map.set_terrain(Vector2i(3, 3), "forest")
-	map.set_terrain(Vector2i(2, 4), "forest")
-	map.set_terrain(Vector2i(7, 7), "mountains")
-	map.set_terrain(Vector2i(8, 7), "mountains")
-	
-	# Add player spawns
-	map.add_player_spawn({
-		"unit_class": GameUnit.UnitClass.WARRIOR,
-		"position": {"x": 1, "y": 1},
-		"level": 1,
-		"name": "Hero"
-	})
-	
-	map.add_player_spawn({
-		"unit_class": GameUnit.UnitClass.ARCHER,
-		"position": {"x": 2, "y": 1},
-		"level": 1,
-		"name": "Archer"
-	})
-	
-	# Add enemy spawns
-	map.add_enemy_spawn({
-		"unit_class": GameUnit.UnitClass.WARRIOR,
-		"position": {"x": 8, "y": 8},
-		"level": 1,
-		"name": "Bandit"
-	})
-	
-	map.add_enemy_spawn({
-		"unit_class": GameUnit.UnitClass.WARRIOR,
-		"position": {"x": 7, "y": 8},
-		"level": 1,
-		"name": "Bandit"
-	})
-	
-	# Set victory condition
-	map.set_victory_condition(VictoryCondition.DEFEAT_ALL)
-	
-	# Set description
-	map.map_description = "A small skirmish to learn the basics of combat."
-	
-	return map 

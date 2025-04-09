@@ -4,7 +4,7 @@ class_name MapLoader
 
 @onready var grid_system: GridSystem = $"../GridSystem"
 @onready var unit_manager: UnitManager = $"../UnitManager"
-
+@onready var item_manager: ItemManager = $"../ItemManager"
 var current_map: MapData = null
 
 var terrain_scenes: Dictionary = {
@@ -17,10 +17,11 @@ var terrain_scenes: Dictionary = {
 
 var terrain_node: Node2D
 var units_node: Node2D
-
+var items_node: Node2D
 func _ready():
 	terrain_node = get_node("/root/Main/Terrain")
 	units_node = get_node("/root/Main/Units")
+	items_node = get_node("/root/Main/Items")
 
 func load_map(map_path: String, player_units: Array[UnitData]) -> bool:
 	var map_data = MapData.load_from_file(map_path)
@@ -37,6 +38,7 @@ func initialize_map(map_data: MapData, player_units: Array[UnitData]) -> bool:
 	grid_system.initialize_grid(map_data.grid_size)
 	create_terrain()
 	spawn_units(player_units)
+	spawn_items()
 	
 	return true
 
@@ -125,6 +127,28 @@ func spawn_unit(spawn_data: Dictionary, faction: int) -> GameUnit:
 	
 	return unit_instance
 
+func spawn_items() -> void:
+	if not current_map:
+		return
+	
+	for i in range(current_map.item_spawn_data.item_count):
+		var item_spawn_options = current_map.item_spawn_data.spawn_options
+		var available_spawns = item_spawn_options.filter(func(pos_data):
+			var grid_pos = Vector2i(int(pos_data.x), int(pos_data.y))
+			return not unit_manager.get_unit_at(grid_pos) and not item_manager.get_item_at(grid_pos)
+		)
+
+		if available_spawns.is_empty():
+			print("No available spawn positions for item!")
+			continue
+		
+		var item_instance = MapItem.new(current_map.item_spawn_data.available_items[i])
+		item_instance.grid_position = available_spawns[0]
+		item_instance.position = grid_system.grid_to_world_centered(available_spawns[0])
+		items_node.add_child(item_instance)
+		item_manager.add_item(item_instance)
+		
+		
 func get_victory_condition() -> String:
 	if current_map:
 		return current_map.map_objective
