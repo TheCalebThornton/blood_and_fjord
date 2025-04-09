@@ -24,6 +24,7 @@
 
 ### Evolved classes and requirements
 - Berserker - (Raider lvl 10, ?? upgrade)
+  - Enraged (+1 swing when below 50% HP)   
 - Reaver – (Raider/Shieldbearer lvl 10, ?? upgrade)
 - Warlord – (Shieldbearer lvl 10, ?? upgrade)
 - Runemaster – (Runecaster lvl 10, ?? upgrade)
@@ -33,6 +34,7 @@
 - Stormcaller – (Spiritcaller/Priest lvl 10, ?? upgrade)
 - High Priest – (Priest lvl 10, ?? upgrade)
 - Nightblade – (Shade lvl 10, ?? upgrade)
+  - Stealth Action (invis 1 turn)
 - Beastmaster – (Shade/Hunter lvl 10, ?? upgrade) Adds an ally pet spawn
 - Sharpshot – (Hunter lvl 10, ?? upgrade)
 - Charioteer – (Rider lvl 10, ?? upgrade)
